@@ -10,6 +10,18 @@
   <link rel='stylesheet' href='./listnav.css'>
   <link rel='stylesheet' href='https://mapzen.com/common/styleguide/styles/styleguide.css'>
   <link rel='shortcut icon' href='/resources/favicon.ico'>
+  <style>
+    /* TODO: Migrate to styleguide for this page */
+    /* Prevent direct links from headbutting the window */
+    body.data-pages #extracts li {
+      margin-top: -50px;
+      padding-top: 60px;
+    }
+    /* Positioning to allow direct links to appear */
+    h5.place_name {
+      position: relative;
+    }
+  </style>
 </head>
 <body class='data-pages'>
 
@@ -67,10 +79,10 @@
         <ul id='extracts_list'>
           {{ #manifest }}
           <li id='{{ id }}'>
-            <h5 class='place_name'>{{ name }} <a href='#{{ id }}' title='Link to this dataset' class='anchor-fragment'></a></h5>
+            <h5 class='place_name'>{{ name }} <a href='#{{ id }}' title='Permanent link to here' class='headerlink'></a></h5>
             <div class='btn-group btn-group-justified'>
               {{ #files }}
-                <a href='https://s3.amazonaws.com/metro-extracts.mapzen.com/{{{ filename }}}' class='btn btn-default format metro-format' data-name='{{ name }}' data-format='{{ format }}'>{{ format }}<span class='size'>{{ formattedsize }}</span></a>
+                <a href='https://s3.amazonaws.com/metro-extracts.mapzen.com/{{{ filename }}}' class='btn btn-default metro-format' data-name='{{ name }}' data-format='{{ format }}'>{{ format }}<span class='size'>{{ formattedsize }}</span></a>
               {{ /files }}
             </div>
           </li>
