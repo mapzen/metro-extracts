@@ -1,0 +1,11 @@
+machine:
+  node:
+    version: 4.2
+
+dependencies:
+  post:
+    - npm run build
+
+general:
+  artifacts:
+    - "dist"
