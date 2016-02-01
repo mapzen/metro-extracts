@@ -6,6 +6,10 @@ dependencies:
   post:
     - npm run build
 
+test:
+  override:
+    - echo 'No tests 🎩'
+
 general:
   artifacts:
     - "dist"
