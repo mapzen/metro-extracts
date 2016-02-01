@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='x-ua-compatible' content='ie=edge'>
+  <title>Metro Extracts · Mapzen</title>
+  <meta name='description' content=''>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css'>
+  <link rel='stylesheet' href='./listnav.css'>
+  <link rel='stylesheet' href='https://mapzen.com/common/styleguide/styles/styleguide.css'>
+  <link rel='shortcut icon' href='/resources/favicon.ico'>
+</head>
+<body class='data-pages'>
+
+  {{{ nav }}}
+
+  <div class='container'>
+    <div class='row headroom-large'>
+      <div class='col-md-8 col-md-offset-2 text-center'>
+        <a class='btn btn-default btn-transparent' href='/data'><i class='fa fa-angle-left'></i>&nbsp;&nbsp; data</a>
+      </div>
+    </div>
+    <div class='row headroom'>
+      <div class='col-md-8 col-md-offset-2 text-center'>
+        <h1>metro extracts</h1>
+        <h3 class='headroom'>City-sized portions of OpenStreetMap, served weekly</h3>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col-xs-12 text-center headroom-extra-large footroom-extra-large'>
+        <img src='https://mapzen.com/common/styleguide/images/divider/compass-red.png'>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col-xs-12'>
+        <p>
+          Now it’s even easier to get local data so you can start building cool stuff. Each week, we automatically extract the latest <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area shapefiles in a variety of formats for you to use.
+        </p>
+        <p>
+          <strong>Don’t see your city?</strong> Contribute by <a href='https://github.com/mapzen/metroextractor-cities/blob/master/cities.json'>submitting a pull request on our list of cities</a>, or <a href='https://github.com/mapzen/metroextractor-cities/issues'>just ask by opening a new issue</a>.
+        </p>
+        <p>
+          <strong>Need help?</strong> <a href='https://mapzen.com/blog/metro-extracts-101'>Check out our blog post!</a>
+        </p>
+        <p>
+          Mapzen Metro Extracts are produced via a <a href='https://github.com/mapzen/chef-metroextractor'>chef cookbook</a> derived from the work of <a href='http://metro.teczno.com'>Michal Migurski</a>.
+        </p>
+        <div class='updated-at headroom' id='last_updated_at'>
+          Last updated on <span class='datetime'>{{ dateRefreshed }} at {{ timeRefreshed }} UTC</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id='map' class='headroom'></div>
+
+  <div class='container'>
+    <div class='row headroom'>
+      <div class='col-xs-12' id='search_box'>
+        <input class='form-control hasclear' id='search_input' placeholder='example: California' type='text'>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col-xs-12' id='extracts'>
+        <div id='extracts_list-nav'></div>
+        <ul id='extracts_list'>
+          {{ #manifest }}
+          <li id='{{ id }}'>
+            <h5 class='place_name'>{{ name }} <a href='#{{ id }}' title='Link to this dataset' class='anchor-fragment'></a></h5>
+            <div class='btn-group btn-group-justified'>
+              {{ #files }}
+                <a href='https://s3.amazonaws.com/metro-extracts.mapzen.com/{{{ filename }}}' class='btn btn-default format metro-format' data-name='{{ name }}' data-format='{{ format }}'>{{ format }}<span class='size'>{{ formattedsize }}</span></a>
+              {{ /files }}
+            </div>
+          </li>
+          {{ /manifest }}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  {{{ footer }}}
+
+  <script src='https://mapzen.com/common/styleguide/scripts/mapzen-styleguide.min.js'></script>
+  <script src='https://code.jquery.com/jquery-2.2.0.min.js'></script>
+  <script src='./jquery.fastLiveFilter.js'></script>
+  <script src='./jquery-listnav.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js'></script>
+  <script src='https://mapzen.com/tangram/0.5/tangram.min.js'></script>
+  <script src='./metro.js'></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "name": "metro-extracts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node lib/build_site"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "fast-live-filter": "git://github.com/awbush/jquery-fastLiveFilter.git#v1.0.3",
+    "jquery-listnav": "git://github.com/esteinborn/jquery-listnav.git"
+  },
+  "devDependencies": {
+    "fs.extra": "^1.3.2",
+    "html-minifier": "^1.1.1",
+    "lodash": "^4.1.0",
+    "moment": "^2.11.1",
+    "mustache": "^2.2.1",
+    "styleguide": "git://github.com/mapzen/styleguide.git",
+    "superagent": "^1.7.2",
+    "xml2js": "^0.4.16"
+  }
+}
