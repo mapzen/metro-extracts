@@ -1,0 +1,13 @@
+manifest: https://s3.amazonaws.com/osm-polygons.mapzen.com
+title: Borders
+subtitle: Country, region and city boundary data from OpenStreetMap, served monthly
+introduction: |
+  <p>
+    Each country link contains a zipped directory of geojson files, each describing increasingly detailed administrative boundaries. The hierarchy varies by country but in the United States, admin layer 2 describes the national boundary, layer 4 is states, layer 6 is counties, and layer 8 is cities. The OSM wiki has specifics for each country.
+  </p>
+  <p>
+    Check out <a href='http://wiki.openstreetmap.org/wiki/Tag:boundary%3Dadministrative'>the OSM wiki</a> for more information on admin levels.
+  </p>
+  <p>
+    Full planet file available <a href='http://s3.amazonaws.com/osm-polygons.mapzen.com/planet_geojson.tgz'>here.</a>
+  </p>
