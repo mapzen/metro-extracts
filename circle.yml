@@ -8,7 +8,7 @@ dependencies:
 
 test:
   override:
-    - echo "No tests 🎩"
+    - echo 'No tests!'
 
 general:
   artifacts:
