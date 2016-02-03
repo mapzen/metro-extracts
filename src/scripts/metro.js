@@ -43,15 +43,12 @@ var onEachFeature = function (feature, layer) {
 
 // Detect if webgl is available on the browser
 function hasWebGL () {
-  var gl
-
   try {
-    gl = document.createElement('canvas').getContext('webgl')
+    var canvas = document.createElement('canvas')
+    return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')))
   } catch (x) {
-    gl = null
+    return false
   }
-
-  return (gl) ? true : false
 }
 
 // Setup map
@@ -69,11 +66,11 @@ function initDisplayMap () {
 
   if (hasWebGL() === true) {
     layer = Tangram.leafletLayer({
-      scene: 'https://raw.githubusercontent.com/tangrams/refill-style/gh-pages/refill-style.yaml',
-      attribution: '<a href="https://mapzen.com/tangram" target="_blank">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/" target="_blank">Mapzen</a>'
+      scene: 'https://cdn.rawgit.com/tangrams/refill-style/857e1439ae947057bdcfaea7b5eb958628dc7c26/refill-style.yaml',
+      attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/">Mapzen</a>'
     })
   } else {
-    layer = L.tileLayer(' https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
+    layer = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
       attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
     })
   }
