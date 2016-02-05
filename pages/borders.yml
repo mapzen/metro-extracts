@@ -1,5 +1,6 @@
 bucket_url: https://s3.amazonaws.com/osm-polygons.mapzen.com
 file_format_separator: '_'
+metadata: https://s3.amazonaws.com/osm-polygons.mapzen.com/regions.geojson
 title: Borders
 subtitle: Country, region and city boundary data from OpenStreetMap, served monthly
 introduction: |

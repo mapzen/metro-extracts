@@ -2,12 +2,6 @@
 /* global $ */
 
 var mapurl = 'https://s3.amazonaws.com/osm-polygons.mapzen.com/regions.geojson'
-var regions = []
-
-function openMapPopup (e) {
-  var city = $(this).parent().data('city')
-  markers[city].openPopup()
-}
 
 function getRandomColor () {
   var letters = '0123456789ABCDEF'.split('')
@@ -20,21 +14,18 @@ function getRandomColor () {
 
 var onEachFeature = function (feature, layer) {
   if (feature.properties && feature.properties.name) {
-    var city = getReadableName(feature.properties['name:display'])
-    var searchName = getReadableName(feature.properties['name'])
-    regions.push({
-      name: feature.properties['name'],
-      displayName: feature.properties['name:display']
-    })
-    markers[feature.properties['name:display']] = layer
+    var city = feature.properties['name:display']
+    var id = feature.properties['name']
+
+    markers[id] = layer
     layer.setStyle({
-      fillColor:getRandomColor()
+      fillColor: getRandomColor()
     })
     layer.bindPopup(city)
-    layer.on('click', function(e){
+    layer.on('click', function (e) {
       setSearchBox(city)
     })
-    layer.on('popupclose', function(e){
+    layer.on('popupclose', function (e) {
       clearSearchBox()
     })
   }

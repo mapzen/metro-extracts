@@ -26,8 +26,3 @@ var geoJSONOptions = {
   onEachFeature: onEachFeature
 }
 var displayMap = initDisplayMap(mapurl, geoJSONOptions)
-
-function openMapPopup (e) {
-  var id = e.target.parentNode.id
-  markers[id].openPopup()
-}

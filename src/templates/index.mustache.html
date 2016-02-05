@@ -21,6 +21,11 @@
     h5.place_name {
       position: relative;
     }
+    /* Do not force capitalization of display names */
+    /* TODO: Remove from styleguide */
+    body.data-pages h5.place_name {
+      text-transform: none;
+    }
     /* Prevent anti-headbutting measures from overlapping the search box in some cases */
     /* TODO: delete #search_box from styleguide */
     #search-box {

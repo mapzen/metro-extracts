@@ -17,4 +17,3 @@ To only build one of them
 ```sh
 make <name-of-data-page>
 ```
-

@@ -103,6 +103,11 @@ $(document).ready(function () {
   $('body').on('click', 'h5.place_name', openMapPopup)
 })
 
+function openMapPopup (e) {
+  var id = e.target.parentNode.id
+  markers[id].openPopup()
+}
+
 // Enable search input box
 $('#search_input')
   .fastLiveFilter('#extracts_list')
