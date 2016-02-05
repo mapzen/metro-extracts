@@ -22,12 +22,22 @@
       position: relative;
     }
     /* Prevent anti-headbutting measures from overlapping the search box in some cases */
-    #search_box {
+    /* TODO: delete #search_box from styleguide */
+    #search-box {
       z-index: 50;
     }
     /* force lower case for page titles */
     h1 {
       text-transform: lowercase;
+    }
+    /* Filter box label style. Formerly a pseudo-element. */
+    .data-filter-label {
+      position: relative;
+      font-size: 11px;
+      line-height: 1;
+      font-weight: bold;
+      color: #aaa;
+      text-transform: uppercase;
     }
   </style>
 </head>
@@ -68,8 +78,9 @@
 
   <div class='container'>
     <div class='row headroom'>
-      <div class='col-xs-12' id='search_box'>
-        <input class='form-control hasclear' id='search_input' placeholder='example: California' type='text'>
+      <div class='col-xs-12' id='search-box'>
+        <label class='data-filter-label' for='search_input'>{{ page.filter_label }}</label>
+        <input class='form-control hasclear' id='search_input' placeholder='example: {{ page.filter_example }}' type='text'>
       </div>
     </div>
     <div class='row'>
@@ -81,7 +92,7 @@
             <h5 class='place_name'>{{ name }} <a href='#{{ id }}' title='Permanent link to here' class='headerlink'></a></h5>
             <div class='btn-group btn-group-justified'>
               {{ #files }}
-                <a href='https://s3.amazonaws.com/metro-extracts.mapzen.com/{{{ filename }}}' class='btn btn-default metro-format' data-name='{{ name }}' data-format='{{ format }}'>{{ format }}<span class='size'>{{ formattedsize }}</span></a>
+                <a href='{{{ filename }}}' class='btn btn-default metro-format' data-name='{{ name }}' data-format='{{ format }}'>{{ format }}<span class='size'>{{ formattedsize }}</span></a>
               {{ /files }}
             </div>
           </li>
@@ -99,6 +110,7 @@
   <script src='../assets/jquery-listnav.min.js'></script>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js'></script>
   <script src='https://mapzen.com/tangram/0.5/tangram.min.js'></script>
-  <script src='../assets/metro.js'></script>
+  <script src='../assets/datapages.js'></script>
+  <script src='./{{ page.script }}'></script>
 </body>
 </html>

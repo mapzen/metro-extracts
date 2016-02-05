@@ -7,10 +7,10 @@ all: npm clean-dist build-borders build-metro-extracts copy-assets
 	@printf '\nDone.\n'
 
 borders: npm clean-dist build-borders copy-assets
-	@printf '\nDone.\n'
 
 metro-extracts: npm clean-dist build-metro-extracts copy-assets
-	@printf '\nDone.\n'
+
+rebuild: build-borders build-metro-extracts
 
 # Install dependencies
 npm:
@@ -28,11 +28,14 @@ copy-assets:
 	@cp -v node_modules/jquery-listnav/css/listnav.css dist/assets
 	@cp -v node_modules/fast-live-filter/jquery.fastLiveFilter.js dist/assets
 	@cp -v node_modules/jquery-listnav/jquery-listnav.min.js dist/assets
-	@cp -v src/scripts/metro.js dist/assets
+	@cp -v src/scripts/datapages.js dist/assets
 
 build-borders:
+	@mkdir -p dist/borders
+	@cp -v src/scripts/borders.js dist/borders
 	@npm run build borders
 
 build-metro-extracts:
+	@mkdir -p dist/metro-extracts
+	@cp -v src/scripts/metro.js dist/metro-extracts
 	@npm run build metro-extracts
-

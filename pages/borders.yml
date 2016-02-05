@@ -1,4 +1,5 @@
-manifest: https://s3.amazonaws.com/osm-polygons.mapzen.com
+bucket_url: https://s3.amazonaws.com/osm-polygons.mapzen.com
+file_format_separator: '_'
 title: Borders
 subtitle: Country, region and city boundary data from OpenStreetMap, served monthly
 introduction: |
@@ -11,3 +12,6 @@ introduction: |
   <p>
     Full planet file available <a href='http://s3.amazonaws.com/osm-polygons.mapzen.com/planet_geojson.tgz'>here.</a>
   </p>
+filter_example: United States of America
+filter_label: Filter by country or region name
+script: borders.js
