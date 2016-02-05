@@ -1,5 +1,5 @@
 'use strict'
-/* global $ */
+/* global ga, L, $ */
 
 var keyTimeout
 var timeout = 100

@@ -1,5 +1,4 @@
 'use strict'
-/* global ga, L, $ */
 
 var mapurl = 'https://s3.amazonaws.com/metro-extracts.mapzen.com/cities.geojson'
 

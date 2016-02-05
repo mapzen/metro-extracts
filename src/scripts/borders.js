@@ -1,5 +1,5 @@
 'use strict'
-/* global ga, L, $ */
+/* global $ */
 
 var mapurl = 'https://s3.amazonaws.com/osm-polygons.mapzen.com/regions.geojson'
 var regions = []
