@@ -10,7 +10,7 @@ introduction: |
     <strong>Don’t see your city?</strong> Contribute by <a href='https://github.com/mapzen/metroextractor-cities/blob/master/cities.json'>submitting a pull request on our list of cities</a>, or <a href='https://github.com/mapzen/metroextractor-cities/issues'>just ask by opening a new issue</a>.
   </p>
   <p>
-    <strong>Need help?</strong> <a href='https://mapzen.com/blog/metro-extracts-101'>Check out our blog post!</a>
+    <strong>Need help?</strong> <a href='https://mapzen.com/documentation/metro-extracts/'>Check out the documentation.</a>
   </p>
   <p>
     Mapzen Metro Extracts are produced via a <a href='https://github.com/mapzen/chef-metroextractor'>chef cookbook</a> derived from the work of <a href='http://metro.teczno.com'>Michal Migurski</a>.
