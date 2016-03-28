@@ -15,6 +15,9 @@ introduction: |
   <p>
     Mapzen Metro Extracts are produced via a <a href='https://github.com/mapzen/chef-metroextractor'>chef cookbook</a> derived from the work of <a href='http://metro.teczno.com'>Michal Migurski</a>.
   </p>
+  <p>
+    For more granular OpenStreetMap data, you may be interested in our <a href="https://mapzen.com/vector">Vector Tile service</a>. Our navigation and search services also use OpenStreetMap data. <a href="https://mapzen.com/developers/">Sign up here!</a>
+  </p>
 filter_example: California
 filter_label: Filter by city or region name
 script: metro.js
