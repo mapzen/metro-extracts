@@ -1,0 +1,223 @@
+//
+// Metro Extracts page
+// --------------------------------------------------
+
+body.data-pages {
+  .loading {
+    color: $mz-red;
+    text-align: center;
+  }
+
+  .updated-at {
+    color: $mz-red;
+    font-size: 85%;
+  }
+
+  #extracts {
+    ul {
+      padding-left: 0;
+    }
+
+    li {
+      margin-top: 30px;
+      text-align: left;
+      list-style-type: none;
+    }
+
+    a:hover {
+      color: $mz-red;
+    }
+
+    // Bootstrap buttons and button group overrides
+    .btn {
+      color: $mz-blue;
+      font-weight: 500;
+      background: white;
+      font-size: 12px;
+      white-space: normal;
+
+      &:not(:last-of-type) {
+        border-right: 0;
+      }
+
+      &:hover {
+        background-color: whitesmoke;
+        border-color: #ccc;
+      }
+
+      // Override a selected listnav button
+      &.ln-selected {
+        background-color: whitesmoke;
+        color: $mz-red;
+      }
+    }
+
+    .btn-default:focus {
+      border-color: #ccc !important;
+    }
+  }
+
+  #extracts_list {
+    // Bootstrap button overrides for list only
+    .btn {
+      padding-left: 4px;
+      padding-right: 4px;
+    }
+
+    .size {
+      display: block;
+      font-size: 10px;
+      color: gray;
+    }
+
+    // Media query to turn the .btn-group-justified style
+    // into a vertical button group at tablet size and below
+    @media (max-width: $screen-sm-max) {
+      .btn-group-justified {
+        // This following styles duplicates Bootstrap's
+        // own .btn-group-vertical functionality
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+
+        & > .btn:first-child:not(:last-child) {
+          border-top-right-radius: 4px;
+          border-bottom-right-radius: 0;
+          border-bottom-left-radius: 0;
+        }
+        & > .btn,
+        & > .btn-group,
+        & > .btn-group > .btn {
+          display: block;
+          float: none;
+          width: 100%;
+          max-width: 100%;
+        }
+        & > .btn {
+          position: relative;
+          float: left;
+        }
+
+        // Additional tweaks overriding .btn-group-justified
+        & > .btn:not(:last-of-type) {
+          border-right: 1px solid #ccc;
+          border-bottom: 0;
+        }
+        & > .btn + .btn {
+          margin-left: 0;
+        }
+        & > .btn:last-of-type {
+          border-bottom-left-radius: 4px;
+          border-top-right-radius: 0;
+        }
+      }
+    }
+  }
+
+  // List nav
+  #extracts_list-nav {
+    // Override default styles
+    padding-top: 0 !important;
+    margin-left: 0 !important;
+
+    // Overrides default Bootstrap style
+    // and makes button height a bit more spacious
+    .btn {
+      padding-left: 2px;
+      padding-right: 2px;
+      line-height: 2;
+    }
+
+    // Label
+    &::before {
+      content: 'Filter by first letter';
+      position: relative;
+      font-size: 11px;
+      line-height: 1;
+      font-weight: bold;
+      color: #aaa;
+      text-transform: uppercase;
+    }
+
+    // Tooltip showing count of items per letter
+    .ln-letter-count {
+      text-align: center;
+      font-size: 0.8em;
+      line-height: 1;
+      margin-bottom: 3px;
+      color: white;
+      background-color: rgba(0,0,0,0.75);
+      padding: 4px 6px;
+      border-radius: 3px;
+      z-index: 200;
+    }
+  }
+
+  // Custom disabled letter behavior
+  .ln-letters {
+    & > .ln-disabled,
+    & > .ln-disabled:hover,
+    & > .ln-disabled:focus,
+    & > .ln-disabled:active,
+    & > .ln-disabled:visited {
+      color: #ccc !important;
+      border-color: #ccc !important;
+      cursor: default;
+    }
+
+    & > .ln-disabled:not(.ln-selected),
+    & > .ln-disabled:hover:not(.ln-selected),
+    & > .ln-disabled:focus:not(.ln-selected),
+    & > .ln-disabled:active:not(.ln-selected),
+    & > .ln-disabled:visited:not(.ln-selected) {
+      background: white !important;
+    }
+
+    & > .ln-disabled:focus,
+    & > .ln-disabled:active {
+      box-shadow: 0 1px 1px rgba(0,0,0,0.075) !important;
+    }
+  }
+
+  h5.place_name {
+    display: block;
+    font-family: "Open Sans", sans-serif;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1;
+    text-transform: capitalize;
+    color: #494949;
+  }
+
+  #search_input {
+    height: 44px;
+  }
+
+  #search_box::before {
+    content: 'Filter by city or region name';
+    position: relative;
+    font-size: 11px;
+    line-height: 1;
+    font-weight: bold;
+    color: #aaa;
+    text-transform: uppercase;
+  }
+
+  #borders-search_box::before {
+    content: 'Filter by country or region name';
+    position: relative;
+    font-size: 11px;
+    line-height: 1;
+    font-weight: bold;
+    color: #aaa;
+    text-transform: uppercase;
+  }
+
+  #map {
+    height: 400px;
+  }
+
+  .leaflet-popup-content {
+    text-transform: capitalize;
+  }
+}
