@@ -9,4 +9,4 @@ def apply_blueprint(app):
 
 @blueprint.route('/')
 def index():
-    return 'Yo'
+    return 'Oi'
