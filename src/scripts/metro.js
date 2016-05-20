@@ -35,5 +35,8 @@ $('body').on('click', 'a.metro-format', function () {
 $('.fa-times').on('click',function(){
   $(".popup").hide();
 });
+$('.bg').on('click',function(){
+  $(".popup").hide();
+});
 
 //href='{{{ filename }}}'

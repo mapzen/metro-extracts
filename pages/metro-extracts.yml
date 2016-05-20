@@ -3,10 +3,13 @@ file_format_separator: '.'
 title: Metro Extracts
 subtitle: City-sized portions of OpenStreetMap, served weekly
 introduction: |
-  <div class="callout">
-    <h4>Help us make Metro Extracts better!</h4>
-    <p>Hi, we are looking for people using metro extracts to participate in a short usability study. Interested in helping? Please answer a few short questions about how you use extracts in your mapping work and we will schedule a time to chat.</p>
-    <a href="" class="btn btn-mapzen-blue">Sure, let's do it!</a>
+  <div class="content top"> 
+    <i class="fa fa-comments" aria-hidden="true"></i>
+    <div class="right">
+      <h4>Help us make Metro Extracts better!</h4>
+      <p>Hi, we are looking for people using metro extracts to participate in a short usability study. Interested in helping? Please answer a few short questions about how you use extracts in your mapping work and we will schedule a time to chat.</p>
+      <a href="https://docs.google.com/forms/d/1WXXV9PtiFcHzRoeLkXWXSBcbgKWauDy6oiAuj4mXa8Y/viewform" class="btn btn-mapzen-alt">Sure, let's do it!</a>
+    </div>
   </div>
   <p>
     Now it’s even easier to get local data so you can start building cool stuff. Each week, we automatically extract the latest <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area shapefiles in a variety of formats for you to use.
@@ -35,16 +38,18 @@ introduction: |
       position: fixed;
       height: 100%;
       width: 100%;
-      background-color: rgba(0,0,0,.2);
+      background-color: rgba(0,0,0,.3);
       top: 0;
       left: 0;
       z-index: 1001;
     }
-    .content {
+    .content.top {
       background-color: rgb(230,234,210);
-      padding: 40px; 
+      padding: 20px 40px;
+      margin-bottom: 40px;
     }
     .popup .content {
+      padding: 40px;
       background-color: white;
       z-index: 1002;
       position:fixed;
@@ -60,6 +65,9 @@ introduction: |
     }
     .right {
       padding-left: 140px;
+      margin: 0;
+    }
+    .top h4, .top .fa-times {
       margin: 0;
     }
     .fa-times {
@@ -87,7 +95,7 @@ introduction: |
         <i class="fa fa-times" aria-hidden="true"></i>
         <h4>Help us make Metro Extracts better!</h4>
         <p>Hi, we are looking for people to participate in a short usability study. Interested in helping? Please answer a few questions about how you use extracts in your mapping work and we will reach out to you to schedule a time to chat.</p>
-        <a class="btn btn-mapzen-alt">Sure, let's do it!</a>
+        <a href="https://docs.google.com/forms/d/1WXXV9PtiFcHzRoeLkXWXSBcbgKWauDy6oiAuj4mXa8Y/viewform" class="btn btn-mapzen-alt">Sure, let's do it!</a>
       </div>
     </div>
   </div>
