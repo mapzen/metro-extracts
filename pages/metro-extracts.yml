@@ -3,9 +3,9 @@ file_format_separator: '.'
 title: Metro Extracts
 subtitle: City-sized portions of OpenStreetMap, served weekly
 introduction: |
-  <div class="content top"> 
-    <i class="fa fa-comments" aria-hidden="true"></i>
-    <div class="right">
+  <div class="content top row"> 
+    <i class="fa fa-comments col-sm-2 hidden-xs" aria-hidden="true"></i>
+    <div class="col-sm-10 col-xs-12">
       <h4>Help us make Metro Extracts better!</h4>
       <p>Hi, we are looking for people using metro extracts to participate in a short usability study. Interested in helping? Please answer a few short questions about how you use extracts in your mapping work and we will schedule a time to chat.</p>
       <a href="https://docs.google.com/forms/d/1WXXV9PtiFcHzRoeLkXWXSBcbgKWauDy6oiAuj4mXa8Y/viewform" class="btn btn-mapzen-alt">Sure, let's do it!</a>
@@ -49,7 +49,7 @@ introduction: |
       margin-bottom: 40px;
     }
     .popup .content {
-      padding: 40px;
+      padding: 20px 40px;
       background-color: white;
       z-index: 1002;
       position:fixed;
@@ -59,40 +59,65 @@ introduction: |
     }
     .fa-comments {
       color: rgb(110,160,164);
-      float:left;
       font-size: 100px;
-      margin-top: 20px;
-    }
-    .right {
-      padding-left: 140px;
-      margin: 0;
+      margin-top: 30px;
+      text-align: center;
     }
     .top h4, .top .fa-times {
       margin: 0;
     }
     .fa-times {
       font-size: 24px;
-      font-size: 24px;
       cursor: pointer;
       position: absolute;
       right: 40px;
       top: 30px;
+      opacity: .5;
     }
-    .right p {
+    .fa-times:hover {
+      opacity: 1;
+    }
+    .content p {
       font-size:16px;
       line-height: 1.6em;
       margin: 20px 0;
     }
-    .right .btn {
+    .content .btn {
       margin:0;
+    }
+    @media(min-width: 768px) and (max-width: 992px) {
+      .fa-comments { 
+        font-size: 80px;
+        margin-top: 40px;
+      }
+      .popup .content {
+        width: 70%;
+        left: 15%;
+      }
+    }
+    @media(max-width: 767px) {
+      .popup h4 {
+        margin-top: 20px;
+      }
+      .popup .content {
+        padding: 10px;
+        top: 10%;
+        width: 80%;
+        left: 10%;
+        box-sizing: content-box;
+      }
+      .fa-times {
+        top: 20px;
+        right: 25px;
+      }
     }
   </style>
   <div class="popup">
     <div class="bg"></div>
-    <div class="content">
-      <i class="fa fa-comments" aria-hidden="true"></i>
-      <div class="right">
-        <i class="fa fa-times" aria-hidden="true"></i>
+    <div class="content row">
+      <i class="fa fa-times" aria-hidden="true"></i>
+      <i class="fa fa-comments col-sm-3 hidden-xs" aria-hidden="true"></i>
+      <div class="col-sm-9 col-xs-12">
         <h4>Help us make Metro Extracts better!</h4>
         <p>Hi, we are looking for people to participate in a short usability study. Interested in helping? Please answer a few questions about how you use extracts in your mapping work and we will reach out to you to schedule a time to chat.</p>
         <a href="https://docs.google.com/forms/d/1WXXV9PtiFcHzRoeLkXWXSBcbgKWauDy6oiAuj4mXa8Y/viewform" class="btn btn-mapzen-alt">Sure, let's do it!</a>
