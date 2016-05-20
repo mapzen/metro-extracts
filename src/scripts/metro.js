@@ -26,3 +26,11 @@ var geoJSONOptions = {
   onEachFeature: onEachFeature
 }
 var displayMap = initDisplayMap(mapurl, geoJSONOptions)
+
+$('body').on('click', 'a.metro-format', function () {
+  setTimeout(function(){
+    $(".popup").fadeIn('slow');
+  },500);
+})
+
+//href='{{{ filename }}}'

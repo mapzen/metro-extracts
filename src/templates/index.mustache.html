@@ -97,7 +97,7 @@
             <h5 class='place_name'>{{ name }} <a href='#{{ id }}' title='Permanent link to here' class='headerlink'></a></h5>
             <div class='btn-group btn-group-justified'>
               {{ #files }}
-                <a href='{{{ filename }}}' class='btn btn-default metro-format' data-name='{{ name }}' data-format='{{ format }}'>{{ format }}<span class='size'>{{ formattedsize }}</span></a>
+                <a class='btn btn-default metro-format' data-name='{{ name }}' data-format='{{ format }}'>{{ format }}<span class='size'>{{ formattedsize }}</span></a>
               {{ /files }}
             </div>
           </li>
