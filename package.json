@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node lib/build_site"
+    "build": "node lib/build_site",
+    "build-css": "node-sass --output-style compressed -o dist/css src/scss"
   },
   "author": "",
   "license": "MIT",

@@ -29,6 +29,7 @@ copy-assets:
 	@cp -v node_modules/fast-live-filter/jquery.fastLiveFilter.js dist/assets
 	@cp -v node_modules/jquery-listnav/jquery-listnav.min.js dist/assets
 	@cp -v src/scripts/datapages.js dist/assets
+	@npm run build-css
 
 build-borders:
 	@mkdir -p dist/borders
