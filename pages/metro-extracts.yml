@@ -3,6 +3,11 @@ file_format_separator: '.'
 title: Metro Extracts
 subtitle: City-sized portions of OpenStreetMap, served weekly
 introduction: |
+  <div class="callout">
+    <h4>Help us make Metro Extracts better!</h4>
+    <p>Hi, we are looking for people using metro extracts to participate in a short usability study. Interested in helping? Please answer a few short questions about how you use extracts in your mapping work and we will schedule a time to chat.</p>
+    <a href="" class="btn btn-mapzen-blue">Sure, let's do it!</a>
+  </div>
   <p>
     Now it’s even easier to get local data so you can start building cool stuff. Each week, we automatically extract the latest <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area shapefiles in a variety of formats for you to use.
   </p>
