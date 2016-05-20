@@ -38,5 +38,3 @@ $('.fa-times').on('click',function(){
 $('.bg').on('click',function(){
   $(".popup").hide();
 });
-
-//href='{{{ filename }}}'
