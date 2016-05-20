@@ -24,13 +24,23 @@ introduction: |
     left: 0;
     z-index: 1001;">
     <div class="bg" style="position: fixed; height: 100%; width: 100%; background-color: rgba(0,0,0,.2); top: 0; left: 0; z-index: 1001; "></div>
-    <div class="content" style="position:fixed; top: 30%; left: 30%; background-color: white; border: 1px solid black;z-index: 1;
-    width: 40%;
-    height: 40%;
-    padding: 50px; z-index: 1002;">
-      <div class="close">x</div>
-      <p>yay</p>
-      <a class="btn btn-mapzen">go on</a>
+    <div class="content" style="position:fixed; top: 30%; left: 20%; background-color: rgb(230,234,210); z-index: 1;
+    width: 60%;
+    padding: 40px; z-index: 1002;">
+      <i class="fa fa-comments" aria-hidden="true" style="color: rgb(110,160,164); float:left;     font-size: 100px;
+    margin-top: 20px;"></i>
+      <div class="right" style="padding-left: 140px;
+    margin: 0;">
+        <i class="fa fa-times" aria-hidden="true" style="font-size: 24px;
+          font-size: 24px;
+          cursor: pointer;
+          position: absolute;
+          right: 40px;
+          top: 40px;"></i>
+        <h4>Help us make Metro Extracts better!</h4>
+        <p style="font-size:16px; line-height: 1.6em; margin: 20px 0;">Hi, we are looking for people to participate in a short usability study. Interested in helping? Please answer a few questions about how you use extracts in your mapping work and we will reach out to you to schedule a time to chat.</p>
+        <a class="btn btn-mapzen" style="margin:0;">Sure, let's do it!</a>
+      </div>
     </div>
   </div>
 filter_example: California

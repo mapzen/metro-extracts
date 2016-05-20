@@ -29,8 +29,11 @@ var displayMap = initDisplayMap(mapurl, geoJSONOptions)
 
 $('body').on('click', 'a.metro-format', function () {
   setTimeout(function(){
-    $(".popup").fadeIn('slow');
+    $(".popup").fadeIn();
   },500);
-})
+});
+$('.fa-times').on('click',function(){
+  $(".popup").fadeOut();
+});
 
 //href='{{{ filename }}}'
