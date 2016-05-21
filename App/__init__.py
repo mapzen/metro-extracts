@@ -1,4 +1,5 @@
-from flask import Blueprint
+from flask import Blueprint, jsonify
+import json
 
 blueprint = Blueprint('Metro-Extracts', __name__)
 
@@ -9,4 +10,7 @@ def apply_blueprint(app):
 
 @blueprint.route('/')
 def index():
-    return 'Oi'
+    with open('cities.json') as file:
+        cities = json.load(file)
+    return jsonify({rk: list(sorted(region['cities'].keys()))
+                    for (rk, region) in cities['regions'].items()})
