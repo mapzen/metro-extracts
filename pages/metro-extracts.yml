@@ -3,6 +3,14 @@ file_format_separator: '.'
 title: Metro Extracts
 subtitle: City-sized portions of OpenStreetMap, served weekly
 introduction: |
+  <div class="content top row"> 
+    <img class="feedback col-sm-3 hidden-xs" src="https://mapzen.com/common/styleguide/images/feedback.svg"/>
+    <div class="col-sm-9 col-xs-12">
+      <h4>Help us make Metro Extracts better!</h4>
+      <p>Hi, we are looking for people using metro extracts to participate in a short usability study. Interested in helping? Please answer a few short questions about how you use extracts in your mapping work and we will schedule a time to chat.</p>
+      <a href="https://docs.google.com/forms/d/1WXXV9PtiFcHzRoeLkXWXSBcbgKWauDy6oiAuj4mXa8Y/viewform" class="btn btn-mapzen-alt">Sure, let's do it!</a>
+    </div>
+  </div>
   <p>
     Now it’s even easier to get local data so you can start building cool stuff. Each week, we automatically extract the latest <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area shapefiles in a variety of formats for you to use.
   </p>
@@ -18,6 +26,101 @@ introduction: |
   <p>
     For more granular OpenStreetMap data, we offer a free, hosted <a href="https://mapzen.com/documentation/vector-tiles/">Vector Tile service</a> -- sign up for your <a href="https://mapzen.com/developers/">API key here</a>.
   </p>
+  <style>
+    .popup {
+      display: none; top: 0;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      z-index: 1001;
+    }
+    .bg {
+      position: fixed;
+      height: 100%;
+      width: 100%;
+      background-color: rgba(0,0,0,.3);
+      top: 0;
+      left: 0;
+      z-index: 1001;
+    }
+    .content.top {
+      background-color: rgb(230,234,210);
+      padding: 0px 40px;
+      margin-bottom: 40px;
+    }
+    .popup .content {
+      padding: 20px 40px;
+      background-color: white;
+      z-index: 1002;
+      position:fixed;
+      top: 20%;
+      left: 20%;
+      width: 60%;
+    }
+    .feedback {
+      margin-top: 30px;
+      text-align: center;
+    }
+    .popup .feedback {
+      margin-top: 50px;
+    }
+    .top h4, .top .fa-times {
+      margin: 0;
+    }
+    .fa-times {
+      font-size: 24px;
+      cursor: pointer;
+      position: absolute;
+      right: 40px;
+      top: 30px;
+      opacity: .5;
+    }
+    .fa-times:hover {
+      opacity: 1;
+    }
+    .content p {
+      font-size:16px;
+      line-height: 1.6em;
+      margin: 20px 0;
+    }
+    .content .btn {
+      margin:0;
+    }
+    @media(min-width: 768px) and (max-width: 992px) {
+      .popup .content {
+        width: 70%;
+        left: 15%;
+      }
+    }
+    @media(max-width: 767px) {
+      .popup h4 {
+        margin-top: 20px;
+      }
+      .popup .content {
+        padding: 10px;
+        top: 10%;
+        width: 80%;
+        left: 10%;
+        box-sizing: content-box;
+      }
+      .fa-times {
+        top: 20px;
+        right: 25px;
+      }
+    }
+  </style>
+  <div class="popup">
+    <div class="bg"></div>
+    <div class="content row">
+      <i class="fa fa-times" aria-hidden="true"></i>
+      <img class="feedback col-sm-3 hidden-xs" src="https://mapzen.com/common/styleguide/images/feedback.svg"/>
+      <div class="col-sm-9 col-xs-12">
+        <h4>Help us make Metro Extracts better!</h4>
+        <p>Hi, we are looking for people to participate in a short usability study. Interested in helping? Please answer a few questions about how you use extracts in your mapping work and we will reach out to you to schedule a time to chat.</p>
+        <a href="https://docs.google.com/forms/d/1WXXV9PtiFcHzRoeLkXWXSBcbgKWauDy6oiAuj4mXa8Y/viewform" class="btn btn-mapzen-alt">Sure, let's do it!</a>
+      </div>
+    </div>
+  </div>
 filter_example: California
 filter_label: Filter by city or region name
 script: metro.js
