@@ -10,8 +10,14 @@ def ordered(d):
         return OrderedDict([(k, d[k]) for k in ('top', 'left', 'bottom', 'right')])
     return OrderedDict([(k, d[k]) for k in sorted(d.keys())])
 
-with open('extracts-2015-03.csv') as file:
-    traffic = [row['City'] for row in DictReader(file) if row['City']]
+with open('extracts-2015-05.csv') as file:
+    counts = {}
+    for row in DictReader(file):
+        city_name = row['City'].lower()
+        if city_name:
+            counts[city_name] = counts.get(city_name, 0) + int(row['Total Events'])
+    
+    traffic = [n for (n, c) in sorted(list(counts.items()), key=itemgetter(1), reverse=True)]
 
 with open('cities-6f65dd6.json') as file:
     cities_json = file.read()

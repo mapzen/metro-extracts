@@ -1,0 +1,498 @@
+City,Total Events,Unique Events
+"aarhus, denmark",566,427
+"Aarhus, Denmark",341,236
+"abidjan, ivory coast",227,162
+"Abidjan, Ivory Coast",103,63
+Abkhazia,130,123
+"abuja, nigeria",148,99
+"Abuja, Nigeria",92,61
+"accra, ghana",163,101
+"Accra, Ghana",95,67
+"acoruna, spain",182,133
+"Acoruna, Spain",48,37
+"adana, turkey",80,63
+"addis abeba, ethiopia",84,51
+"adelaide, australia",181,116
+"Adelaide, Australia",92,49
+Afghanistan,50,50
+"agra, india",103,65
+"Agra, India",85,51
+"Ahmedabad, India",111,53
+"ahmedabad, india",77,53
+"albany, new york",124,87
+"Albany, New York",73,51
+"albuquerque, new mexico",59,50
+"alexandria, egypt",97,43
+"Alexandria, Egypt",62,21
+"algiers, algeria",82,52
+"Algiers, Algeria",67,31
+"Almaty, Kazakhstan",86,46
+"almaty, kazakhstan",80,50
+"Amman, Jordan",58,28
+"amman, jordan",46,35
+"amsterdam, netherlands",481,314
+"Amsterdam, Netherlands",232,134
+"ankara, turkey",165,106
+"Ankara, Turkey",81,52
+"antwerp, belgium",100,63
+"Antwerp, Belgium",58,29
+"astana, kazakhstan",85,44
+"Astana, Kazakhstan",62,35
+"athens, greece",239,126
+"Athens, Greece",150,66
+"atlanta, georgia",255,186
+"Atlanta, Georgia",99,82
+"auckland, new zealand",128,90
+"Auckland, New Zealand",82,43
+"austin, texas",216,146
+"Austin, Texas",92,74
+Australia,91,79
+Austria,47,42
+"baghdad, iraq",88,54
+"baku, azerbaijan",56,32
+"bali, indonesia",131,57
+"Bali, Indonesia",55,17
+"bandung, indonesia",120,74
+"Bandung, Indonesia",53,26
+"banff, canada",48,25
+"bangkok, thailand",222,127
+"Bangkok, Thailand",80,49
+"barcelona, spain",487,287
+"Barcelona, Spain",206,117
+"basel, switzerland",66,43
+"beijing, china",752,414
+"Beijing, China",582,267
+"Beirut, Lebanon",62,27
+"belfast, ireland",108,44
+Belgium,55,53
+"belo horizonte, brazil",55,38
+"bengaluru, india",300,218
+"Bengaluru, India",183,111
+"bergen, norway",50,32
+"berlin, germany",564,402
+"Berlin, Germany",312,185
+"bern, switzerland",67,49
+"Bern, Switzerland",50,24
+"bilbao, spain",61,31
+"birmingham, alabama",61,36
+"birmingham, england",107,77
+"Birmingham, England",46,26
+"bishkek, kyrgyzstan",48,31
+"bogota, colombia",155,103
+"Bogota, Colombia",55,30
+"bologna, italy",101,71
+"Bologna, Italy",64,32
+"bordeaux, france",82,54
+"boston, massachusetts",443,300
+"Boston, Massachusetts",190,125
+"brasilia, brazil",159,98
+"Brasilia, Brazil",57,29
+"bratislava, slovakia",151,92
+"Bratislava, Slovakia",58,33
+Brazil,90,82
+"brescia, italy",53,23
+"brighton, england",48,27
+"brisbane, australia",148,106
+"Brisbane, Australia",84,55
+"brno, czech republic",64,40
+"Brooklyn, New York",97,63
+"bruges, belgium",48,33
+"brussels, belgium",201,145
+"Brussels, Belgium",192,105
+"bucharest, romania",167,108
+"Bucharest, Romania",103,51
+"budapest, hungary",196,140
+"Budapest, Hungary",129,63
+"buenos aires, argentina",204,132
+"Buenos Aires, Argentina",126,67
+"bursa, turkey",52,39
+"busan, south korea",72,36
+"cairo, egypt",185,117
+"Cairo, Egypt",92,48
+"calgary, canada",94,71
+"Calgary, Canada",68,49
+"cambridge, england",64,47
+Canada,100,94
+"canberra, australia",77,53
+"cape town, south africa",226,112
+"Cape Town, South Africa",122,60
+"caracas, venezuela",83,48
+"cardiff newport bristol bath, england",109,67
+"Cardiff Newport Bristol Bath, England",56,36
+"cartagena, colombia",64,30
+"casablanca, morocco",87,47
+"Casablanca, Morocco",53,25
+"charlotte, north carolina",69,55
+"chelyabinsk, russia",78,57
+"Chengdu, China",170,70
+"chengdu, china",106,63
+"chennai, india",246,137
+"Chennai, India",94,54
+"chicago, illinois",737,447
+"Chicago, Illinois",321,207
+China,126,91
+"chisinau, moldova",75,33
+"chongqing, china",119,65
+"Chongqing, China",103,30
+"christchurch, new zealand",69,42
+"cincinnati, ohio",77,55
+"cleveland, ohio",104,64
+"Cleveland, Ohio",50,32
+"Cluj, Romania",85,45
+"cluj, romania",58,38
+"coimbatore, india",63,29
+"cologne, germany",78,57
+"Cologne, Germany",49,42
+Colombia,55,53
+"columbus, ohio",76,60
+"copenhagen, denmark",252,140
+"Copenhagen, Denmark",142,78
+"curitiba, brazil",75,41
+Czech Republic,52,47
+"dakar, senegal",68,37
+"dallas, texas",235,168
+"Dallas, Texas",104,64
+"damascus, syria",72,47
+"dar es salaam, tanzania",61,37
+"Dar Es Salaam, Tanzania",53,27
+"darwin, australia",62,34
+"davao city, philippines",69,28
+"dc baltimore, maryland",448,276
+"Dc Baltimore, Maryland",185,118
+"denver boulder, colorado",182,141
+"Denver Boulder, Colorado",91,61
+"detroit, michigan",259,147
+"Detroit, Michigan",142,68
+"dhaka, bangladesh",135,80
+"Dhaka, Bangladesh",63,41
+"doha, qatar",105,50
+"donetsk, ukraine",57,33
+"dresden, germany",86,64
+"dubai, abu dhabi",404,209
+"Dubai, Abu Dhabi",210,108
+"dublin, ireland",213,131
+"Dublin, Ireland",129,81
+"duesseldorf, germany",81,55
+"durban, south africa",63,33
+"edinburgh, scotland",141,85
+"Edinburgh, Scotland",50,32
+"edmonton, canada",81,52
+"Edmonton, Canada",52,32
+"florence, italy",92,64
+"Florence, Italy",51,37
+France,118,109
+"frankfurt, germany",176,124
+"Frankfurt, Germany",65,35
+"gdansk, poland",84,50
+"Gdansk, Poland",54,24
+"geneva, switzerland",55,44
+"genoa, italy",91,44
+Germany,226,206
+"glasgow, scotland",69,45
+"Glasgow, Scotland",53,25
+"gold coast, australia",49,32
+"gothenburg, sweden",96,57
+"granada, spain",49,30
+Greece,47,46
+"grenoble, france",52,36
+"guangzhou, china",158,81
+"Guangzhou, China",133,53
+"halifax, canada",50,30
+"hamburg, germany",243,156
+"Hamburg, Germany",97,54
+"hamilton, canada",61,33
+"hampton roads, virginia",81,39
+"hangzhou, china",93,49
+"Hangzhou, China",75,36
+"hanoi, vietnam",94,60
+"Harare, Zimbabwe",58,21
+"harbin, china",49,28
+"helsinki, finland",140,85
+"Helsinki, Finland",52,33
+"hiroshima, japan",61,37
+"ho chi minh city, vietnam",145,85
+"Ho Chi Minh City, Vietnam",86,49
+"hong kong, china",634,325
+"Hong Kong, China",314,155
+"honolulu, hawaii",86,45
+"Honolulu, Hawaii",65,39
+"houston, texas",202,115
+"Houston, Texas",63,43
+"hyderabad, india",121,90
+"Hyderabad, India",69,40
+India,215,195
+"indianapolis, indiana",54,40
+Indonesia,49,45
+"Indore, India",53,24
+"islamabad, pakistan",65,46
+"istanbul, turkey",462,248
+"Istanbul, Turkey",245,119
+Italy,89,83
+"izmir, turkey",111,57
+"jakarta, indonesia",307,142
+"Jakarta, Indonesia",127,63
+Japan,49,46
+"jeddah, saudi arabia",79,40
+"jeju, south korea",57,25
+"jerusalem, israel",114,73
+"johannesburg, south africa",163,102
+"Johannesburg, South Africa",103,38
+"kabul, afghanistan",68,46
+"kansas city lawrence topeka, kansas",81,58
+"karachi, pakistan",100,46
+"karlsruhe, germany",63,45
+"kathmandu, nepal",75,52
+"kharkiv, ukraine",142,71
+"kingston, jamaica",52,29
+"kinshasa, congo",47,30
+"kochi, india",71,42
+"kolkata, india",132,71
+"Kolkata, India",59,35
+"krakow, poland",157,87
+"Krakow, Poland",152,72
+"kuala lumpur, malaysia",153,107
+"Kuala Lumpur, Malaysia",99,48
+"kyiv, ukraine",292,177
+"Kyiv, Ukraine",160,85
+"kyoto, japan",64,55
+"la habana, cuba",123,46
+"La Habana, Cuba",58,20
+"lagos, nigeria",127,62
+"lahore, pakistan",50,27
+"las vegas, nevada",117,81
+"Las Vegas, Nevada",54,46
+"leeds, england",62,43
+"leipzig, germany",68,52
+"lexington, kentucky",74,47
+"lille, france",55,45
+"lima, peru",129,64
+"Lima, Peru",88,41
+"lisbon, portugal",254,131
+"Lisbon, Portugal",73,52
+"liverpool, england",83,48
+"london, england",1310,799
+"London, England",537,326
+"los angeles, california",589,384
+"Los Angeles, California",288,182
+"louisville, kentucky",56,37
+"luanda, angola",80,24
+"lviv, ukraine",77,50
+"Lviv, Ukraine",54,30
+"lyon, france",139,104
+"Lyon, France",61,43
+"madison, wisconsin",53,34
+"madrid, spain",446,300
+"Madrid, Spain",193,120
+Malaysia,55,41
+"malmo, sweden",54,37
+"manchester, england",144,84
+"Manchester, England",70,42
+"manila, philippines",230,137
+"Manila, Philippines",151,85
+"manila, phillipines",48,22
+"maputo, mozambique",69,26
+"marseille, france",109,63
+"medellin, colombia",94,54
+"melbourne, australia",583,365
+"Melbourne, Australia",231,148
+"memphis, tennessee",60,39
+Mexico,59,58
+"mexico city, mexico",268,179
+"Mexico City, Mexico",110,76
+"miami, florida",232,143
+"Miami, Florida",121,77
+"milan, italy",347,226
+"Milan, Italy",166,110
+"milwaukee, wisconsin",78,52
+"minneapolis saint paul, minnesota",123,93
+"Minneapolis Saint Paul, Minnesota",74,52
+"minsk, belarus",202,129
+"Minsk, Belarus",99,52
+"monaco, france",48,27
+"montevideo, uruguay",55,32
+"montpellier, france",49,32
+"montreal, canada",312,193
+"Montreal, Canada",125,86
+"moscow, russia",714,479
+"Moscow, Russia",470,258
+"mumbai, india",604,282
+"Mumbai, India",249,132
+"munich, germany",288,199
+"Munich, Germany",172,102
+"nairobi, kenya",139,75
+"Nairobi, Kenya",49,29
+"nancy, france",52,30
+"Nanjing, China",47,24
+"naples, italy",100,61
+"Naples, Italy",73,34
+"nashville, tennessee",87,51
+"Nashville, Tennessee",50,31
+"new delhi, india",308,206
+"New Delhi, India",158,111
+"new orleans, louisiana",184,99
+"New Orleans, Louisiana",108,50
+"new york, new york",1565,1009
+"New York, New York",613,401
+"newcastle, england",74,48
+"nice, france",55,30
+"nizhniy novgorod, russia",81,47
+"Nizhniy Novgorod, Russia",54,28
+"nuremberg, germany",61,39
+"odessa, ukraine",71,40
+"orlando, florida",71,54
+"osaka kyoto, japan",73,44
+"osaka, japan",48,33
+"oslo, norway",183,109
+"Oslo, Norway",76,53
+"ottawa, canada",120,80
+"Ottawa, Canada",87,46
+"oxford, england",46,32
+"palermo, italy",67,38
+"panama city, panama",46,33
+"paris, france",898,615
+"Paris, France",370,256
+"penang, malaysia",56,30
+"perm, russia",81,49
+"Perm, Russia",48,25
+"perth, australia",191,117
+"Perth, Australia",82,58
+"philadelphia, pennsylvania",238,149
+"Philadelphia, Pennsylvania",141,88
+"phoenix, arizona",119,85
+"Phoenix, Arizona",56,34
+"pittsburgh, pennsylvania",119,85
+Poland,55,53
+"port au prince, haiti",78,40
+"portland, maine",50,27
+"portland, oregon",230,156
+"Portland, Oregon",143,84
+"porto alegre, brazil",54,33
+"porto, portugal",123,67
+"Porto, Portugal",71,45
+"poznan, poland",81,52
+"prague, czech republic",202,131
+"Prague, Czech Republic",135,85
+"providence, rhode island",50,25
+"pune, india",111,71
+"Pune, India",65,36
+"pyongyang, north korea",47,24
+"quebec, canada",64,39
+"quito, ecuador",75,43
+"raleigh, north carolina",81,56
+"Raleigh, North Carolina",48,39
+"rangoon, myanmar",92,37
+"rennes, france",47,33
+"reykjavik, iceland",87,48
+"richmond, virginia",77,48
+"riga, latvia",98,44
+"rio de janeiro, brazil",284,171
+"Rio De Janeiro, Brazil",189,92
+"riyadh, saudi arabia",99,59
+Romania,53,49
+"rome, italy",608,354
+"Rome, Italy",233,136
+"rotterdam, netherlands",141,103
+"Rotterdam, Netherlands",70,47
+Russian Federation,118,106
+"sacramento, california",63,52
+"saint louis, missouri",103,74
+"Saint Louis, Missouri",46,29
+"saint petersburg, russia",380,204
+"Saint Petersburg, Russia",196,109
+"salt lake city, utah",72,49
+"Samara Tolyatti, Russia",59,26
+"samara tolyatti, russia",53,36
+"san antonio, texas",96,59
+"san diego tijuana, mexico",204,125
+"San Diego, California",87,49
+"san francisco bay, california",685,477
+"San Francisco Bay, California",295,210
+"san francisco, california",451,294
+"San Francisco, California",224,163
+"san jose, california",167,102
+"San Jose, California",69,55
+"san jose, costa rica",46,32
+"san juan, puerto rico",70,48
+"santa barbara, california",59,39
+"santa monica, california",51,35
+"santiago, chile",150,115
+"Santiago, Chile",95,52
+"sao paulo, brazil",329,196
+"Sao Paulo, Brazil",93,67
+"seattle, washington",348,220
+"Seattle, Washington",165,104
+"seoul, south korea",465,237
+"Seoul, South Korea",174,99
+"seville, spain",68,45
+"shanghai, china",660,334
+"Shanghai, China",410,183
+"Shenyang, China",72,13
+"Shenzhen, China",186,59
+singapore,713,413
+Singapore,367,210
+"sofia, bulgaria",85,55
+"southampton, england",80,42
+Spain,81,72
+"stockholm, sweden",247,165
+"Stockholm, Sweden",155,96
+"strasbourg, france",83,41
+Sweden,60,56
+Switzerland,49,46
+"sydney, australia",466,283
+"Sydney, Australia",235,130
+"syracuse, new york",53,39
+"taichung, taiwan",61,29
+"Taipei, City, Taiwan",48,31
+"taipei, taiwan",133,71
+"Taipei, Taiwan",59,29
+"tallinn, estonia",64,33
+"tampa, florida",106,66
+"Tampa, Florida",53,28
+"tehran, iran",122,74
+"Tehran, Iran",47,28
+"tel aviv, israel",137,83
+The Netherlands,62,55
+"thessaloniki, greece",87,53
+"Thessaloniki, Greece",50,17
+"Tianjin, China",72,24
+"tianjin, china",55,28
+to use this feature visit: EVENT-TRACKING.COM,57,57
+"tokyo, japan",564,315
+"Tokyo, Japan",262,150
+"toronto, canada",373,266
+"Toronto, Canada",181,111
+"toulouse, france",63,46
+trinidad tobago,64,32
+"tucson, arizona",71,46
+"tunis, tunisia",98,56
+"turin, italy",100,67
+"Turin, Italy",60,37
+Turkey,101,97
+"tyumen, russia",53,30
+Ukraine,64,60
+"ulaanbaatar, mongolia",100,59
+"ulyanovsk, russia",54,29
+United Kingdom,139,129
+United States of America,598,556
+"valencia, spain",113,72
+"vancouver, canada",252,156
+"Vancouver, Canada",112,71
+"venice, italy",224,146
+"Venice, Italy",139,71
+"victoria, canada",90,43
+"vienna bratislava, austria",124,100
+"Vienna, Austria",144,83
+"vienna, austria",114,71
+"vigo, spain",48,28
+"vilnius, lithuania",68,44
+"walt disney world, florida",49,31
+"warsaw, poland",245,163
+"Warsaw, Poland",84,52
+"wellington, new zealand",67,46
+"wroclaw, poland",86,57
+"Wuhan, China",150,57
+"wuhan, china",140,76
+"yokohama, japan",66,39
+"zagreb, croatia",94,56
+"zurich, switzerland",170,114
+"Zurich, Switzerland",66,38
