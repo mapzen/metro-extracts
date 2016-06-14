@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/mapzen/data-pages.git"
+    "type": "git",
+    "url": "https://github.com/mapzen/data-pages.git"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node lib/build_site"
+    "build": "node lib/build_site",
+    "build-css": "node-sass --output-style compressed -o dist/css src/scss"
   },
   "author": "",
   "license": "MIT",
@@ -23,6 +24,7 @@
     "minimist": "^1.2.0",
     "moment": "^2.11.1",
     "mustache": "^2.2.1",
+    "node-sass": "^3.7.0",
     "request": "^2.69.0",
     "styleguide": "git://github.com/mapzen/styleguide.git",
     "superagent": "^1.7.2",
