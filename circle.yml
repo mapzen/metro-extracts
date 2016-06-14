@@ -4,3 +4,4 @@ machine:
 test:
   override:
     - ./test.py
+    - cp -Lr Prototypes $CIRCLE_ARTIFACTS/
