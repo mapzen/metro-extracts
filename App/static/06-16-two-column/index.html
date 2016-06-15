@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='x-ua-compatible' content='ie=edge'>
+  <title>Mapzen</title>
+  <meta name='description' content=''>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css'>
+<!--   <link rel='stylesheet' href='../assets/listnav.css'> -->
+  <link rel='stylesheet' href='https://mapzen.com/common/styleguide/styles/styleguide.css'>
+  <link rel='shortcut icon' href='/resources/favicon.ico'>
+  <style>
+  	body.data-pages #extracts li{margin-top:-50px;padding-top:60px}h5.place_name{position:relative}body.data-pages h5.place_name{text-transform:none}#search-box{z-index:50}h1{text-transform:lowercase}.data-filter-label{position:relative;font-size:11px;line-height:1;font-weight:bold;color:#aaa;text-transform:uppercase}body.data-pages .loading{color:#d4645c;text-align:center}body.data-pages .updated-at{color:#d4645c;font-size:85%}body.data-pages #extracts ul{padding-left:0}body.data-pages #extracts li{text-align:left;list-style-type:none}body.data-pages #extracts a:hover{color:#d4645c}body.data-pages #extracts .btn{color:#6ea0a4;font-weight:500;background:white;font-size:12px;white-space:normal}body.data-pages #extracts .btn:not(:last-of-type){border-right:0}body.data-pages #extracts .btn:hover{background-color:whitesmoke;border-color:#ccc}body.data-pages #extracts .btn.ln-selected{background-color:whitesmoke;color:#d4645c}body.data-pages #extracts .btn-default:focus{border-color:#ccc !important}body.data-pages #extracts_list .btn{padding-left:4px;padding-right:4px}body.data-pages #extracts_list .size{display:block;font-size:10px;color:gray}@media (max-width: 991px){body.data-pages #extracts_list .btn-group-justified{position:relative;display:inline-block;vertical-align:middle}body.data-pages #extracts_list .btn-group-justified>.btn:first-child:not(:last-child){border-top-right-radius:4px;border-bottom-right-radius:0;border-bottom-left-radius:0}body.data-pages #extracts_list .btn-group-justified>.btn,body.data-pages #extracts_list .btn-group-justified>.btn-group,body.data-pages #extracts_list .btn-group-justified>.btn-group>.btn{display:block;float:none;width:100%;max-width:100%}body.data-pages #extracts_list .btn-group-justified>.btn{position:relative;float:left}body.data-pages #extracts_list .btn-group-justified>.btn:not(:last-of-type){border-right:1px solid #ccc;border-bottom:0}body.data-pages #extracts_list .btn-group-justified>.btn+.btn{margin-left:0}body.data-pages #extracts_list .btn-group-justified>.btn:last-of-type{border-bottom-left-radius:4px;border-top-right-radius:0}}body.data-pages #extracts_list-nav{padding-top:0 !important;margin-left:0 !important}body.data-pages #extracts_list-nav .btn{padding-left:2px;padding-right:2px;line-height:2}body.data-pages #extracts_list-nav::before{content:'Filter by first letter';position:relative;font-size:11px;line-height:1;font-weight:bold;color:#aaa;text-transform:uppercase}body.data-pages #extracts_list-nav .ln-letter-count{text-align:center;font-size:0.8em;line-height:1;margin-bottom:3px;color:white;background-color:rgba(0,0,0,0.75);padding:4px 6px;border-radius:3px;z-index:200}body.data-pages .ln-letters>.ln-disabled,body.data-pages .ln-letters>.ln-disabled:hover,body.data-pages .ln-letters>.ln-disabled:focus,body.data-pages .ln-letters>.ln-disabled:active,body.data-pages .ln-letters>.ln-disabled:visited{color:#ccc !important;border-color:#ccc !important;cursor:default}body.data-pages .ln-letters>.ln-disabled:not(.ln-selected),body.data-pages .ln-letters>.ln-disabled:hover:not(.ln-selected),body.data-pages .ln-letters>.ln-disabled:focus:not(.ln-selected),body.data-pages .ln-letters>.ln-disabled:active:not(.ln-selected),body.data-pages .ln-letters>.ln-disabled:visited:not(.ln-selected){background:white !important}body.data-pages .ln-letters>.ln-disabled:focus,body.data-pages .ln-letters>.ln-disabled:active{box-shadow:0 1px 1px rgba(0,0,0,0.075) !important}body.data-pages h5.place_name{display:block;font-family:"Open Sans", sans-serif;font-size:22px;font-weight:400;line-height:1;text-transform:capitalize;color:#494949}body.data-pages #search_input{height:44px}body.data-pages #search_box::before{content:'Filter by city or region name';position:relative;font-size:11px;line-height:1;font-weight:bold;color:#aaa;text-transform:uppercase}body.data-pages #borders-search_box::before{content:'Filter by country or region name';position:relative;font-size:11px;line-height:1;font-weight:bold;color:#aaa;text-transform:uppercase}body.data-pages #map{height:100%;min-height:500px;border:1px solid red}body.data-pages .leaflet-popup-content{text-transform:capitalize}
+
+      .country {
+        text-transform: capitalize;
+      }
+      .country-name {
+        background: #eee;
+        margin-top: 10px;
+        font-weight: bold;
+      }
+      .city {
+        margin-left: 20px;
+      }
+  </style>
+</head>
+<body class='data-pages'>
+
+  <div class='container'>
+<!--     <div class='row headroom-large'>
+      <div class='col-md-8 col-md-offset-2 text-center'>
+        <a class='btn btn-default btn-transparent' href='/data'><i class='fa fa-angle-left'></i>&nbsp;&nbsp; data</a>
+      </div>
+    </div> -->
+    <div class='row headroom'>
+      <div class='col-xs-12 text-center'>
+        <h1>Metro Extracts</h1>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col-xs-12'>
+
+          <p>
+		    Now it’s even easier to get local data so you can start building cool stuff. Each week, we automatically extract the latest <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area shapefiles in a variety of formats for you to use.
+		  </p>
+		  <p>
+		    <a>Format Guide</a> | <a>Documentation</a> | <a>Tutorial</a> | <a>Request an Extract</a>
+		  </p>
+
+<!--         <div class='updated-at headroom' id='last_updated_at'>
+          Last updated on <span class='datetime'>{{ dateRefreshed }} at {{ timeRefreshed }} UTC</span>
+        </div> -->
+      </div>
+    </div>
+  </div>
+
+  <div class='container-fluid' style='border-top: 1px solid black;'>
+    <div class='col-xs-6' style='position: fixed;'>
+      <div id='map'></div>
+    </div>
+    <div class='col-xs-6' style='float: right;'>
+      <div class='col-xs-12' id='search-box'>
+        <label class='data-filter-label' for='search_input'>Filter by City</label>
+        <input type='search' class='form-control hasclear' id='search_input' placeholder='example: Los Angeles' type='text'>
+      </div>
+      <div class='col-xs-12' id='extracts'></div>
+    </div>
+  </div>
+
+<!--   <script src='https://mapzen.com/common/styleguide/scripts/mapzen-styleguide.min.js'></script> -->
+<!--   <script src='https://code.jquery.com/jquery-2.2.0.min.js'></script> -->
+  <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<!--   <script src='../assets/jquery.fastLiveFilter.js'></script>
+  <script src='../assets/jquery-listnav.min.js'></script> -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js'></script>
+  <script src='https://mapzen.com/tangram/0.5/tangram.min.js'></script>
+
+  <script>
+    d3.json('./cities.json',function(data) {
+      var cityArray = [];
+      for (region in data.regions){
+        for (city in data.regions[region].cities) {
+          var cityCountry = city.split("_");
+          cityArray.push({
+            city: cityCountry[0],
+            country: cityCountry[1],
+            bbox: data.regions[region].cities[city].bbox
+          });
+        }
+      }
+      var nestedCities = d3.nest()
+        .key(function(d){ return d.country; })
+        .entries(cityArray)
+        .sort(function(a,b){ return (a.key < b.key) ? -1 : (a.key > b.key) ? 1 : 0; });
+      var countries = d3.select("#extracts").selectAll(".country").data(nestedCities);
+      var enterCountries = countries.enter().append("div").attr("class","country");
+      enterCountries.append("div").attr("class","country-name").text(function(d){ return d.key; });
+      var cities = enterCountries.selectAll(".city").data(function(d){ return d.values; });
+      cities.enter().append("div").attr("class","city")
+        .text(function(d){ return d.city.replace(/-/g," "); });
+    });
+  </script>
+</body>
+</html>
