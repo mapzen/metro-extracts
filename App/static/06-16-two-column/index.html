@@ -17,11 +17,11 @@
     .data-filter-label{position:relative;font-size:12px;line-height:1;font-weight:bold;color:#000;text-transform:uppercase}body.data-pages .loading{color:#d4645c;text-align:center}body.data-pages .updated-at{color:#d4645c;font-size:85%}body.data-pages #extracts ul{padding-left:0}body.data-pages #extracts li{text-align:left;list-style-type:none}body.data-pages #extracts a:hover{color:#d4645c}body.data-pages #extracts .btn{color:#6ea0a4;font-weight:500;background:white;font-size:12px;white-space:normal}body.data-pages #extracts .btn:not(:last-of-type){border-right:0}body.data-pages #extracts .btn:hover{background-color:whitesmoke;border-color:#ccc}body.data-pages #extracts .btn.ln-selected{background-color:whitesmoke;color:#d4645c}body.data-pages #extracts .btn-default:focus{border-color:#ccc !important}body.data-pages #extracts_list .btn{padding-left:4px;padding-right:4px}body.data-pages #extracts_list .size{display:block;font-size:10px;color:gray}@media (max-width: 991px){body.data-pages #extracts_list .btn-group-justified{position:relative;display:inline-block;vertical-align:middle}body.data-pages #extracts_list .btn-group-justified>.btn:first-child:not(:last-child){border-top-right-radius:4px;border-bottom-right-radius:0;border-bottom-left-radius:0}body.data-pages #extracts_list .btn-group-justified>.btn,body.data-pages #extracts_list .btn-group-justified>.btn-group,body.data-pages #extracts_list .btn-group-justified>.btn-group>.btn{display:block;float:none;width:100%;max-width:100%}body.data-pages #extracts_list .btn-group-justified>.btn{position:relative;float:left}body.data-pages #extracts_list .btn-group-justified>.btn:not(:last-of-type){border-right:1px solid #ccc;border-bottom:0}body.data-pages #extracts_list .btn-group-justified>.btn+.btn{margin-left:0}body.data-pages #extracts_list .btn-group-justified>.btn:last-of-type{border-bottom-left-radius:4px;border-top-right-radius:0}}body.data-pages #extracts_list-nav{padding-top:0 !important;margin-left:0 !important}body.data-pages #extracts_list-nav .btn{padding-left:2px;padding-right:2px;line-height:2}body.data-pages #extracts_list-nav::before{content:'Filter by first letter';position:relative;font-size:11px;line-height:1;font-weight:bold;color:#aaa;text-transform:uppercase}body.data-pages #extracts_list-nav .ln-letter-count{text-align:center;font-size:0.8em;line-height:1;margin-bottom:3px;color:white;background-color:rgba(0,0,0,0.75);padding:4px 6px;border-radius:3px;z-index:200}body.data-pages .ln-letters>.ln-disabled,body.data-pages .ln-letters>.ln-disabled:hover,body.data-pages .ln-letters>.ln-disabled:focus,body.data-pages .ln-letters>.ln-disabled:active,body.data-pages .ln-letters>.ln-disabled:visited{color:#ccc !important;border-color:#ccc !important;cursor:default}body.data-pages .ln-letters>.ln-disabled:not(.ln-selected),body.data-pages .ln-letters>.ln-disabled:hover:not(.ln-selected),body.data-pages .ln-letters>.ln-disabled:focus:not(.ln-selected),body.data-pages .ln-letters>.ln-disabled:active:not(.ln-selected),body.data-pages .ln-letters>.ln-disabled:visited:not(.ln-selected){background:white !important}body.data-pages .ln-letters>.ln-disabled:focus,body.data-pages .ln-letters>.ln-disabled:active{box-shadow:0 1px 1px rgba(0,0,0,0.075) !important}body.data-pages h5.place_name{display:block;font-family:"Open Sans", sans-serif;font-size:22px;font-weight:400;line-height:1;text-transform:capitalize;color:#494949}
     body.data-pages #search_input{height:41px}
     body.data-pages .inline-submit .btn { background: #666; color: white;}
-    body.data-pages #search_box::before{content:'Filter by city or region name';position:relative;font-size:11px;line-height:1;font-weight:bold;color:#000;text-transform:uppercase}body.data-pages #borders-search_box::before{content:'Filter by country or region name';position:relative;font-size:11px;line-height:1;font-weight:bold;color:#aaa;text-transform:uppercase}body.data-pages #map{border:1px solid red}body.data-pages .leaflet-popup-content{text-transform:capitalize}
+    body.data-pages #search_box::before{content:'Filter by city or region name';position:relative;font-size:11px;line-height:1;font-weight:bold;color:#000;text-transform:uppercase}body.data-pages #borders-search_box::before{content:'Filter by country or region name';position:relative;font-size:11px;line-height:1;font-weight:bold;color:#aaa;text-transform:uppercase}body.data-pages .leaflet-popup-content{text-transform:capitalize}
 
       .country-name {
         background: #eee;
-        margin-top: 10px;
+        margin-top: 20px;
         font-weight: bold;
         text-transform: uppercase;
         display: inline-block;
@@ -36,6 +36,10 @@
       .city {
         text-transform: capitalize;
         margin: 3px 0 3px 20px;
+        cursor: pointer;
+      }
+      .city:hover {
+        text-decoration: underline;
       }
       #request {
         background: #eee;
@@ -80,7 +84,7 @@
     </div>
     <div class='col-xs-6' style='float: right;'>
       <div class='col-xs-12 inline-submit' id='search-box'>
-        <label class='data-filter-label' for='search_input'>Filter Extracts by City or Region Name</label>
+        <label class='data-filter-label' for='search_input'>Filter Extracts by City or Region</label>
         <input type='search' class='hasclear col-sm-9 col-xs-8' id='search_input' placeholder='example: Los Angeles' type='text'>
         <input type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
       </div>
