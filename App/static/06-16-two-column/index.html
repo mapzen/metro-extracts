@@ -17,7 +17,7 @@
     .data-filter-label{position:relative;font-size:12px;line-height:1;font-weight:bold;color:#000;text-transform:uppercase}body.data-pages .loading{color:#d4645c;text-align:center}body.data-pages .updated-at{color:#d4645c;font-size:85%}body.data-pages #extracts ul{padding-left:0}body.data-pages #extracts li{text-align:left;list-style-type:none}body.data-pages #extracts a:hover{color:#d4645c}body.data-pages #extracts .btn{color:#6ea0a4;font-weight:500;background:white;font-size:12px;white-space:normal}body.data-pages #extracts .btn:not(:last-of-type){border-right:0}body.data-pages #extracts .btn:hover{background-color:whitesmoke;border-color:#ccc}body.data-pages #extracts .btn.ln-selected{background-color:whitesmoke;color:#d4645c}body.data-pages #extracts .btn-default:focus{border-color:#ccc !important}body.data-pages #extracts_list .btn{padding-left:4px;padding-right:4px}body.data-pages #extracts_list .size{display:block;font-size:10px;color:gray}@media (max-width: 991px){body.data-pages #extracts_list .btn-group-justified{position:relative;display:inline-block;vertical-align:middle}body.data-pages #extracts_list .btn-group-justified>.btn:first-child:not(:last-child){border-top-right-radius:4px;border-bottom-right-radius:0;border-bottom-left-radius:0}body.data-pages #extracts_list .btn-group-justified>.btn,body.data-pages #extracts_list .btn-group-justified>.btn-group,body.data-pages #extracts_list .btn-group-justified>.btn-group>.btn{display:block;float:none;width:100%;max-width:100%}body.data-pages #extracts_list .btn-group-justified>.btn{position:relative;float:left}body.data-pages #extracts_list .btn-group-justified>.btn:not(:last-of-type){border-right:1px solid #ccc;border-bottom:0}body.data-pages #extracts_list .btn-group-justified>.btn+.btn{margin-left:0}body.data-pages #extracts_list .btn-group-justified>.btn:last-of-type{border-bottom-left-radius:4px;border-top-right-radius:0}}body.data-pages #extracts_list-nav{padding-top:0 !important;margin-left:0 !important}body.data-pages #extracts_list-nav .btn{padding-left:2px;padding-right:2px;line-height:2}body.data-pages #extracts_list-nav::before{content:'Filter by first letter';position:relative;font-size:11px;line-height:1;font-weight:bold;color:#aaa;text-transform:uppercase}body.data-pages #extracts_list-nav .ln-letter-count{text-align:center;font-size:0.8em;line-height:1;margin-bottom:3px;color:white;background-color:rgba(0,0,0,0.75);padding:4px 6px;border-radius:3px;z-index:200}body.data-pages .ln-letters>.ln-disabled,body.data-pages .ln-letters>.ln-disabled:hover,body.data-pages .ln-letters>.ln-disabled:focus,body.data-pages .ln-letters>.ln-disabled:active,body.data-pages .ln-letters>.ln-disabled:visited{color:#ccc !important;border-color:#ccc !important;cursor:default}body.data-pages .ln-letters>.ln-disabled:not(.ln-selected),body.data-pages .ln-letters>.ln-disabled:hover:not(.ln-selected),body.data-pages .ln-letters>.ln-disabled:focus:not(.ln-selected),body.data-pages .ln-letters>.ln-disabled:active:not(.ln-selected),body.data-pages .ln-letters>.ln-disabled:visited:not(.ln-selected){background:white !important}body.data-pages .ln-letters>.ln-disabled:focus,body.data-pages .ln-letters>.ln-disabled:active{box-shadow:0 1px 1px rgba(0,0,0,0.075) !important}body.data-pages h5.place_name{display:block;font-family:"Open Sans", sans-serif;font-size:22px;font-weight:400;line-height:1;text-transform:capitalize;color:#494949}
     body.data-pages #search_input{height:41px}
     body.data-pages .inline-submit .btn { background: #666; color: white;}
-    body.data-pages #search_box::before{content:'Filter by city or region name';position:relative;font-size:11px;line-height:1;font-weight:bold;color:#000;text-transform:uppercase}body.data-pages #borders-search_box::before{content:'Filter by country or region name';position:relative;font-size:11px;line-height:1;font-weight:bold;color:#aaa;text-transform:uppercase}body.data-pages #map{height:100%;min-height:500px;border:1px solid red}body.data-pages .leaflet-popup-content{text-transform:capitalize}
+    body.data-pages #search_box::before{content:'Filter by city or region name';position:relative;font-size:11px;line-height:1;font-weight:bold;color:#000;text-transform:uppercase}body.data-pages #borders-search_box::before{content:'Filter by country or region name';position:relative;font-size:11px;line-height:1;font-weight:bold;color:#aaa;text-transform:uppercase}body.data-pages #map{border:1px solid red}body.data-pages .leaflet-popup-content{text-transform:capitalize}
 
       .country-name {
         background: #eee;
@@ -95,61 +95,9 @@
   <script src='../assets/jquery-listnav.min.js'></script> -->
   <script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js'></script>
   <script src='https://mapzen.com/tangram/0.5/tangram.min.js'></script>
-
-  <script>
-    d3.json('./cities.json',function(data) {
-      var cityArray = [];
-      for (region in data.regions){
-        for (city in data.regions[region].cities) {
-          var cityCountry = city.split("_");
-          cityArray.push({
-            city: cityCountry[0],
-            country: cityCountry[1],
-            bbox: data.regions[region].cities[city].bbox
-          });
-        }
-      }
-      var nestedCities = d3.nest()
-        .key(function(d){ return d.country; })
-        .entries(cityArray)
-        .sort(function(a,b){ return (a.key < b.key) ? -1 : (a.key > b.key) ? 1 : 0; });
-
-      function drawList(data) {
-        var countries = d3.select("#extracts").selectAll(".country").data(data);
-        var enterCountries = countries.enter().append("div").attr("class","country");
-        countries.exit().remove();
-        enterCountries.append("div").attr("class","country-name");
-        countries.select(".country-name").text(function(d){ return d.key; });
-        var cities = countries.selectAll(".city").data(function(d){ return d.values; });
-        cities.enter().append("div").attr("class","city");
-        cities.text(function(d){ return d.city.replace(/-/g," "); });
-        cities.exit().remove();
-      }
-      drawList(nestedCities);
-
-      d3.select("#search_input").on("keyup",function(d, i, e){
-        var val = document.getElementById("search_input").value,
-          newData = [];
-        if (!val.length) {
-          drawList(nestedCities);
-          return;
-        }
-        nestedCities.forEach(function(d){
-          var country = jQuery.extend({}, d);
-          if (country.key.replace(/-/g," ").indexOf(val) != -1) {
-            newData.push(country);
-          } else {
-            country.values = country.values.filter(function(e){ 
-              return e.city.replace(/-/g," ").indexOf(val) != -1; 
-            });
-            if (country.values.length) newData.push(country);
-          }
-        });
-        drawList(newData);
-      });
-    });
-  </script>
   <script type="text/javascript">
+
+    d3.select("#map").style("height",(window.innerHeight - 240) + 'px');
 
     function hasWebGL () {
       try {
@@ -160,8 +108,8 @@
       }
     }
     function initDisplayMap (geoJSONUrl, geoJSONOptions) {
-      var southwest = L.latLng(-41.7713, -197.2265)
-      var northeast = L.latLng(68.2693, 206.7187)
+      var southwest = L.latLng(0, -125)
+      var northeast = L.latLng(0, 125)
       var options = {
         scrollWheelZoom: false,
         // Disables dragging on touch-detected devices
@@ -224,6 +172,64 @@
       onEachFeature: onEachFeature
     }
     var displayMap = initDisplayMap(mapurl, geoJSONOptions)
+
+    d3.json('./cities.json',function(data) {
+      var cityArray = [];
+      for (region in data.regions){
+        for (city in data.regions[region].cities) {
+          var cityCountry = city.split("_");
+          cityArray.push({
+            city: cityCountry[0],
+            country: cityCountry[1],
+            bbox: data.regions[region].cities[city].bbox
+          });
+        }
+      }
+      var nestedCities = d3.nest()
+        .key(function(d){ return d.country; })
+        .entries(cityArray)
+        .sort(function(a,b){ return (a.key < b.key) ? -1 : (a.key > b.key) ? 1 : 0; });
+
+      function drawList(data) {
+        var countries = d3.select("#extracts").selectAll(".country").data(data);
+        var enterCountries = countries.enter().append("div").attr("class","country");
+        countries.exit().remove();
+        enterCountries.append("div").attr("class","country-name");
+        countries.select(".country-name").text(function(d){ return d.key; });
+        var cities = countries.selectAll(".city").data(function(d){ return d.values; });
+        cities.enter().append("div").attr("class","city");
+        cities.text(function(d){ return d.city.replace(/-/g," "); });
+        cities.exit().remove();
+      }
+      drawList(nestedCities);
+
+      d3.select("#search_input").on("keyup",function(d, i, e){
+        var val = document.getElementById("search_input").value,
+          newData = [];
+        if (!val.length) {
+          drawList(nestedCities);
+          return;
+        } else if (event.key == "Enter") {
+          d3.json("https://search.mapzen.com/v1/search?text="+val+"&api_key=search-owZDPeC", function(error, json) {
+              var latlon = json.features[0].geometry.coordinates;
+              displayMap.setView(L.latLng(latlon[1], latlon[0]), 8);
+          });
+        } else {
+          nestedCities.forEach(function(d){
+            var country = jQuery.extend({}, d);
+            if (country.key.replace(/-/g," ").indexOf(val) != -1) {
+              newData.push(country);
+            } else {
+              country.values = country.values.filter(function(e){ 
+                return e.city.replace(/-/g," ").indexOf(val) != -1; 
+              });
+              if (country.values.length) newData.push(country);
+            }
+          });
+          drawList(newData);
+        }
+      });
+    });
   </script>
 </body>
 </html>
