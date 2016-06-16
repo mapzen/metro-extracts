@@ -28,6 +28,10 @@
         letter-spacing: 1px;
         padding: 2px 10px;
         font-size: 12px;
+        cursor: pointer;
+      }
+      .country-name:hover {
+        background: #ddd;
       }
       .city {
         text-transform: capitalize;
@@ -194,7 +198,10 @@
         var countries = d3.select("#extracts").selectAll(".country").data(data);
         var enterCountries = countries.enter().append("div").attr("class","country");
         countries.exit().remove();
-        enterCountries.append("div").attr("class","country-name");
+        enterCountries.append("div").attr("class","country-name")
+          .on("click",function(d){
+            doSearch(d.key, 5);
+          });
         countries.select(".country-name").text(function(d){ return d.key; });
         var cities = countries.selectAll(".city").data(function(d){ return d.values; });
         cities.enter().append("div").attr("class","city");
@@ -203,6 +210,13 @@
       }
       drawList(nestedCities);
 
+      function doSearch(query, zoom) {
+        d3.json("https://search.mapzen.com/v1/search?text="+query+"&api_key=search-owZDPeC", function(error, json) {
+            var latlon = json.features[0].geometry.coordinates;
+            displayMap.setView(L.latLng(latlon[1], latlon[0]), zoom ? zoom : 8);
+        });
+      }
+
       d3.select("#search_input").on("keyup",function(d, i, e){
         var val = document.getElementById("search_input").value,
           newData = [];
@@ -210,10 +224,7 @@
           drawList(nestedCities);
           return;
         } else if (event.key == "Enter") {
-          d3.json("https://search.mapzen.com/v1/search?text="+val+"&api_key=search-owZDPeC", function(error, json) {
-              var latlon = json.features[0].geometry.coordinates;
-              displayMap.setView(L.latLng(latlon[1], latlon[0]), 8);
-          });
+          doSearch(val);
         } else {
           nestedCities.forEach(function(d){
             var country = jQuery.extend({}, d);
