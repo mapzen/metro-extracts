@@ -212,6 +212,8 @@
     }
     var displayMap = initDisplayMap(mapurl, geoJSONOptions)
 
+    var nestedCities;
+
     d3.json('./cities.json',function(data) {
       var cityArray = [];
       for (region in data.regions){
@@ -224,58 +226,87 @@
           });
         }
       }
-      var nestedCities = d3.nest()
+      nestedCities = d3.nest()
         .key(function(d){ return d.country; })
         .entries(cityArray)
         .sort(function(a,b){ return (a.key < b.key) ? -1 : (a.key > b.key) ? 1 : 0; });
 
-      function drawList(data) {
-        var countries = d3.select("#extracts").selectAll(".country").data(data);
-        var enterCountries = countries.enter().append("div").attr("class","country");
-        countries.exit().remove();
-        enterCountries.append("div").attr("class","country-name")
-          .on("click",function(d){
-            doSearch(d.key);
-          });
-        countries.select(".country-name").text(function(d){ return d.key; });
-        var cities = countries.selectAll(".city").data(function(d){ return d.values; });
-        cities.enter().append("div").attr("class","city");
-        cities.text(function(d){ return d.city.replace(/-/g," "); });
-        cities.exit().remove();
-      }
       drawList(nestedCities);
-
-      function doSearch(query) {
-        d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
-            var bbox = json.features[0].bbox;
-            displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]])
-            if (json.features[0].properties.layer == "locality") displayMap.zoomOut(2);
+    });
+    function drawList(data) {
+      var countries = d3.select("#extracts").selectAll(".country").data(data);
+      var enterCountries = countries.enter().append("div").attr("class","country");
+      countries.exit().remove();
+      enterCountries.append("div").attr("class","country-name")
+        .on("click",function(d){
+          doSearch(d.key);
         });
+      countries.select(".country-name").text(function(d){ return d.key; });
+      var cities = countries.selectAll(".city").data(function(d){ return d.values; });
+      cities.enter().append("div").attr("class","city");
+      cities.text(function(d){ return d.city.replace(/-/g," "); });
+      cities.exit().remove();
+    }
+    function doSearch(query) {
+      d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
+          var bbox = json.features[0].bbox;
+          displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]])
+          if (json.features[0].properties.layer == "locality") displayMap.zoomOut(2);
+      });
+    }
+
+    var keyIndex = 0;
+
+    String.prototype.capitalize = function() {
+      var words = this.split(" "),
+        capitalized = words.map(function(w){ return w.charAt(0).toUpperCase() + w.slice(1); });
+      return capitalized.join(" ");
+  }
+
+    d3.select("#search_input").on("keyup",function(d, i, e){
+      var inputDiv = document.getElementById("search_input");
+      var val = inputDiv.value,
+        newData = [];
+      if (!val.length) {
+        drawList(nestedCities);
+        return;
       }
 
-      d3.select("#search_input").on("keyup",function(d, i, e){
-        var val = document.getElementById("search_input").value,
-          newData = [];
-        if (!val.length) {
-          drawList(nestedCities);
-          return;
-        } else if (event.key == "Enter") {
-          doSearch(val);
-        } else {
-          nestedCities.forEach(function(d){
-            var country = jQuery.extend({}, d);
-            if (country.key.replace(/-/g," ").indexOf(val) != -1) {
-              newData.push(country);
-            } else {
-              country.values = country.values.filter(function(e){ 
-                return e.city.replace(/-/g," ").indexOf(val) != -1; 
-              });
-              if (country.values.length) newData.push(country);
-            }
-          });
-          drawList(newData);
-        }
-      });
+      var currentList = d3.selectAll(".city");
+
+      if (event.key == "ArrowDown") {        
+        currentList.each(function(d, i){
+          if (i == keyIndex)
+            inputDiv.value = d.city.replace(/-/g," ").capitalize();
+        });
+        keyIndex = Math.min(keyIndex+1, currentList[0].length-1);
+
+      } else if (event.key == "ArrowUp") {
+        currentList.each(function(d, i){
+          if (i == keyIndex)
+            inputDiv.value = d.city.replace(/-/g," ");
+        });
+        keyIndex = Math.max(keyIndex-1, 0);
+
+      } else if (event.key == "Enter") {
+        inputDiv.value = "";
+        keyIndex = 0;
+        doSearch(val);
+        
+      } else {
+        nestedCities.forEach(function(d){
+          var country = jQuery.extend({}, d);
+          if (country.key.replace(/-/g," ").indexOf(val) != -1) {
+            newData.push(country);
+          } else {
+            country.values = country.values.filter(function(e){ 
+              return e.city.replace(/-/g," ").indexOf(val) != -1; 
+            });
+            if (country.values.length) newData.push(country);
+          }
+        });
+        drawList(newData);
+      }
     });
   </script>
 </body>
