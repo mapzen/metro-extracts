@@ -284,7 +284,7 @@
       } else if (event.key == "ArrowUp") {
         currentList.each(function(d, i){
           if (i == keyIndex)
-            inputDiv.value = d.city.replace(/-/g," ");
+            inputDiv.value = d.city.replace(/-/g," ").capitalize();
         });
         keyIndex = Math.max(keyIndex-1, 0);
 
