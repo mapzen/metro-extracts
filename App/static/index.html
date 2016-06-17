@@ -193,16 +193,12 @@
 
     var onEachFeature = function (feature, layer) {
       if (feature.properties && feature.properties.name) {
-        var id = getNormalizedId(feature.properties.name)
         var text = feature.properties.name;
-        markers[id] = layer
-        // layer.bindPopup(text)
-        // layer.on('click', function (e) {
-        //   setSearchBox(text)
-        // })
-        // layer.on('popupclose', function (e) {
-        //   clearSearchBox()
-        // })
+        layer.on('click', function (e) {
+          var str = text.split("_")[0].replace(/-/g," ");
+          document.getElementById("search_input").value = str.capitalize();
+          filterList(str);
+        })
       }
     }
 
@@ -211,6 +207,28 @@
       onEachFeature: onEachFeature
     }
     var displayMap = initDisplayMap(mapurl, geoJSONOptions)
+
+    // var start, rect, 
+    //   drawRect = false;
+    // displayMap.on('mousedown',function(e){
+    //   if (rect) return;
+    //   displayMap.dragging.disable();
+    //   drawRect = true;
+    //   start = e.latlng;
+    // });
+    // displayMap.on('mouseup',function(e){
+    //   displayMap.dragging.enable();
+    //   drawRect = false;
+    // });
+    // displayMap.on('mousemove',function(e){
+    //   if (!drawRect) return;
+    //   if (!rect) {
+    //     rect = new L.Rectangle(new L.LatLngBounds(start, e.latlng));
+    //     displayMap.addLayer(rect);
+    //   } else {
+    //     rect.setBounds(new L.LatLngBounds(start, e.latlng));
+    //   }
+    // });
 
     var nestedCities;
 
@@ -267,15 +285,13 @@
 
     d3.select("#search_input").on("keyup",function(d, i, e){
       var inputDiv = document.getElementById("search_input");
-      var val = inputDiv.value,
-        newData = [];
+      var val = inputDiv.value;
       if (!val.length) {
         drawList(nestedCities);
         return;
       }
 
       var currentList = d3.selectAll(".city");
-
       if (event.key == "ArrowDown") {        
         currentList.each(function(d, i){
           if (i == keyIndex)
@@ -293,22 +309,26 @@
       } else if (event.key == "Enter") {
         keyIndex = 0;
         doSearch(val);
-
       } else {
-        nestedCities.forEach(function(d){
-          var country = jQuery.extend({}, d);
-          if (country.key.replace(/-/g," ").indexOf(val) != -1) {
-            newData.push(country);
-          } else {
-            country.values = country.values.filter(function(e){ 
-              return e.city.replace(/-/g," ").indexOf(val) != -1; 
-            });
-            if (country.values.length) newData.push(country);
-          }
-        });
-        drawList(newData);
+        filterList(val);
       }
     });
+
+    function filterList(str) {
+      var newData = [];
+      nestedCities.forEach(function(d){
+        var country = jQuery.extend({}, d);
+        if (country.key.replace(/-/g," ").indexOf(str) != -1) {
+          newData.push(country);
+        } else {
+          country.values = country.values.filter(function(e){ 
+            return e.city.replace(/-/g," ").indexOf(str) != -1; 
+          });
+          if (country.values.length) newData.push(country);
+        }
+      });
+      drawList(newData);
+    }
   </script>
 </body>
 </html>
