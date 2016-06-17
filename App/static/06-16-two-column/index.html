@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='x-ua-compatible' content='ie=edge'>
+  <title>Mapzen</title>
+  <meta name='description' content=''>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css'>
+<!--   <link rel='stylesheet' href='../assets/listnav.css'> -->
+  <link rel='stylesheet' href='https://mapzen.com/common/styleguide/styles/styleguide.css'>
+  <link rel='shortcut icon' href='/resources/favicon.ico'>
+  <style>
+  	body.data-pages #extracts li{margin-top:-50px;padding-top:60px}h5.place_name{position:relative}body.data-pages h5.place_name{text-transform:none}
+    
+    #search-box{z-index:50; margin: 20px 0 40px;}
+
+    h1{text-transform:lowercase}
+    .data-filter-label{position:relative;font-size:12px;line-height:1;font-weight:bold;color:#000;text-transform:uppercase}body.data-pages .loading{color:#d4645c;text-align:center}body.data-pages .updated-at{color:#d4645c;font-size:85%}body.data-pages #extracts ul{padding-left:0}body.data-pages #extracts li{text-align:left;list-style-type:none}body.data-pages #extracts a:hover{color:#d4645c}body.data-pages #extracts .btn{color:#6ea0a4;font-weight:500;background:white;font-size:12px;white-space:normal}body.data-pages #extracts .btn:not(:last-of-type){border-right:0}body.data-pages #extracts .btn:hover{background-color:whitesmoke;border-color:#ccc}body.data-pages #extracts .btn.ln-selected{background-color:whitesmoke;color:#d4645c}body.data-pages #extracts .btn-default:focus{border-color:#ccc !important}body.data-pages #extracts_list .btn{padding-left:4px;padding-right:4px}body.data-pages #extracts_list .size{display:block;font-size:10px;color:gray}@media (max-width: 991px){body.data-pages #extracts_list .btn-group-justified{position:relative;display:inline-block;vertical-align:middle}body.data-pages #extracts_list .btn-group-justified>.btn:first-child:not(:last-child){border-top-right-radius:4px;border-bottom-right-radius:0;border-bottom-left-radius:0}body.data-pages #extracts_list .btn-group-justified>.btn,body.data-pages #extracts_list .btn-group-justified>.btn-group,body.data-pages #extracts_list .btn-group-justified>.btn-group>.btn{display:block;float:none;width:100%;max-width:100%}body.data-pages #extracts_list .btn-group-justified>.btn{position:relative;float:left}body.data-pages #extracts_list .btn-group-justified>.btn:not(:last-of-type){border-right:1px solid #ccc;border-bottom:0}body.data-pages #extracts_list .btn-group-justified>.btn+.btn{margin-left:0}body.data-pages #extracts_list .btn-group-justified>.btn:last-of-type{border-bottom-left-radius:4px;border-top-right-radius:0}}body.data-pages #extracts_list-nav{padding-top:0 !important;margin-left:0 !important}body.data-pages #extracts_list-nav .btn{padding-left:2px;padding-right:2px;line-height:2}body.data-pages #extracts_list-nav::before{content:'Filter by first letter';position:relative;font-size:11px;line-height:1;font-weight:bold;color:#aaa;text-transform:uppercase}body.data-pages #extracts_list-nav .ln-letter-count{text-align:center;font-size:0.8em;line-height:1;margin-bottom:3px;color:white;background-color:rgba(0,0,0,0.75);padding:4px 6px;border-radius:3px;z-index:200}body.data-pages .ln-letters>.ln-disabled,body.data-pages .ln-letters>.ln-disabled:hover,body.data-pages .ln-letters>.ln-disabled:focus,body.data-pages .ln-letters>.ln-disabled:active,body.data-pages .ln-letters>.ln-disabled:visited{color:#ccc !important;border-color:#ccc !important;cursor:default}body.data-pages .ln-letters>.ln-disabled:not(.ln-selected),body.data-pages .ln-letters>.ln-disabled:hover:not(.ln-selected),body.data-pages .ln-letters>.ln-disabled:focus:not(.ln-selected),body.data-pages .ln-letters>.ln-disabled:active:not(.ln-selected),body.data-pages .ln-letters>.ln-disabled:visited:not(.ln-selected){background:white !important}body.data-pages .ln-letters>.ln-disabled:focus,body.data-pages .ln-letters>.ln-disabled:active{box-shadow:0 1px 1px rgba(0,0,0,0.075) !important}body.data-pages h5.place_name{display:block;font-family:"Open Sans", sans-serif;font-size:22px;font-weight:400;line-height:1;text-transform:capitalize;color:#494949}
+
+    body.data-pages #search_input{height:41px}
+    body.data-pages .inline-submit .btn { background: #666; color: white;}
+    body.data-pages .inline-submit .btn:hover { background: #555; }
+
+    body.data-pages #search_box::before{content:'Filter by city or region name';position:relative;font-size:11px;line-height:1;font-weight:bold;color:#000;text-transform:uppercase}body.data-pages #borders-search_box::before{content:'Filter by country or region name';position:relative;font-size:11px;line-height:1;font-weight:bold;color:#aaa;text-transform:uppercase}body.data-pages .leaflet-popup-content{text-transform:capitalize}
+
+      body.data-pages {
+        margin-top: 0;
+      }
+      #map {
+        border-right: 1px solid rgb(224,224,224);
+      }
+      #map path {
+        fill: #d4645c;
+        stroke: #d4645c;
+        stroke-width: 2;
+        stroke-opacity: .3;
+        fill-opacity: .3;
+      }
+      .leaflet-container a {
+        color: #6ea0a4;
+      }
+      .leaflet-container .leaflet-control-zoom-in,
+      .leaflet-container .leaflet-control-zoom-out {
+        color: #000;
+      }
+      .country {
+        border-top: 1px solid rgb(224,224,224);
+        margin-top: 20px;
+      }
+      .country-name {
+        background: rgb(224,224,224);
+        font-weight: bold;
+        text-transform: uppercase;
+        display: inline-block;
+        letter-spacing: 1px;
+        padding: 2px 10px;
+        font-size: 12px;
+        cursor: pointer;
+        float: left;
+      }
+      .country-name:hover {
+        background: #ccc;
+      }
+      .city {
+        text-transform: capitalize;
+        margin: 3px 0 3px 10px;
+        cursor: pointer;
+        clear: both;
+      }
+      .city:hover {
+        text-decoration: underline;
+      }
+      #request {
+        background: rgb(224,224,224);
+        margin: 50px 0;
+        padding: 20px;
+      }
+  </style>
+</head>
+<body class='data-pages'>
+
+  <div class='container'>
+<!--     <div class='row headroom-large'>
+      <div class='col-md-8 col-md-offset-2 text-center'>
+        <a class='btn btn-default btn-transparent' href='/data'><i class='fa fa-angle-left'></i>&nbsp;&nbsp; data</a>
+      </div>
+    </div> -->
+    
+  </div>
+
+  <div class='container-fluid'>
+    <div class='col-xs-6' style='position: fixed;'>
+      <div id='map'></div>
+    </div>
+    <div class='col-xs-6' style='float: right;'>
+      <div class='row headroom'>
+      <div class='col-xs-12 text-center'>
+        <h1>Metro Extracts</h1>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col-xs-12'>
+
+          <p>
+        Now it’s even easier to get local data so you can start building cool stuff. Each week, we automatically extract the latest <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area shapefiles in a variety of formats for you to use.
+      </p>
+      <p>
+        <a>Format Guide</a> | <a>Documentation</a> | <a>Tutorial</a> | <a>Request an Extract</a>
+      </p>
+
+<!--         <div class='updated-at headroom' id='last_updated_at'>
+          Last updated on <span class='datetime'>{{ dateRefreshed }} at {{ timeRefreshed }} UTC</span>
+        </div> -->
+      </div>
+    </div>
+      <div class='row inline-submit' id='search-box'>
+        <label class='data-filter-label' for='search_input'>Filter Extracts by City or Region</label>
+        <input type='search' class='hasclear col-sm-9 col-xs-8' id='search_input' placeholder='example: Los Angeles' type='text'>
+        <input type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
+      </div>
+      <div id='extracts'></div>
+      <div class='row' id='request'>
+        <p>Can't find what you're looking for? Request one!</p>
+        <div class='btn btn-transparent'>Submit GH Issue</div>
+      </div>
+    </div>
+  </div>
+
+<!--   <script src='https://mapzen.com/common/styleguide/scripts/mapzen-styleguide.min.js'></script> -->
+  <script src='https://code.jquery.com/jquery-2.2.0.min.js'></script>
+  <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<!--   <script src='../assets/jquery.fastLiveFilter.js'></script>
+  <script src='../assets/jquery-listnav.min.js'></script> -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js'></script>
+  <script src='https://mapzen.com/tangram/0.5/tangram.min.js'></script>
+  <script type="text/javascript">
+
+    d3.select("#map").style("height", window.innerHeight + 'px');
+
+    function hasWebGL () {
+      try {
+        var canvas = document.createElement('canvas')
+        return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')))
+      } catch (x) {
+        return false
+      }
+    }
+    function initDisplayMap (geoJSONUrl, geoJSONOptions) {
+      var southwest = L.latLng(0, -125)
+      var northeast = L.latLng(0, 125)
+      var options = {
+        scrollWheelZoom: false,
+        // Disables dragging on touch-detected devices
+        dragging: (window.self !== window.top && L.Browser.touch) ? false : true,
+        tap: (window.self !== window.top && L.Browser.touch) ? false : true,
+      }
+      var displayMap = L.map('map', options).fitBounds(L.latLngBounds(southwest, northeast))
+      var layer
+
+      if (hasWebGL() === true) {
+        layer = Tangram.leafletLayer({
+          scene: './scene.yaml',
+          attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/">Mapzen</a>'
+        })
+      } else {
+        layer = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
+          attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+        })
+      }
+      layer.addTo(displayMap)
+
+      $.ajax({
+        type: 'GET',
+        url: geoJSONUrl,
+        dataType: 'json',
+        success: function (data) {
+          L.geoJson(data, geoJSONOptions).addTo(displayMap)
+        },
+        error: function (request, status, error) {
+          // do nothing
+        }
+      })
+
+      return displayMap
+    }
+    var mapurl = 'https://s3.amazonaws.com/metro-extracts.mapzen.com/cities.geojson'
+
+    var getNormalizedId = function (name) {
+      return name.toLowerCase().replace(/,?\s+/g, '-').replace(/_/g, '-')
+    }
+    var markers = {}
+
+    var onEachFeature = function (feature, layer) {
+      if (feature.properties && feature.properties.name) {
+        var id = getNormalizedId(feature.properties.name)
+        var text = feature.properties.name;
+        markers[id] = layer
+        // layer.bindPopup(text)
+        // layer.on('click', function (e) {
+        //   setSearchBox(text)
+        // })
+        // layer.on('popupclose', function (e) {
+        //   clearSearchBox()
+        // })
+      }
+    }
+
+    // Setup map
+    var geoJSONOptions = {
+      onEachFeature: onEachFeature
+    }
+    var displayMap = initDisplayMap(mapurl, geoJSONOptions)
+
+    var nestedCities;
+
+    d3.json('./cities.json',function(data) {
+      var cityArray = [];
+      for (region in data.regions){
+        for (city in data.regions[region].cities) {
+          var cityCountry = city.split("_");
+          cityArray.push({
+            city: cityCountry[0],
+            country: cityCountry[1],
+            bbox: data.regions[region].cities[city].bbox
+          });
+        }
+      }
+      nestedCities = d3.nest()
+        .key(function(d){ return d.country; })
+        .entries(cityArray)
+        .sort(function(a,b){ return (a.key < b.key) ? -1 : (a.key > b.key) ? 1 : 0; });
+
+      drawList(nestedCities);
+    });
+
+    function drawList(data) {
+      var countries = d3.select("#extracts").selectAll(".country").data(data);
+      var enterCountries = countries.enter().append("div").attr("class","country");
+      countries.exit().remove();
+      enterCountries.append("div").attr("class","country-name")
+        .on("click",function(d){
+          doSearch(d.key);
+        });
+      countries.select(".country-name").text(function(d){ return d.key; });
+      var cities = countries.selectAll(".city").data(function(d){ return d.values; });
+      cities.enter().append("div").attr("class","city");
+      cities.text(function(d){ return d.city.replace(/-/g," "); });
+      cities.exit().remove();
+    }
+    
+    function doSearch(query) {
+      d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
+          var bbox = json.features[0].bbox;
+          displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]])
+          if (json.features[0].properties.layer == "locality") displayMap.zoomOut(2);
+      });
+    }
+
+    var keyIndex = 0;
+
+    String.prototype.capitalize = function() {
+      var words = this.split(" "),
+        capitalized = words.map(function(w){ return w.charAt(0).toUpperCase() + w.slice(1); });
+      return capitalized.join(" ");
+    }
+
+    d3.select("#search_input").on("keyup",function(d, i, e){
+      var inputDiv = document.getElementById("search_input");
+      var val = inputDiv.value,
+        newData = [];
+      if (!val.length) {
+        drawList(nestedCities);
+        return;
+      }
+
+      var currentList = d3.selectAll(".city");
+
+      if (event.key == "ArrowDown") {        
+        currentList.each(function(d, i){
+          if (i == keyIndex)
+            inputDiv.value = d.city.replace(/-/g," ").capitalize();
+        });
+        keyIndex = Math.min(keyIndex+1, currentList[0].length-1);
+
+      } else if (event.key == "ArrowUp") {
+        currentList.each(function(d, i){
+          if (i == keyIndex)
+            inputDiv.value = d.city.replace(/-/g," ").capitalize();
+        });
+        keyIndex = Math.max(keyIndex-1, 0);
+
+      } else if (event.key == "Enter") {
+        keyIndex = 0;
+        doSearch(val);
+
+      } else {
+        nestedCities.forEach(function(d){
+          var country = jQuery.extend({}, d);
+          if (country.key.replace(/-/g," ").indexOf(val) != -1) {
+            newData.push(country);
+          } else {
+            country.values = country.values.filter(function(e){ 
+              return e.city.replace(/-/g," ").indexOf(val) != -1; 
+            });
+            if (country.values.length) newData.push(country);
+          }
+        });
+        drawList(newData);
+      }
+    });
+  </script>
+</body>
+</html>
