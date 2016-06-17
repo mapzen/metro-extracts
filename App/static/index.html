@@ -298,11 +298,35 @@
       });
     }
 
+    Number.prototype.toRad = function() {
+       return this * Math.PI / 180;
+    }
+    Number.prototype.toDeg = function() {
+       return this * 180 / Math.PI;
+    }
+
+    function calculateOffset(theta, lat1, lng1) {
+      var lat1 = lat1.toRad(), 
+        lng1 = lng1.toRad(),
+        d = 20, // 20km offset on area
+        R = 6371;
+
+      var lat2 = Math.asin( Math.sin(lat1)*Math.cos(d/R) 
+            + Math.cos(lat1)*Math.sin(d/R)*Math.cos(theta) ),
+        lng2 = lng1 + Math.atan2(Math.sin(theta)*Math.sin(d/R)*Math.cos(lat1), 
+              Math.cos(d/R)-Math.sin(lat1)*Math.sin(lat2));
+
+      return [lat2.toDeg(), lng2.toDeg()];
+    }
+
     var rect;
 
     function requestExtract(metro) {
-      var bbox = metro.bbox;
-      rect = new L.Rectangle(new L.LatLngBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]), { className : "blue" });
+      var bbox = metro.bbox,
+        northEast = calculateOffset(-Math.PI*3/4, bbox[1], bbox[0]),
+        southWest = calculateOffset(Math.PI/4, bbox[3], bbox[2]);
+
+      rect = new L.Rectangle(new L.LatLngBounds([northEast,southWest]), { className : "blue" });
       displayMap.addLayer(rect);
       d3.select("#make-request").style("display","block")
         .selectAll(".name").text(metro.properties.name);
