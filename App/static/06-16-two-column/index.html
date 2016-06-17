@@ -233,6 +233,7 @@
 
       drawList(nestedCities);
     });
+
     function drawList(data) {
       var countries = d3.select("#extracts").selectAll(".country").data(data);
       var enterCountries = countries.enter().append("div").attr("class","country");
@@ -247,6 +248,7 @@
       cities.text(function(d){ return d.city.replace(/-/g," "); });
       cities.exit().remove();
     }
+    
     function doSearch(query) {
       d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
           var bbox = json.features[0].bbox;
@@ -261,7 +263,7 @@
       var words = this.split(" "),
         capitalized = words.map(function(w){ return w.charAt(0).toUpperCase() + w.slice(1); });
       return capitalized.join(" ");
-  }
+    }
 
     d3.select("#search_input").on("keyup",function(d, i, e){
       var inputDiv = document.getElementById("search_input");
@@ -289,10 +291,9 @@
         keyIndex = Math.max(keyIndex-1, 0);
 
       } else if (event.key == "Enter") {
-        inputDiv.value = "";
         keyIndex = 0;
         doSearch(val);
-        
+
       } else {
         nestedCities.forEach(function(d){
           var country = jQuery.extend({}, d);
