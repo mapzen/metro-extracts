@@ -204,7 +204,7 @@
         countries.exit().remove();
         enterCountries.append("div").attr("class","country-name")
           .on("click",function(d){
-            doSearch(d.key, 5);
+            doSearch(d.key);
           });
         countries.select(".country-name").text(function(d){ return d.key; });
         var cities = countries.selectAll(".city").data(function(d){ return d.values; });
@@ -215,9 +215,9 @@
       drawList(nestedCities);
 
       function doSearch(query, zoom) {
-        d3.json("https://search.mapzen.com/v1/search?text="+query+"&api_key=search-owZDPeC", function(error, json) {
-            var latlon = json.features[0].geometry.coordinates;
-            displayMap.setView(L.latLng(latlon[1], latlon[0]), zoom ? zoom : 8);
+        d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
+            var bbox = json.features[0].bbox;
+            displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]);
         });
       }
 
