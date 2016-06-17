@@ -19,9 +19,25 @@
     body.data-pages .inline-submit .btn { background: #666; color: white;}
     body.data-pages #search_box::before{content:'Filter by city or region name';position:relative;font-size:11px;line-height:1;font-weight:bold;color:#000;text-transform:uppercase}body.data-pages #borders-search_box::before{content:'Filter by country or region name';position:relative;font-size:11px;line-height:1;font-weight:bold;color:#aaa;text-transform:uppercase}body.data-pages .leaflet-popup-content{text-transform:capitalize}
 
+      body.data-pages {
+        margin-top: 0;
+      }
+      #map {
+        border-right: 1px solid rgb(224,224,224);
+      }
+      #map path {
+        fill: #d4645c;
+        stroke: #d4645c;
+        stroke-width: 2;
+        stroke-opacity: .3;
+        fill-opacity: .3;
+      }
+      .country {
+        border-top: 1px solid #eee;
+        margin-top: 20px;
+      }
       .country-name {
         background: #eee;
-        margin-top: 20px;
         font-weight: bold;
         text-transform: uppercase;
         display: inline-block;
@@ -29,14 +45,16 @@
         padding: 2px 10px;
         font-size: 12px;
         cursor: pointer;
+        float: left;
       }
       .country-name:hover {
         background: #ddd;
       }
       .city {
         text-transform: capitalize;
-        margin: 3px 0 3px 20px;
+        margin: 3px 0 3px 10px;
         cursor: pointer;
+        clear: both;
       }
       .city:hover {
         text-decoration: underline;
@@ -56,7 +74,15 @@
         <a class='btn btn-default btn-transparent' href='/data'><i class='fa fa-angle-left'></i>&nbsp;&nbsp; data</a>
       </div>
     </div> -->
-    <div class='row headroom'>
+    
+  </div>
+
+  <div class='container-fluid'>
+    <div class='col-xs-6' style='position: fixed;'>
+      <div id='map'></div>
+    </div>
+    <div class='col-xs-6' style='float: right;'>
+      <div class='row headroom'>
       <div class='col-xs-12 text-center'>
         <h1>Metro Extracts</h1>
       </div>
@@ -65,24 +91,17 @@
       <div class='col-xs-12'>
 
           <p>
-		    Now it’s even easier to get local data so you can start building cool stuff. Each week, we automatically extract the latest <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area shapefiles in a variety of formats for you to use.
-		  </p>
-		  <p>
-		    <a>Format Guide</a> | <a>Documentation</a> | <a>Tutorial</a> | <a>Request an Extract</a>
-		  </p>
+        Now it’s even easier to get local data so you can start building cool stuff. Each week, we automatically extract the latest <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area shapefiles in a variety of formats for you to use.
+      </p>
+      <p>
+        <a>Format Guide</a> | <a>Documentation</a> | <a>Tutorial</a> | <a>Request an Extract</a>
+      </p>
 
 <!--         <div class='updated-at headroom' id='last_updated_at'>
           Last updated on <span class='datetime'>{{ dateRefreshed }} at {{ timeRefreshed }} UTC</span>
         </div> -->
       </div>
     </div>
-  </div>
-
-  <div class='container-fluid' style='border-top: 1px solid black;'>
-    <div class='col-xs-6' style='position: fixed;'>
-      <div id='map'></div>
-    </div>
-    <div class='col-xs-6' style='float: right;'>
       <div class='col-xs-12 inline-submit' id='search-box'>
         <label class='data-filter-label' for='search_input'>Filter Extracts by City or Region</label>
         <input type='search' class='hasclear col-sm-9 col-xs-8' id='search_input' placeholder='example: Los Angeles' type='text'>
@@ -105,7 +124,7 @@
   <script src='https://mapzen.com/tangram/0.5/tangram.min.js'></script>
   <script type="text/javascript">
 
-    d3.select("#map").style("height",(window.innerHeight - 240) + 'px');
+    d3.select("#map").style("height", window.innerHeight + 'px');
 
     function hasWebGL () {
       try {
@@ -129,7 +148,7 @@
 
       if (hasWebGL() === true) {
         layer = Tangram.leafletLayer({
-          scene: 'https://cdn.rawgit.com/tangrams/refill-style/857e1439ae947057bdcfaea7b5eb958628dc7c26/refill-style.yaml',
+          scene: './scene.yaml',
           attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/">Mapzen</a>'
         })
       } else {
@@ -214,10 +233,11 @@
       }
       drawList(nestedCities);
 
-      function doSearch(query, zoom) {
+      function doSearch(query) {
         d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
             var bbox = json.features[0].bbox;
-            displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]);
+            displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]])
+            if (json.features[0].properties.layer == "locality") displayMap.zoomOut(2);
         });
       }
 
