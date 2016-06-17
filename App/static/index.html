@@ -37,6 +37,10 @@
         stroke-opacity: .3;
         fill-opacity: .3;
       }
+      #map path.blue {
+        fill: #6ea0a4;
+        stroke: #6ea0a4;
+      }
       .leaflet-container a {
         color: #6ea0a4;
       }
@@ -70,6 +74,11 @@
       }
       .city:hover {
         text-decoration: underline;
+      }
+      #make-request {
+        display: none;
+        background: rgba(110,160,164,.3);
+        padding: 20px;
       }
       #request {
         background: rgb(224,224,224);
@@ -117,9 +126,13 @@
       <div class='row inline-submit' id='search-box'>
         <label class='data-filter-label' for='search_input'>Filter Extracts by City or Region</label>
         <input type='search' class='hasclear col-sm-9 col-xs-8' id='search_input' placeholder='example: Los Angeles' type='text'>
-        <input type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
+        <input id='search_submit' type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
       </div>
       <div id='extracts'></div>
+      <div id="make-request">
+        <p>Hmm, we don't have an extract for <span class="name"></span> yet. Would you like to request one?</p>
+        <a class="btn btn-transparent">Create <span class="name"></span> Request</a>
+      </div>
       <div class='row' id='request'>
         <p>Can't find what you're looking for? Request one!</p>
         <div class='btn btn-transparent'>Submit GH Issue</div>
@@ -266,13 +279,42 @@
       cities.text(function(d){ return d.city.replace(/-/g," "); });
       cities.exit().remove();
     }
+
+    d3.select("#search_submit").on("click",function(){
+      doSearch(document.getElementById("search_input").value);
+    });
     
     function doSearch(query) {
       d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
+        console.log(json.features[0]);
           var bbox = json.features[0].bbox;
           displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]])
           if (json.features[0].properties.layer == "locality") displayMap.zoomOut(2);
+          if (d3.selectAll(".city")[0].length == 0){
+            requestExtract(json.features[0]);
+          } else {
+            clearRequest();
+          }
       });
+    }
+
+    var rect;
+
+    function requestExtract(metro) {
+      var bbox = metro.bbox;
+      rect = new L.Rectangle(new L.LatLngBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]), { className : "blue" });
+      displayMap.addLayer(rect);
+      d3.select("#make-request").style("display","block")
+        .selectAll(".name").text(metro.properties.name);
+      d3.select("#request").style("display","none");
+      d3.select("#make-request").select("a")
+        .attr("href","https://github.com/mapzen/data-pages/issues/new?title="+metro.properties.name+"&body=Bounding Box: "+bbox);
+    }
+    function clearRequest() {
+      displayMap.removeLayer(rect);
+      d3.select("#request").style("display","block");
+      d3.select("#make-request").style("display","none");
+
     }
 
     var keyIndex = 0;
@@ -288,6 +330,7 @@
       var val = inputDiv.value;
       if (!val.length) {
         drawList(nestedCities);
+        clearRequest();
         return;
       }
 
