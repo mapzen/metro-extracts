@@ -71,6 +71,9 @@
         margin: 3px 0 3px 10px;
         cursor: pointer;
         clear: both;
+        color: #000;
+        font-weight: normal;
+        display: block;
       }
       .city:hover {
         text-decoration: underline;
@@ -275,8 +278,9 @@
         });
       countries.select(".country-name").text(function(d){ return d.key; });
       var cities = countries.selectAll(".city").data(function(d){ return d.values; });
-      cities.enter().append("div").attr("class","city");
-      cities.text(function(d){ return d.city.replace(/-/g," "); });
+      cities.enter().append("a").attr("class","city");
+      cities.text(function(d){ return d.city.replace(/-/g," "); })
+        .attr("href",function(d){ return "./city.html#"+d.city; });
       cities.exit().remove();
     }
 
@@ -361,6 +365,7 @@
       var val = inputDiv.value;
       if (!val.length) {
         drawList(nestedCities);
+        clearTimeout(searchTimeout);
         clearRequest();
         return;
       }
