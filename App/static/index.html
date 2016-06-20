@@ -354,6 +354,8 @@
       return capitalized.join(" ");
     }
 
+    var searchTimeout;
+
     d3.select("#search_input").on("keyup",function(d, i, e){
       var inputDiv = document.getElementById("search_input");
       var val = inputDiv.value;
@@ -362,6 +364,11 @@
         clearRequest();
         return;
       }
+
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(function(){
+        doSearch(val);
+      },1500);
 
       var currentList = d3.selectAll(".city");
       if (event.key == "ArrowDown") {        
@@ -380,6 +387,7 @@
 
       } else if (event.keyCode == 13) {
         keyIndex = 0;
+        clearTimeout(searchTimeout);
         doSearch(val);
       } else {
         filterList(val);
