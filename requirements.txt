@@ -10,3 +10,6 @@ MarkupSafe==0.23
 Werkzeug==0.11.9
 Jinja2==2.8
 gunicorn==19.5.0
+
+requests==2.10.0
+uritemplate==0.6
