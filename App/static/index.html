@@ -286,7 +286,6 @@
     
     function doSearch(query) {
       d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
-        console.log(json.features[0]);
           var bbox = json.features[0].bbox;
           displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]])
           if (json.features[0].properties.layer == "locality") displayMap.zoomOut(2);
@@ -320,6 +319,7 @@
     }
 
     var rect;
+    var wof = "https://whosonfirst.mapzen.com/spelunker/id/{id}.geojson";
 
     function requestExtract(metro) {
       var bbox = metro.bbox,
