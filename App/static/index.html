@@ -83,10 +83,33 @@
         background: rgba(110,160,164,.3);
         padding: 20px;
       }
+      #make-request .btn:hover {
+        background: rgba(110,160,164,.4);
+      }
       #request {
         background: rgb(224,224,224);
         margin: 50px 0;
         padding: 20px;
+      }
+      .autocomplete {
+        border: 1px solid #ddd;
+      }
+      .suggestion {
+        border-bottom: 1px solid #ddd;
+        padding: 1px 0 1px 15px;
+        color: #808080;
+        cursor: pointer;
+      }
+      .suggestion.selected {
+        color: #000;
+        background: #ddd;
+      }
+      .suggestion:hover {
+        color: #000;
+        background: #eee;
+      }
+      .suggestion:last-child {
+        margin-bottom: -1px;
       }
   </style>
 </head>
@@ -130,6 +153,7 @@
         <label class='data-filter-label' for='search_input'>Filter Extracts by City or Region</label>
         <input type='search' class='hasclear col-sm-9 col-xs-8' id='search_input' placeholder='example: Los Angeles' type='text'>
         <input id='search_submit' type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
+        <div class="autocomplete"></div>
       </div>
       <div id='extracts'></div>
       <div id="make-request">
@@ -288,7 +312,35 @@
       doSearch(document.getElementById("search_input").value);
     });
     
+    var wait = false,
+      waitQuery;
+
+    function suggestSearch(query) {
+      if (!wait) {
+        wait = true;
+        doSuggestion(query);
+        setTimeout(function(){ 
+          wait = false; 
+          doSuggestion(waitQuery); 
+        }, 500);
+      } else {
+        waitQuery = query;
+      }
+    }
+
+    function doSuggestion(query) {
+      d3.json("https://search.mapzen.com/v1/autocomplete?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
+          var suggestion = d3.select(".autocomplete")
+            .selectAll(".suggestion").data(json.features);
+          suggestion.enter().append("div").attr("class","suggestion");
+          suggestion.exit().remove();
+          suggestion.text(function(d){ return d.properties.label; });
+      });
+    }
+
     function doSearch(query) {
+      d3.selectAll(".suggestion").remove();
+      
       d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
           var bbox = json.features[0].bbox;
           displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]])
@@ -337,6 +389,7 @@
 
       rect = new L.Rectangle(new L.LatLngBounds([northEast,southWest]), { className : "blue" });
       displayMap.addLayer(rect);
+
       d3.select("#make-request").style("display","block")
         .selectAll(".name").text(metro.properties.name);
       d3.select("#request").style("display","none");
@@ -358,43 +411,35 @@
       return capitalized.join(" ");
     }
 
-    var searchTimeout;
-
     d3.select("#search_input").on("keyup",function(d, i, e){
       var inputDiv = document.getElementById("search_input");
       var val = inputDiv.value;
       if (!val.length) {
         drawList(nestedCities);
-        clearTimeout(searchTimeout);
         clearRequest();
         return;
       }
 
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(function(){
-        doSearch(val);
-      },1500);
-
-      var currentList = d3.selectAll(".city");
+      var currentList = d3.selectAll(".suggestion");
       if (event.key == "ArrowDown") {        
         currentList.each(function(d, i){
           if (i == keyIndex)
-            inputDiv.value = d.city.replace(/-/g," ").capitalize();
-        });
+            inputDiv.value = d.properties.label;
+        }).classed("selected",function(d,i){ return i == keyIndex; });
         keyIndex = Math.min(keyIndex+1, currentList[0].length-1);
 
       } else if (event.key == "ArrowUp") {
         currentList.each(function(d, i){
           if (i == keyIndex)
-            inputDiv.value = d.city.replace(/-/g," ").capitalize();
-        });
+            inputDiv.value = d.properties.label;
+        }).classed("selected",function(d,i){ return i == keyIndex; });
         keyIndex = Math.max(keyIndex-1, 0);
 
       } else if (event.keyCode == 13) {
         keyIndex = 0;
-        clearTimeout(searchTimeout);
         doSearch(val);
       } else {
+        suggestSearch(val);
         filterList(val);
       }
     });
