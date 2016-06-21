@@ -41,9 +41,16 @@
         fill: #6ea0a4;
         stroke: #6ea0a4;
       }
-      #map path.black {
-        fill: #000;
+      #map path.outline {
         stroke: #000;
+        fill: transparent;
+      }
+      .drag-icon {
+        width: 10px;
+        height: 10px;
+        background: #000;
+        border-radius: 10px;
+        cursor: pointer;
       }
       .leaflet-container a {
         color: #6ea0a4;
@@ -162,7 +169,7 @@
       <div id='extracts'></div>
       <div id="make-request">
         <p>Hmm, we don't have an extract for <span class="name"></span> yet. Would you like to request one?</p>
-        <a class="btn btn-transparent">Create <span class="name"></span> Request</a>
+        <a class="btn btn-transparent" target="_blank">Create <span class="name"></span> Request</a>
       </div>
       <div class='row' id='request'>
         <p>Can't find what you're looking for? Request one!</p>
@@ -384,21 +391,23 @@
       return [northEast, southWest];
     }
 
-    var rect,
-      outline;
+    var rect, 
+      dots = [],
+      outline,
+      requestBoundingBox;
+    var myIcon = L.divIcon({className: 'drag-icon'});
     //var wof = "http://whosonfirst.mapzen.com/spelunker/id/";
     var wof = "/wof/";
 
     function requestExtract(metro) {
-      var geoID = metro.properties.id,
-        bbox = metro.bbox,
-        newBox = calculateNewBox(bbox);
+      var geoID = metro.properties.id;
+      requestBoundingBox = calculateNewBox(metro.bbox);
 
-      rect = new L.Rectangle(new L.LatLngBounds(newBox), { className : "blue" });
-      displayMap.addLayer(rect);
+      drawRequestBox();
 
       d3.json(wof+geoID+".geojson",function(data){
-        outline = L.geoJson(data.geometry, { className : "black" }).addTo(displayMap);
+        var outline = L.geoJson(data.geometry, { className : "outline" }).addTo(displayMap);
+        displayMap.addLayer(outline);
       });
 
       //Polygon.getBounds().contains(MarketLatLng);
@@ -410,14 +419,49 @@
         .selectAll(".name").text(metro.properties.name);
       d3.select("#request").style("display","none");
       d3.select("#make-request").select("a")
-        .attr("href","https://github.com/mapzen/data-pages/issues/new?title="+metro.properties.name+"&body=Bounding Box: "+bbox);
+        .on("click",function(){
+          d3.select(this).attr("href","https://github.com/mapzen/data-pages/issues/new?title="+metro.properties.name+"&body=Bounding Box: "+requestBoundingBox);
+        });
+    }
+    function drawRequestBox() {
+      clearMap();
+      rect = new L.Rectangle(new L.LatLngBounds(requestBoundingBox), { className : "blue" });
+      displayMap.addLayer(rect);
+
+      var cSW = new L.marker(requestBoundingBox[0], { icon : myIcon, draggable: true });
+      dots.push(cSW);
+      var cNE = new L.marker(requestBoundingBox[1], { icon : myIcon, draggable: true });
+      dots.push(cNE);
+
+      cSW.on("drag",function(e){
+        requestBoundingBox[0] = [e.target.getLatLng().lat, e.target.getLatLng().lng];
+        displayMap.removeLayer(rect);
+        rect = new L.Rectangle(new L.LatLngBounds(requestBoundingBox), { className : "blue" });
+        displayMap.addLayer(rect);
+      });
+      cNE.on("drag",function(e){
+        requestBoundingBox[1] = [e.target.getLatLng().lat, e.target.getLatLng().lng];
+        displayMap.removeLayer(rect);
+        rect = new L.Rectangle(new L.LatLngBounds(requestBoundingBox), { className : "blue" });
+        displayMap.addLayer(rect);
+      });
+
+      dots.forEach(function(l){
+        displayMap.addLayer(l);
+      });
+    }
+    function clearMap() {
+      if (rect) displayMap.removeLayer(rect);
+      if (outline) displayMap.removeLayer(outline);
+      dots.forEach(function(l){
+        displayMap.removeLayer(l);
+      });
+      dots = [];
     }
     function clearRequest() {
-      displayMap.removeLayer(rect);
-      displayMap.removeLayer(outline);
+      clearMap();
       d3.select("#request").style("display","block");
       d3.select("#make-request").style("display","none");
-
     }
 
     var keyIndex = 0;
