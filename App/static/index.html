@@ -374,8 +374,10 @@
       return [lat2.toDeg(), lng2.toDeg()];
     }
 
-    var rect;
-    var wof = "http://whosonfirst.mapzen.com/spelunker/id/";
+    var rect,
+      outline;
+    //var wof = "http://whosonfirst.mapzen.com/spelunker/id/";
+    var wof = "/wof/";
 
     function requestExtract(metro) {
       var geoID = metro.properties.id,
@@ -383,9 +385,9 @@
         northEast = calculateOffset(-Math.PI*3/4, bbox[1], bbox[0]),
         southWest = calculateOffset(Math.PI/4, bbox[3], bbox[2]);
 
-      // d3.json(wof+geoID+".geojson",function(data){
-      //   console.log(data);
-      // });
+      d3.json(wof+geoID+".geojson",function(data){
+        outline = L.geoJson(data.geometry).addTo(displayMap);
+      });
 
       rect = new L.Rectangle(new L.LatLngBounds([northEast,southWest]), { className : "blue" });
       displayMap.addLayer(rect);
@@ -398,6 +400,7 @@
     }
     function clearRequest() {
       displayMap.removeLayer(rect);
+      displayMap.removeLayer(outline);
       d3.select("#request").style("display","block");
       d3.select("#make-request").style("display","none");
 
