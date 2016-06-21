@@ -306,10 +306,7 @@
       if (!wait) {
         wait = true;
         doSuggestion(query);
-        setTimeout(function(){ 
-          wait = false; 
-          doSuggestion(waitQuery); 
-        }, 500);
+        setTimeout(function(){ wait = false; }, 500);
       } else {
         waitQuery = query;
       }
@@ -321,7 +318,12 @@
             .selectAll(".suggestion").data(json.features);
           suggestion.enter().append("div").attr("class","suggestion");
           suggestion.exit().remove();
-          suggestion.text(function(d){ return d.properties.label; });
+          suggestion.text(function(d){ return d.properties.label; })
+            .on("click",function(d){
+              document.getElementById("search_input").value = d.properties.label;
+              doSearch(d.properties.label);
+              filterList(d.properties.label);
+            });
       });
     }
 
@@ -440,7 +442,7 @@
       d3.select("#make-request").style("display","none");
     }
 
-    var keyIndex = 0;
+    var keyIndex = -1;
 
     String.prototype.capitalize = function() {
       var words = this.split(" "),
@@ -451,31 +453,38 @@
     d3.select("#search_input").on("keyup",function(d, i, e){
       var inputDiv = document.getElementById("search_input");
       var val = inputDiv.value;
+
       if (!val.length) {
         drawList(nestedCities);
+        d3.selectAll(".suggestion").remove();
         clearRequest();
         return;
       }
 
       var currentList = d3.selectAll(".suggestion");
-      if (event.key == "ArrowDown") {        
-        currentList.each(function(d, i){
-          if (i == keyIndex)
-            inputDiv.value = d.properties.label;
-        }).classed("selected",function(d,i){ return i == keyIndex; });
+      if (event.keyCode == 40) {
         keyIndex = Math.min(keyIndex+1, currentList[0].length-1);
-
-      } else if (event.key == "ArrowUp") {
+        currentList.each(function(d, i){ //arrow down
+          if (i == keyIndex)
+            inputDiv.value = d.properties.label;
+        }).classed("selected",function(d,i){ return i == keyIndex; });
+        
+      } else if (event.keyCode == 38) { //arrow up
+        keyIndex = Math.max(keyIndex-1, 0);
         currentList.each(function(d, i){
           if (i == keyIndex)
             inputDiv.value = d.properties.label;
         }).classed("selected",function(d,i){ return i == keyIndex; });
-        keyIndex = Math.max(keyIndex-1, 0);
-
+        
       } else if (event.keyCode == 13) {
-        keyIndex = 0;
+        keyIndex = -1;
+        filterList(val);
+        d3.selectAll(".suggestion").remove();
         doSearch(val);
+      } else if (event.keyCode < 48 || event.keyCode > 90) {
+        return; //restrict autocomplete to 0-9,a-z character input
       } else {
+        keyIndex = -1;
         suggestSearch(val);
         filterList(val);
       }
