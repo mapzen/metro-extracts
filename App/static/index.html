@@ -41,6 +41,10 @@
         fill: #6ea0a4;
         stroke: #6ea0a4;
       }
+      #map path.black {
+        fill: #000;
+        stroke: #000;
+      }
       .leaflet-container a {
         color: #6ea0a4;
       }
@@ -360,10 +364,9 @@
        return this * 180 / Math.PI;
     }
 
-    function calculateOffset(theta, lat1, lng1) {
+    function calculateOffset(theta, d, lat1, lng1) {
       var lat1 = lat1.toRad(), 
         lng1 = lng1.toRad(),
-        d = 20, // 20km offset on area
         R = 6371;
 
       var lat2 = Math.asin( Math.sin(lat1)*Math.cos(d/R) 
@@ -374,6 +377,13 @@
       return [lat2.toDeg(), lng2.toDeg()];
     }
 
+    function calculateNewBox(bbox) {
+      var distance = Math.sqrt(Math.pow(bbox[3]-bbox[1],2) + Math.pow(bbox[2]-bbox[0], 2))*25;
+      var northEast = calculateOffset(-Math.PI*3/4, distance, bbox[1], bbox[0]),
+      southWest = calculateOffset(Math.PI/4, distance, bbox[3], bbox[2]);
+      return [northEast, southWest];
+    }
+
     var rect,
       outline;
     //var wof = "http://whosonfirst.mapzen.com/spelunker/id/";
@@ -382,15 +392,19 @@
     function requestExtract(metro) {
       var geoID = metro.properties.id,
         bbox = metro.bbox,
-        northEast = calculateOffset(-Math.PI*3/4, bbox[1], bbox[0]),
-        southWest = calculateOffset(Math.PI/4, bbox[3], bbox[2]);
+        newBox = calculateNewBox(bbox);
+
+      rect = new L.Rectangle(new L.LatLngBounds(newBox), { className : "blue" });
+      displayMap.addLayer(rect);
 
       d3.json(wof+geoID+".geojson",function(data){
-        outline = L.geoJson(data.geometry).addTo(displayMap);
+        outline = L.geoJson(data.geometry, { className : "black" }).addTo(displayMap);
       });
 
-      rect = new L.Rectangle(new L.LatLngBounds([northEast,southWest]), { className : "blue" });
-      displayMap.addLayer(rect);
+      //Polygon.getBounds().contains(MarketLatLng);
+      /* to do: 
+        check to see if the bounding box is contained by an existing extract
+      */
 
       d3.select("#make-request").style("display","block")
         .selectAll(".name").text(metro.properties.name);
