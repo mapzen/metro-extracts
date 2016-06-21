@@ -10,20 +10,101 @@
 <!--   <link rel='stylesheet' href='../assets/listnav.css'> -->
   <link rel='stylesheet' href='https://mapzen.com/common/styleguide/styles/styleguide.css'>
   <link rel='shortcut icon' href='/resources/favicon.ico'>
+  <style>
+    #map {
+      width: 500px;
+      height: 500px;
+    }
+    #map path {
+      fill: #d4645c;
+      stroke: #d4645c;
+      stroke-width: 2;
+      stroke-opacity: .3;
+      fill-opacity: .3;
+    }
+    #map path.blue {
+      fill: #6ea0a4;
+      stroke: #6ea0a4;
+    }
+    #map path.outline {
+      stroke: #000;
+      fill: transparent;
+    }
+    .leaflet-container a {
+      color: #6ea0a4;
+    }
+    .leaflet-container .leaflet-control-zoom-in,
+    .leaflet-container .leaflet-control-zoom-out {
+      color: #000;
+    }
+  </style>
 </head>
 <body class='data-pages'>
   <h1>Yippee, you are looking at the page for <span id="city-name"></span></h1>
+  <div id="map"></div>
 
 <!--   <script src='https://mapzen.com/common/styleguide/scripts/mapzen-styleguide.min.js'></script> -->
   <script src='https://code.jquery.com/jquery-2.2.0.min.js'></script>
   <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-<!--   <script src='../assets/jquery.fastLiveFilter.js'></script>
-  <script src='../assets/jquery-listnav.min.js'></script> -->
   <script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js'></script>
   <script src='https://mapzen.com/tangram/0.5/tangram.min.js'></script>
   <script type="text/javascript">
-    var city = window.location.hash.split("#")[1];
-    d3.select("#city-name").text(city.replace(/-/g," "));
+    function hasWebGL () {
+      try {
+        var canvas = document.createElement('canvas')
+        return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')))
+      } catch (x) {
+        return false
+      }
+    }
+    function initDisplayMap (bbox) {
+      bbox = bbox.split(",");
+      var southwest = L.latLng(bbox[1], bbox[0])
+      var northeast = L.latLng(bbox[3], bbox[2])
+      var options = {
+        scrollWheelZoom: false,
+        // Disables dragging on touch-detected devices
+        dragging: (window.self !== window.top && L.Browser.touch) ? false : true,
+        tap: (window.self !== window.top && L.Browser.touch) ? false : true,
+      }
+      var displayMap = L.map('map', options).fitBounds(L.latLngBounds(southwest, northeast))
+      var layer
+
+      if (hasWebGL() === true) {
+        layer = Tangram.leafletLayer({
+          scene: './scene.yaml',
+          attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/">Mapzen</a>'
+        })
+      } else {
+        layer = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
+          attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+        })
+      }
+      layer.addTo(displayMap)
+
+      var rect = new L.Rectangle(new L.LatLngBounds([southwest, northeast]), { className : "blue" });
+      displayMap.addLayer(rect);
+
+      return displayMap
+    }
+
+    String.prototype.capitalize = function() {
+      var words = this.split(" "),
+        capitalized = words.map(function(w){ return w.charAt(0).toUpperCase() + w.slice(1); });
+      return capitalized.join(" ");
+    }
+
+    var hashInfo = window.location.hash.split("#")[1];
+    hashInfo = hashInfo.split("&");
+    hashObj = {};
+    hashInfo.forEach(function(h){ 
+      var obj = h.split("=");
+      hashObj[obj[0]] = obj[1];
+    });
+
+    d3.select("#city-name").text(hashObj.city.replace(/-/g," ").capitalize());
+
+    var displayMap = initDisplayMap(hashObj.bbox);
   </script>
 </body>
 </html>

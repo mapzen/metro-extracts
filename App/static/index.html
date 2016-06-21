@@ -235,12 +235,7 @@
 
       return displayMap
     }
-    var mapurl = 'https://s3.amazonaws.com/metro-extracts.mapzen.com/cities.geojson'
-
-    var getNormalizedId = function (name) {
-      return name.toLowerCase().replace(/,?\s+/g, '-').replace(/_/g, '-')
-    }
-    var markers = {}
+    var mapurl = 'https://s3.amazonaws.com/metro-extracts.mapzen.com/cities.geojson';
 
     var onEachFeature = function (feature, layer) {
       if (feature.properties && feature.properties.name) {
@@ -258,28 +253,6 @@
       onEachFeature: onEachFeature
     }
     var displayMap = initDisplayMap(mapurl, geoJSONOptions)
-
-    // var start, rect, 
-    //   drawRect = false;
-    // displayMap.on('mousedown',function(e){
-    //   if (rect) return;
-    //   displayMap.dragging.disable();
-    //   drawRect = true;
-    //   start = e.latlng;
-    // });
-    // displayMap.on('mouseup',function(e){
-    //   displayMap.dragging.enable();
-    //   drawRect = false;
-    // });
-    // displayMap.on('mousemove',function(e){
-    //   if (!drawRect) return;
-    //   if (!rect) {
-    //     rect = new L.Rectangle(new L.LatLngBounds(start, e.latlng));
-    //     displayMap.addLayer(rect);
-    //   } else {
-    //     rect.setBounds(new L.LatLngBounds(start, e.latlng));
-    //   }
-    // });
 
     var nestedCities;
 
@@ -315,7 +288,10 @@
       var cities = countries.selectAll(".city").data(function(d){ return d.values; });
       cities.enter().append("a").attr("class","city");
       cities.text(function(d){ return d.city.replace(/-/g," "); })
-        .attr("href",function(d){ return "./city.html#"+d.city; });
+        .attr("href",function(d){ 
+          console.log(d);
+          return "./city.html#city="+d.city+"&bbox="+[d.bbox.left, d.bbox.bottom,d.bbox.right, d.bbox.top]; 
+        });
       cities.exit().remove();
     }
 
