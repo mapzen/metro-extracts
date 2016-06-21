@@ -290,7 +290,7 @@
       cities.text(function(d){ return d.city.replace(/-/g," "); })
         .attr("href",function(d){ 
           console.log(d);
-          return "./city.html#city="+d.city+"&bbox="+[d.bbox.left, d.bbox.bottom,d.bbox.right, d.bbox.top]; 
+          return "./city.html#city="+d.city+"&country="+d.country+"&bbox="+[d.bbox.left, d.bbox.bottom,d.bbox.right, d.bbox.top]; 
         });
       cities.exit().remove();
     }

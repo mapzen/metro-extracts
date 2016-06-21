@@ -12,8 +12,9 @@
   <link rel='shortcut icon' href='/resources/favicon.ico'>
   <style>
     #map {
-      width: 500px;
+      width: 100%;
       height: 500px;
+      border: 1px solid #ddd;
     }
     #map path {
       fill: #d4645c;
@@ -37,11 +38,25 @@
     .leaflet-container .leaflet-control-zoom-out {
       color: #000;
     }
+    .link {
+      border: 1px solid #ddd;
+      display: inline-block;
+      padding: 5px 15px;
+      margin-right: 10px;
+    }
   </style>
 </head>
 <body class='data-pages'>
   <h1>Yippee, you are looking at the page for <span id="city-name"></span></h1>
-  <div id="map"></div>
+  <div class="row">
+    <div class="col-sm-6">
+      <div id="map"></div>
+    </div>
+    <div class="col-sm-6">
+      <h2>Here are download links</h2>
+      <div id="downloads"></div>
+    </div>
+  </div>
 
 <!--   <script src='https://mapzen.com/common/styleguide/scripts/mapzen-styleguide.min.js'></script> -->
   <script src='https://code.jquery.com/jquery-2.2.0.min.js'></script>
@@ -105,6 +120,22 @@
     d3.select("#city-name").text(hashObj.city.replace(/-/g," ").capitalize());
 
     var displayMap = initDisplayMap(hashObj.bbox);
+
+    var links = [
+      { ext : ".osm.pbf", name : "OSM PBF" },
+      { ext : ".osm.xml", name : "OSM XML" },
+      { ext : ".osm2pgsql-shapefiles.zip", name : "OSM2PGSQL SHP" },
+      { ext : ".osm2pgsql-geojson.zip", name : "OSM2PGSQL GEOJSON" },
+      { ext : ".imposm-shapefiles.zip", name : "IMPOSM SHP" },
+      { ext : ".imposm-geojson.zip", name : "IMPOSM GEOJSON" },
+      { ext : ".water.coastline.zip", name : "WATER COASTLINE SHP" },
+      { ext : ".land.coastline.zip", name : "LAND COASTLINE SHP" },
+    ];
+
+    var links = d3.select("#downloads").selectAll(".link").data(links);
+    links.enter().append("a").attr("class","link")
+      .attr("href",function(d){ return "https://s3.amazonaws.com/metro-extracts.mapzen.com/" + hashObj.city + "_" + hashObj.country + d.ext; })
+      .text(function(d){ return d.name; })
   </script>
 </body>
 </html>
