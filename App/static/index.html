@@ -94,6 +94,9 @@
         background: rgba(110,160,164,.3);
         padding: 20px;
       }
+      #make-request .btn {
+        margin-bottom: 20px;
+      }
       #make-request .btn:hover {
         background: rgba(110,160,164,.4);
       }
@@ -166,11 +169,12 @@
         <input id='search_submit' type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
         <div class="autocomplete"></div>
       </div>
-      <div id='extracts'></div>
       <div id="make-request">
         <p>Hmm, we don't have an extract for <span class="name"></span> yet. Would you like to request one?</p>
         <a class="btn btn-transparent" target="_blank">Create <span class="name"></span> Request</a>
+        <p>Otherwise, would one of these work?</p>
       </div>
+      <div id='extracts'></div>
       <div class='row' id='request'>
         <p>Can't find what you're looking for? Request one!</p>
         <div class='btn btn-transparent'>Submit GH Issue</div>
@@ -280,6 +284,7 @@
         .entries(cityArray)
         .sort(function(a,b){ return (a.key < b.key) ? -1 : (a.key > b.key) ? 1 : 0; });
 
+      console.log(nestedCities);
       drawList(nestedCities);
     });
 
@@ -398,11 +403,22 @@
         p2 = L.latLng(bbox[3],bbox[2]),
         p3 = L.latLng(bbox[1],bbox[2]),
         p4 = L.latLng(bbox[3],bbox[0]);
-        
+
+      var nearby = [{
+        key : "Nearby Cities",
+        values : []
+      }];
+
       extractLayers.forEach(function(l){
         if (l.getBounds().contains(p1) || l.getBounds().contains(p2) || l.getBounds().contains(p3) || l.getBounds().contains(p4)) 
-          console.log(l.feature.properties.name)
+          nearby[0].values.push({
+            city : l.feature.properties.name.split("_")[0],
+            country : l.feature.properties.name.split("_")[1],
+            bbox : l.feature.bbox
+          })
       });
+      console.log(nearby)
+      drawList(nearby);
 
       d3.select("#make-request").style("display","block")
         .selectAll(".name").text(metro.properties.name);
