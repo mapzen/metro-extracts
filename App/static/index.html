@@ -94,11 +94,11 @@
         background: rgba(110,160,164,.3);
         padding: 20px;
       }
-      #make-request .btn {
-        margin-bottom: 20px;
-      }
       #make-request .btn:hover {
         background: rgba(110,160,164,.4);
+      }
+      .nearby-text {
+        display: none;
       }
       #request {
         background: rgb(224,224,224);
@@ -172,8 +172,8 @@
       <div id="make-request">
         <p>Hmm, we don't have an extract for <span class="name"></span> yet. Would you like to request one?</p>
         <a class="btn btn-transparent" target="_blank">Create <span class="name"></span> Request</a>
-        <p>Otherwise, would one of these work?</p>
       </div>
+      <p class="nearby-text">Otherwise, would one of these work?</p>
       <div id='extracts'></div>
       <div class='row' id='request'>
         <p>Can't find what you're looking for? Request one!</p>
@@ -417,8 +417,10 @@
             bbox : l.feature.bbox
           })
       });
-      console.log(nearby)
-      drawList(nearby);
+      if (nearby[0].values.length){
+        d3.select(".nearby-text").style("display","block");
+        drawList(nearby);
+      }
 
       d3.select("#make-request").style("display","block")
         .selectAll(".name").text(metro.properties.name);
@@ -467,6 +469,7 @@
       clearMap();
       d3.select("#request").style("display","block");
       d3.select("#make-request").style("display","none");
+      d3.select(".nearby-text").style("display","none");
     }
 
     var keyIndex = -1;
