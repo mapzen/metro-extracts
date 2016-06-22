@@ -29,6 +29,14 @@ def index():
     
     return render_template('index.html', metros_tree=metros_tree)
 
+@blueprint.route('/metros/<name>')
+def metro(name):
+    with open('cities.json') as file:
+        cities = json.load(file)
+        metro = {c['name']: c for c in cities}[name]
+    
+    return render_template('metro.html', metro=metro)
+
 @blueprint.route('/wof/<id>.geojson')
 def wof_geojson(id):
     ''' Proxy requests to http://whosonfirst.mapzen.com/spelunker/id/{id}.geojson
