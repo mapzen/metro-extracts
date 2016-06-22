@@ -18,12 +18,12 @@ def index():
     with open('cities.json') as file:
         cities = json.load(file)
     
-    ordered_cities = sorted(cities, key=itemgetter('whatever'))
+    ordered_cities = sorted(cities, key=itemgetter('country'))
     metros_tree = list()
     
-    for (whatever, sub_cities) in groupby(ordered_cities, itemgetter('whatever')):
+    for (country, sub_cities) in groupby(ordered_cities, itemgetter('country')):
         metros_tree.append({
-            'whatever': whatever,
+            'country': country,
             'metros': sorted(sub_cities, key=itemgetter('name'))
             })
     

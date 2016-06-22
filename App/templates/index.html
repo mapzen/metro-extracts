@@ -2,13 +2,13 @@
 
 {% block content %}
     <ul>
-        {% for metro_tree in metros_tree %}
+        {% for country_metros in metros_tree %}
             <li>
-                {{ metro_tree.whatever }}
+                {{ country_metros.country }}
                 <ul>
-                    {% for metro in metro_tree.metros %}
+                    {% for metro in country_metros.metros %}
                         <li>
-                            {{ metro.name }} in {{ metro.whatever }}, {{ metro.region }}
+                            {{ metro.name }} in {{ metro.country }}, {{ metro.region }}
                         </li>
                     {% endfor %}
                 </ul>
