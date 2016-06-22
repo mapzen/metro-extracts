@@ -235,12 +235,7 @@
 
       return displayMap
     }
-    var mapurl = 'https://s3.amazonaws.com/metro-extracts.mapzen.com/cities.geojson'
-
-    var getNormalizedId = function (name) {
-      return name.toLowerCase().replace(/,?\s+/g, '-').replace(/_/g, '-')
-    }
-    var markers = {}
+    var mapurl = 'https://s3.amazonaws.com/metro-extracts.mapzen.com/cities.geojson';
 
     var onEachFeature = function (feature, layer) {
       if (feature.properties && feature.properties.name) {
@@ -293,7 +288,10 @@
       var cities = countries.selectAll(".city").data(function(d){ return d.values; });
       cities.enter().append("a").attr("class","city");
       cities.text(function(d){ return d.city.replace(/-/g," "); })
-        .attr("href",function(d){ return "./city.html#"+d.city; });
+        .attr("href",function(d){ 
+          console.log(d);
+          return "./city.html#city="+d.city+"&country="+d.country+"&bbox="+[d.bbox.left, d.bbox.bottom,d.bbox.right, d.bbox.top]; 
+        });
       cities.exit().remove();
     }
 
