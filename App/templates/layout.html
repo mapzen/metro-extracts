@@ -1,3 +1,22 @@
-[yo I am a page]
-
-{% block content %}{% endblock %}
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='x-ua-compatible' content='ie=edge'>
+  <title>Mapzen</title>
+  <meta name='description' content=''>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css'>
+  <link rel='stylesheet' href='https://mapzen.com/common/styleguide/styles/styleguide.css'>
+  <style>
+    {% block styles %}{% endblock %}
+  </style>
+</head>
+<body class='data-pages'>
+  {% block content %}{% endblock %}
+  <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js'></script>
+  <script src='https://mapzen.com/tangram/0.5/tangram.min.js'></script>
+  {% block script %}{% endblock %}
+</body>
+</html>

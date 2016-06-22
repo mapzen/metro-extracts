@@ -1,18 +1,173 @@
 {% extends "layout.html" %}
 
+{% block styles %}
+  body.data-pages {
+    margin-top: 0;
+  }
+  body.data-pages #search_input{
+    height:41px;
+  }
+  body.data-pages .inline-submit .btn { 
+    background: #666; 
+    color: white;
+  }
+  body.data-pages .inline-submit .btn:hover { 
+    background: #555; 
+  }
+
+  #map {
+    border-right: 1px solid rgb(224,224,224);
+  }
+  #map path {
+    fill: #d4645c;
+    stroke: #d4645c;
+    stroke-width: 2;
+    stroke-opacity: .3;
+    fill-opacity: .3;
+  }
+  #map path.blue {
+    fill: #6ea0a4;
+    stroke: #6ea0a4;
+  }
+  #map path.outline {
+    stroke: #000;
+    fill: transparent;
+  }
+  .drag-icon {
+    width: 10px;
+    height: 10px;
+    background: #000;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .leaflet-container a {
+    color: #6ea0a4;
+  }
+  .leaflet-container .leaflet-control-zoom-in,
+  .leaflet-container .leaflet-control-zoom-out {
+    color: #000;
+  }
+
+  #search-box {
+    margin: 20px 0 40px;
+  }
+  .data-filter-label {
+    position:relative;
+    font-size:12px;
+    line-height:1;
+    font-weight:bold;
+    color:#000;
+    text-transform:uppercase
+  }
+  .country {
+    border-top: 1px solid rgb(224,224,224);
+    margin-top: 20px;
+  }
+  .country-name {
+    background: rgb(224,224,224);
+    font-weight: bold;
+    text-transform: uppercase;
+    display: inline-block;
+    letter-spacing: 1px;
+    padding: 2px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    float: left;
+  }
+  .country-name:hover {
+    background: #ccc;
+  }
+  .city {
+    text-transform: capitalize;
+    margin: 3px 0 3px 10px;
+    cursor: pointer;
+    clear: both;
+    color: #000;
+    font-weight: normal;
+    display: block;
+  }
+  .city:hover {
+    text-decoration: underline;
+  }
+  #make-request {
+    display: none;
+    background: rgba(110,160,164,.3);
+    padding: 20px;
+  }
+  #make-request .btn:hover {
+    background: rgba(110,160,164,.4);
+  }
+  #request {
+    background: rgb(224,224,224);
+    margin: 50px 0;
+    padding: 20px;
+  }
+  .autocomplete {
+    border: 1px solid #ddd;
+  }
+  .suggestion {
+    border-bottom: 1px solid #ddd;
+    padding: 1px 0 1px 15px;
+    color: #808080;
+    cursor: pointer;
+  }
+  .suggestion.selected {
+    color: #000;
+    background: #ddd;
+  }
+  .suggestion:hover {
+    color: #000;
+    background: #eee;
+  }
+  .suggestion:last-child {
+    margin-bottom: -1px;
+  }
+{% endblock %}
+
 {% block content %}
-    <ul>
+  <div class='container-fluid'>
+    <div class='col-xs-6' style='position: fixed;'>
+      <div id='map'></div>
+    </div>
+    <div class='col-xs-6' style='float: right;'>
+      <div class='row headroom'>
+      <div class='col-xs-12 text-center'>
+        <h1>metro extracts</h1>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col-xs-12'>
+        <p>Now it’s even easier to get local data so you can start building cool stuff. Each week, we automatically extract the latest <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area shapefiles in a variety of formats for you to use.</p>
+        <p><a>Format Guide</a> | <a>Documentation</a> | <a>Tutorial</a> | <a>Request an Extract</a></p>
+      </div>
+    </div>
+      <div class='row inline-submit' id='search-box'>
+        <label class='data-filter-label' for='search_input'>Filter Extracts by City or Region</label>
+        <input type='search' class='hasclear col-sm-9 col-xs-8' id='search_input' placeholder='example: Los Angeles' type='text'>
+        <input id='search_submit' type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
+        <div class="autocomplete"></div>
+      </div>
+      <div id='extracts'>
         {% for country_metros in metros_tree %}
-            <li>
-                {{ country_metros.country }}
-                <ul>
-                    {% for metro in country_metros.metros %}
-                        <li>
-                            <a href="metros/{{ metro.name }}">{{ metro.name }}</a> in {{ metro.country }}, {{ metro.region }}
-                        </li>
-                    {% endfor %}
-                </ul>
-            </li>
+          <div class="country">
+            <div class="country-name">{{ country_metros.country }}</div>
+            {% for metro in country_metros.metros %}
+              <a class="city" href="metros/{{ metro.name }}">{{ metro.name }}</a>
+            {% endfor %}
+          </div>
         {% endfor %}
-    </ul>
+      </div>
+      <div id="make-request">
+        <p>Hmm, we don't have an extract for <span class="name"></span> yet. Would you like to request one?</p>
+        <a class="btn btn-transparent" target="_blank">Create <span class="name"></span> Request</a>
+      </div>
+      <div class='row' id='request'>
+        <p>Can't find what you're looking for? Request one!</p>
+        <div class='btn btn-transparent'>Submit GH Issue</div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src='../static/index.js'></script>
 {% endblock %}
