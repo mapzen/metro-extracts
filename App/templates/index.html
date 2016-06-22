@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <ul>
+        {% for (key, city) in cities.items() %}
+            <li>
+                {{ key }} in {{ city.whatever }}, {{ city.region }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

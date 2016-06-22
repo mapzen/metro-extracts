@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, Response
+from flask import Blueprint, jsonify, Response, render_template
 import json
 
 import requests
@@ -15,8 +15,8 @@ def apply_blueprint(app):
 def index():
     with open('cities.json') as file:
         cities = json.load(file)
-    return jsonify({rk: list(sorted(region['cities'].keys()))
-                    for (rk, region) in cities['regions'].items()})
+    
+    return render_template('index.html', cities=cities)
 
 @blueprint.route('/wof/<id>.geojson')
 def wof_geojson(id):
