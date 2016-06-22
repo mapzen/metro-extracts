@@ -197,6 +197,8 @@
         return false
       }
     }
+
+    var extractLayers = [];
     function initDisplayMap (geoJSONUrl, geoJSONOptions) {
       var southwest = L.latLng(0, -125)
       var northeast = L.latLng(0, 125)
@@ -226,7 +228,7 @@
         url: geoJSONUrl,
         dataType: 'json',
         success: function (data) {
-          L.geoJson(data, geoJSONOptions).addTo(displayMap)
+          L.geoJson(data, geoJSONOptions).addTo(displayMap);
         },
         error: function (request, status, error) {
           // do nothing
@@ -240,9 +242,9 @@
     var getNormalizedId = function (name) {
       return name.toLowerCase().replace(/,?\s+/g, '-').replace(/_/g, '-')
     }
-    var markers = {}
 
     var onEachFeature = function (feature, layer) {
+      extractLayers.push(layer);
       if (feature.properties && feature.properties.name) {
         var text = feature.properties.name;
         layer.on('click', function (e) {
@@ -334,7 +336,8 @@
       
       d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
           var bbox = json.features[0].bbox;
-          displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]])
+          displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]);
+
           if (json.features[0].properties.layer == "locality") displayMap.zoomOut(2);
           if (d3.selectAll(".city")[0].length == 0){
             requestExtract(json.features[0]);
@@ -390,10 +393,16 @@
         displayMap.addLayer(outline);
       });
 
-      //Polygon.getBounds().contains(MarketLatLng);
-      /* to do: 
-        check to see if the bounding box is contained by an existing extract
-      */
+      var bbox = metro.bbox,
+        p1 = L.latLng(bbox[1],bbox[0]),
+        p2 = L.latLng(bbox[3],bbox[2]),
+        p3 = L.latLng(bbox[1],bbox[2]),
+        p4 = L.latLng(bbox[3],bbox[0]);
+        
+      extractLayers.forEach(function(l){
+        if (l.getBounds().contains(p1) || l.getBounds().contains(p2) || l.getBounds().contains(p3) || l.getBounds().contains(p4)) 
+          console.log(l.feature.properties.name)
+      });
 
       d3.select("#make-request").style("display","block")
         .selectAll(".name").text(metro.properties.name);
