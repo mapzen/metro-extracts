@@ -2,9 +2,16 @@
 
 {% block content %}
     <ul>
-        {% for (key, city) in cities.items() %}
+        {% for metro_tree in metros_tree %}
             <li>
-                {{ key }} in {{ city.whatever }}, {{ city.region }}
+                {{ metro_tree.whatever }}
+                <ul>
+                    {% for metro in metro_tree.metros %}
+                        <li>
+                            {{ metro.name }} in {{ metro.whatever }}, {{ metro.region }}
+                        </li>
+                    {% endfor %}
+                </ul>
             </li>
         {% endfor %}
     </ul>

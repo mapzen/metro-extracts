@@ -1,4 +1,6 @@
 from flask import Blueprint, jsonify, Response, render_template
+from itertools import groupby
+from operator import itemgetter
 import json
 
 import requests
@@ -16,7 +18,16 @@ def index():
     with open('cities.json') as file:
         cities = json.load(file)
     
-    return render_template('index.html', cities=cities)
+    ordered_cities = sorted(cities, key=itemgetter('whatever'))
+    metros_tree = list()
+    
+    for (whatever, sub_cities) in groupby(ordered_cities, itemgetter('whatever')):
+        metros_tree.append({
+            'whatever': whatever,
+            'metros': sorted(sub_cities, key=itemgetter('name'))
+            })
+    
+    return render_template('index.html', metros_tree=metros_tree)
 
 @blueprint.route('/wof/<id>.geojson')
 def wof_geojson(id):
