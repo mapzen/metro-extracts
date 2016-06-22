@@ -59,7 +59,7 @@ var displayMap = initDisplayMap(mapurl, geoJSONOptions)
 
 var nestedCities;
 
-d3.json('./cities.json',function(data) {
+d3.json('/cities.json',function(data) {
   var cityArray = [];
   for (region in data.regions){
     for (city in data.regions[region].cities) {
@@ -76,7 +76,7 @@ d3.json('./cities.json',function(data) {
     .entries(cityArray)
     .sort(function(a,b){ return (a.key < b.key) ? -1 : (a.key > b.key) ? 1 : 0; });
 
-  drawList(nestedCities);
+  //drawList(nestedCities);
 });
 
 function drawList(data) {

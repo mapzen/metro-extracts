@@ -1,5 +1,119 @@
 {% extends "layout.html" %}
 
+{% block styles %}
+  #map {
+    width: 100%;
+    height: 500px;
+    border: 1px solid #ddd;
+  }
+  #map path {
+    fill: #d4645c;
+    stroke: #d4645c;
+    stroke-width: 2;
+    stroke-opacity: .3;
+    fill-opacity: .3;
+  }
+  #map path.blue {
+    fill: #6ea0a4;
+    stroke: #6ea0a4;
+  }
+  #map path.outline {
+    stroke: #000;
+    fill: transparent;
+  }
+  .leaflet-container a {
+    color: #6ea0a4;
+  }
+  .leaflet-container .leaflet-control-zoom-in,
+  .leaflet-container .leaflet-control-zoom-out {
+    color: #000;
+  }
+  .link {
+    border: 1px solid #ddd;
+    display: inline-block;
+    padding: 5px 15px;
+    margin-right: 10px;
+  }
+{% endblock %}
+
 {% block content %}
-    <h1>{{ metro.name }}</h1>
+  <h1>Yippee, you are looking at the page for {{ metro.name }}</h1>
+  <div class="row">
+    <div class="col-sm-6">
+      <div id="map"></div>
+    </div>
+    <div class="col-sm-6">
+      <h2>Download Links</h2>
+      <div id="downloads"></div>
+      <h2>Helpful Messaging</h2>
+      <p>Now it’s even easier to get local data so you can start building cool stuff. Each week, we automatically extract the latest <a href="http://openstreetmap.org/">OpenStreetMap</a> data into manageable, metro-area shapefiles in a variety of formats for you to use.</p><p><strong>Don’t see your city?</strong> Contribute by <a href="https://github.com/mapzen/metroextractor-cities/blob/master/cities.json">submitting a pull request on our list of cities</a>, or <a href="https://github.com/mapzen/metroextractor-cities/issues">just ask by opening a new issue</a>.</p><p><strong>Need help?</strong> <a href="https://mapzen.com/documentation/metro-extracts/">Check out the documentation.</a></p><p>Mapzen Metro Extracts are produced via a <a href="https://github.com/mapzen/chef-metroextractor">chef cookbook</a> derived from the work of <a href="http://metro.teczno.com">Michal Migurski</a>.</p><p>For more granular OpenStreetMap data, we offer a free, hosted <a href="https://mapzen.com/documentation/vector-tiles/">Vector Tile service</a> -- sign up for your <a href="https://mapzen.com/developers/">API key here</a>.</p>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  function hasWebGL () {
+    try {
+      var canvas = document.createElement('canvas')
+      return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')))
+    } catch (x) {
+      return false
+    }
+  }
+  function initDisplayMap (bbox) {
+    bbox = bbox.split(",");
+    var southwest = L.latLng(bbox[1], bbox[0])
+    var northeast = L.latLng(bbox[3], bbox[2])
+    var options = {
+      scrollWheelZoom: false,
+      // Disables dragging on touch-detected devices
+      dragging: (window.self !== window.top && L.Browser.touch) ? false : true,
+      tap: (window.self !== window.top && L.Browser.touch) ? false : true,
+    }
+    var displayMap = L.map('map', options).fitBounds(L.latLngBounds(southwest, northeast))
+    var layer
+
+    if (hasWebGL() === true) {
+      layer = Tangram.leafletLayer({
+        scene: './scene.yaml',
+        attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/">Mapzen</a>'
+      })
+    } else {
+      layer = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
+        attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+      })
+    }
+    layer.addTo(displayMap)
+
+    var rect = new L.Rectangle(new L.LatLngBounds([southwest, northeast]), { className : "blue" });
+    displayMap.addLayer(rect);
+
+    return displayMap
+  }
+
+  String.prototype.capitalize = function() {
+    var words = this.split(" "),
+      capitalized = words.map(function(w){ return w.charAt(0).toUpperCase() + w.slice(1); });
+    return capitalized.join(" ");
+  }
+
+  d3.select("#city-name").text({{ metro.city }}.replace(/-/g," ").capitalize());
+
+  var displayMap = initDisplayMap({{ metro.bbox }});
+
+  var links = [
+    { ext : ".osm.pbf", name : "OSM PBF" },
+    { ext : ".osm.xml", name : "OSM XML" },
+    { ext : ".osm2pgsql-shapefiles.zip", name : "OSM2PGSQL SHP" },
+    { ext : ".osm2pgsql-geojson.zip", name : "OSM2PGSQL GEOJSON" },
+    { ext : ".imposm-shapefiles.zip", name : "IMPOSM SHP" },
+    { ext : ".imposm-geojson.zip", name : "IMPOSM GEOJSON" },
+    { ext : ".water.coastline.zip", name : "WATER COASTLINE SHP" },
+    { ext : ".land.coastline.zip", name : "LAND COASTLINE SHP" },
+  ];
+
+  var links = d3.select("#downloads").selectAll(".link").data(links);
+  links.enter().append("a").attr("class","link")
+    .attr("href",function(d){ return "https://s3.amazonaws.com/metro-extracts.mapzen.com/" + hashObj.city + "_" + hashObj.country + d.ext; })
+    .text(function(d){ return d.name; })
 {% endblock %}

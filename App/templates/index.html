@@ -152,7 +152,7 @@
           <div class="country">
             <div class="country-name">{{ country_metros.country }}</div>
             {% for metro in country_metros.metros %}
-              <a class="city" href="metros/{{ metro.name }}">{{ metro.name }}</a>
+              <a class="city" href="metros/{{ metro.name }}">{{ metro.name.split("_")[0] }}</a>
             {% endfor %}
           </div>
         {% endfor %}
