@@ -1,4 +1,6 @@
-from flask import Blueprint, jsonify, Response
+from flask import Blueprint, jsonify, Response, render_template
+from itertools import groupby
+from operator import itemgetter
 import json
 
 import requests
@@ -15,8 +17,25 @@ def apply_blueprint(app):
 def index():
     with open('cities.json') as file:
         cities = json.load(file)
-    return jsonify({rk: list(sorted(region['cities'].keys()))
-                    for (rk, region) in cities['regions'].items()})
+    
+    ordered_cities = sorted(cities, key=itemgetter('country'))
+    metros_tree = list()
+    
+    for (country, sub_cities) in groupby(ordered_cities, itemgetter('country')):
+        metros_tree.append({
+            'country': country,
+            'metros': sorted(sub_cities, key=itemgetter('name'))
+            })
+    
+    return render_template('index.html', metros_tree=metros_tree)
+
+@blueprint.route('/metros/<name>')
+def metro(name):
+    with open('cities.json') as file:
+        cities = json.load(file)
+        metro = {c['name']: c for c in cities}[name]
+    
+    return render_template('metro.html', metro=metro)
 
 @blueprint.route('/wof/<id>.geojson')
 def wof_geojson(id):

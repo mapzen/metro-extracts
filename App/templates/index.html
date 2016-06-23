@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <ul>
+        {% for country_metros in metros_tree %}
+            <li>
+                {{ country_metros.country }}
+                <ul>
+                    {% for metro in country_metros.metros %}
+                        <li>
+                            <a href="metros/{{ metro.name }}">{{ metro.name }}</a> in {{ metro.country }}, {{ metro.region }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
