@@ -59,6 +59,9 @@
       .leaflet-container .leaflet-control-zoom-out {
         color: #000;
       }
+      #extracts {
+        margin-bottom: 50px;
+      }
       .country {
         border-top: 1px solid rgb(224,224,224);
         margin-top: 20px;
@@ -97,9 +100,11 @@
       #make-request .btn:hover {
         background: rgba(110,160,164,.4);
       }
+      .nearby-text {
+        display: none;
+      }
       #request {
         background: rgb(224,224,224);
-        margin: 50px 0;
         padding: 20px;
       }
       .autocomplete {
@@ -166,12 +171,13 @@
         <input id='search_submit' type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
         <div class="autocomplete"></div>
       </div>
+      <p class="nearby-text">We do have some extracts that are near to your request: </p>
       <div id='extracts'></div>
       <div id="make-request">
         <p>Hmm, we don't have an extract for <span class="name"></span> yet. Would you like to request one?</p>
         <a class="btn btn-transparent" target="_blank">Create <span class="name"></span> Request</a>
       </div>
-      <div class='row' id='request'>
+      <div id='request'>
         <p>Can't find what you're looking for? Request one!</p>
         <div class='btn btn-transparent'>Submit GH Issue</div>
       </div>
@@ -197,6 +203,8 @@
         return false
       }
     }
+
+    var extractLayers = [];
     function initDisplayMap (geoJSONUrl, geoJSONOptions) {
       var southwest = L.latLng(0, -125)
       var northeast = L.latLng(0, 125)
@@ -226,7 +234,7 @@
         url: geoJSONUrl,
         dataType: 'json',
         success: function (data) {
-          L.geoJson(data, geoJSONOptions).addTo(displayMap)
+          L.geoJson(data, geoJSONOptions).addTo(displayMap);
         },
         error: function (request, status, error) {
           // do nothing
@@ -235,9 +243,11 @@
 
       return displayMap
     }
+
     var mapurl = 'https://s3.amazonaws.com/metro-extracts.mapzen.com/cities.geojson';
 
     var onEachFeature = function (feature, layer) {
+      extractLayers.push(layer);
       if (feature.properties && feature.properties.name) {
         var text = feature.properties.name;
         layer.on('click', function (e) {
@@ -273,6 +283,7 @@
         .entries(cityArray)
         .sort(function(a,b){ return (a.key < b.key) ? -1 : (a.key > b.key) ? 1 : 0; });
 
+      console.log(nestedCities);
       drawList(nestedCities);
     });
 
@@ -332,7 +343,8 @@
       
       d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
           var bbox = json.features[0].bbox;
-          displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]])
+          displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]);
+
           if (json.features[0].properties.layer == "locality") displayMap.zoomOut(2);
           if (d3.selectAll(".city")[0].length == 0){
             requestExtract(json.features[0]);
@@ -388,10 +400,29 @@
         displayMap.addLayer(outline);
       });
 
-      //Polygon.getBounds().contains(MarketLatLng);
-      /* to do: 
-        check to see if the bounding box is contained by an existing extract
-      */
+      var bbox = metro.bbox,
+        p1 = L.latLng(bbox[1],bbox[0]),
+        p2 = L.latLng(bbox[3],bbox[2]),
+        p3 = L.latLng(bbox[1],bbox[2]),
+        p4 = L.latLng(bbox[3],bbox[0]);
+
+      var nearby = [{
+        key : "Nearby Cities",
+        values : []
+      }];
+
+      extractLayers.forEach(function(l){
+        if (l.getBounds().contains(p1) || l.getBounds().contains(p2) || l.getBounds().contains(p3) || l.getBounds().contains(p4)) 
+          nearby[0].values.push({
+            city : l.feature.properties.name.split("_")[0],
+            country : l.feature.properties.name.split("_")[1],
+            bbox : l.feature.bbox
+          })
+      });
+      if (nearby[0].values.length){
+        d3.select(".nearby-text").style("display","block");
+        drawList(nearby);
+      }
 
       d3.select("#make-request").style("display","block")
         .selectAll(".name").text(metro.properties.name);
@@ -440,6 +471,7 @@
       clearMap();
       d3.select("#request").style("display","block");
       d3.select("#make-request").style("display","none");
+      d3.select(".nearby-text").style("display","none");
     }
 
     var keyIndex = -1;
