@@ -59,6 +59,9 @@
       .leaflet-container .leaflet-control-zoom-out {
         color: #000;
       }
+      #extracts {
+        margin-bottom: 50px;
+      }
       .country {
         border-top: 1px solid rgb(224,224,224);
         margin-top: 20px;
@@ -99,11 +102,9 @@
       }
       .nearby-text {
         display: none;
-        margin-top: 50px;
       }
       #request {
         background: rgb(224,224,224);
-        margin: 50px 0;
         padding: 20px;
       }
       .autocomplete {
@@ -170,13 +171,13 @@
         <input id='search_submit' type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
         <div class="autocomplete"></div>
       </div>
+      <p class="nearby-text">We do have some extracts that are near to your request: </p>
+      <div id='extracts'></div>
       <div id="make-request">
         <p>Hmm, we don't have an extract for <span class="name"></span> yet. Would you like to request one?</p>
         <a class="btn btn-transparent" target="_blank">Create <span class="name"></span> Request</a>
       </div>
-      <p class="nearby-text">We do have some extracts that are nearby to your request: </p>
-      <div id='extracts'></div>
-      <div class='row' id='request'>
+      <div id='request'>
         <p>Can't find what you're looking for? Request one!</p>
         <div class='btn btn-transparent'>Submit GH Issue</div>
       </div>
@@ -242,7 +243,7 @@
 
       return displayMap
     }
-    
+
     var mapurl = 'https://s3.amazonaws.com/metro-extracts.mapzen.com/cities.geojson';
 
     var onEachFeature = function (feature, layer) {
