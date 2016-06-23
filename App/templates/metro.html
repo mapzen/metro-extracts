@@ -52,6 +52,8 @@
 {% endblock %}
 
 {% block script %}
+  var metro = {{metro|tojson|safe}};
+
   function hasWebGL () {
     try {
       var canvas = document.createElement('canvas')
@@ -61,9 +63,8 @@
     }
   }
   function initDisplayMap (bbox) {
-    bbox = bbox.split(",");
-    var southwest = L.latLng(bbox[1], bbox[0])
-    var northeast = L.latLng(bbox[3], bbox[2])
+    var southwest = L.latLng(metro.bbox.bottom, metro.bbox.right)
+    var northeast = L.latLng(metro.bbox.top, metro.bbox.left)
     var options = {
       scrollWheelZoom: false,
       // Disables dragging on touch-detected devices
@@ -75,7 +76,7 @@
 
     if (hasWebGL() === true) {
       layer = Tangram.leafletLayer({
-        scene: './scene.yaml',
+        scene: '../static/scene.yaml',
         attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/">Mapzen</a>'
       })
     } else {
@@ -97,9 +98,9 @@
     return capitalized.join(" ");
   }
 
-  d3.select("#city-name").text({{ metro.city }}.replace(/-/g," ").capitalize());
+  d3.select("#city-name").text(metro.name.replace(/-/g," ").capitalize());
 
-  var displayMap = initDisplayMap({{ metro.bbox }});
+  var displayMap = initDisplayMap(metro.bbox);
 
   var links = [
     { ext : ".osm.pbf", name : "OSM PBF" },
@@ -114,6 +115,6 @@
 
   var links = d3.select("#downloads").selectAll(".link").data(links);
   links.enter().append("a").attr("class","link")
-    .attr("href",function(d){ return "https://s3.amazonaws.com/metro-extracts.mapzen.com/" + hashObj.city + "_" + hashObj.country + d.ext; })
+    .attr("href",function(d){ return "https://s3.amazonaws.com/metro-extracts.mapzen.com/" + metro.name + d.ext; })
     .text(function(d){ return d.name; })
 {% endblock %}
