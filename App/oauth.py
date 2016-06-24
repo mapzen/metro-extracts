@@ -7,7 +7,6 @@ from uuid import uuid4
 from time import time
 
 from requests import get, post
-from requests_oauthlib import OAuth2Session
 
 from flask import (
     Blueprint, session, request, render_template, redirect, make_response,
