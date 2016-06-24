@@ -200,10 +200,11 @@
       layer.addTo(displayMap);
 
       d3.json(geoJSONUrl, function(data){
+        console.log(data);
         L.geoJson(data, geoJSONOptions).addTo(displayMap);
       });
 
-      return displayMap
+      return displayMap;
     }
 
     var mapurl = 'https://s3.amazonaws.com/metro-extracts.mapzen.com/cities.geojson';
