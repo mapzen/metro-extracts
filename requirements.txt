@@ -13,3 +13,6 @@ gunicorn==19.5.0
 
 requests==2.10.0
 uritemplate==0.6
+
+oauthlib==1.1.2
+requests-oauthlib==0.6.1
