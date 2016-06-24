@@ -37,14 +37,23 @@
 {% endblock %}
 
 {% block content %}
-  <h1>Yippee, you are looking at the page for {{ metro.name }}</h1>
+  <h1>Yippee, you are looking at the page for {{ metro.name.split("_")[0] }}</h1>
   <div class="row">
     <div class="col-sm-6">
       <div id="map"></div>
     </div>
     <div class="col-sm-6">
       <h2>Download Links</h2>
-      <div id="downloads"></div>
+      <div id="downloads">
+        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.osm.pbf">OSM PBF</a>
+        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.osm.xml">OSM XML</a>
+        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.osm2pgsql-shapefiles.zip">OSM2PGSQL SHP</a>
+        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.osm2pgsql-geojson.zip">OSM2PGSQL GEOJSON</a>
+        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.imposm-shapefiles.zip">IMPOSM SHP</a>
+        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.imposm-geojson.zip">IMPOSM GEOJSON</a>
+        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.water.coastline.zip">WATER COASTLINE SHP</a>
+        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.land.coastline.zip">LAND COASTLINE SHP</a>
+      </div>
       <h2>Helpful Messaging</h2>
       <p>Now it’s even easier to get local data so you can start building cool stuff. Each week, we automatically extract the latest <a href="http://openstreetmap.org/">OpenStreetMap</a> data into manageable, metro-area shapefiles in a variety of formats for you to use.</p><p><strong>Don’t see your city?</strong> Contribute by <a href="https://github.com/mapzen/metroextractor-cities/blob/master/cities.json">submitting a pull request on our list of cities</a>, or <a href="https://github.com/mapzen/metroextractor-cities/issues">just ask by opening a new issue</a>.</p><p><strong>Need help?</strong> <a href="https://mapzen.com/documentation/metro-extracts/">Check out the documentation.</a></p><p>Mapzen Metro Extracts are produced via a <a href="https://github.com/mapzen/chef-metroextractor">chef cookbook</a> derived from the work of <a href="http://metro.teczno.com">Michal Migurski</a>.</p><p>For more granular OpenStreetMap data, we offer a free, hosted <a href="https://mapzen.com/documentation/vector-tiles/">Vector Tile service</a> -- sign up for your <a href="https://mapzen.com/developers/">API key here</a>.</p>
     </div>
@@ -98,23 +107,21 @@
     return capitalized.join(" ");
   }
 
-  d3.select("#city-name").text(metro.name.replace(/-/g," ").capitalize());
-
   var displayMap = initDisplayMap(metro.bbox);
 
-  var links = [
-    { ext : ".osm.pbf", name : "OSM PBF" },
-    { ext : ".osm.xml", name : "OSM XML" },
-    { ext : ".osm2pgsql-shapefiles.zip", name : "OSM2PGSQL SHP" },
-    { ext : ".osm2pgsql-geojson.zip", name : "OSM2PGSQL GEOJSON" },
-    { ext : ".imposm-shapefiles.zip", name : "IMPOSM SHP" },
-    { ext : ".imposm-geojson.zip", name : "IMPOSM GEOJSON" },
-    { ext : ".water.coastline.zip", name : "WATER COASTLINE SHP" },
-    { ext : ".land.coastline.zip", name : "LAND COASTLINE SHP" },
-  ];
+  // var links = [
+  //   { ext : ".osm.pbf", name : "OSM PBF" },
+  //   { ext : ".osm.xml", name : "OSM XML" },
+  //   { ext : ".osm2pgsql-shapefiles.zip", name : "OSM2PGSQL SHP" },
+  //   { ext : ".osm2pgsql-geojson.zip", name : "OSM2PGSQL GEOJSON" },
+  //   { ext : ".imposm-shapefiles.zip", name : "IMPOSM SHP" },
+  //   { ext : ".imposm-geojson.zip", name : "IMPOSM GEOJSON" },
+  //   { ext : ".water.coastline.zip", name : "WATER COASTLINE SHP" },
+  //   { ext : ".land.coastline.zip", name : "LAND COASTLINE SHP" },
+  // ];
 
-  var links = d3.select("#downloads").selectAll(".link").data(links);
-  links.enter().append("a").attr("class","link")
-    .attr("href",function(d){ return "https://s3.amazonaws.com/metro-extracts.mapzen.com/" + metro.name + d.ext; })
-    .text(function(d){ return d.name; })
+  // var links = d3.select("#downloads").selectAll(".link").data(links);
+  // links.enter().append("a").attr("class","link")
+  //   .attr("href",function(d){ return "https://s3.amazonaws.com/metro-extracts.mapzen.com/" + metro.name + d.ext; })
+  //   .text(function(d){ return d.name; })
 {% endblock %}

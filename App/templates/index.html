@@ -250,7 +250,7 @@
     countries.select(".country-name").text(function(d){ return d.country; });
     var cities = countries.selectAll(".city").data(function(d){ return d.metros; });
     cities.enter().append("a").attr("class","city");
-    cities.text(function(d){ return d.name.replace(/-/g," "); })
+    cities.text(function(d){ return d.name.split("_")[0].replace(/-/g," "); })
       .attr("href",function(d){ 
         return "./metro/"+d.name; 
       });

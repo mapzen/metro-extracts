@@ -29,7 +29,7 @@ def index():
     
     return render_template('index.html', metros_tree=metros_tree)
 
-@blueprint.route('/metros/<name>')
+@blueprint.route('/metro/<name>')
 def metro(name):
     with open('cities.json') as file:
         cities = json.load(file)
