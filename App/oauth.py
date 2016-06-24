@@ -10,7 +10,7 @@ from requests import get, post
 
 from flask import (
     Blueprint, session, request, render_template, redirect, make_response,
-    current_app, Response
+    current_app, Response, url_for
     )
 
 blueprint = Blueprint('OAuth', __name__, template_folder='templates/oauth')
@@ -87,7 +87,7 @@ def make_401_response():
     session['states'] = [dict(redirect=request.url, created=time())]
 
     args = dict(href=mapzen_authorize_url)
-    args.update(redirect_uri=urljoin(request.url, '/oauth/callback'))
+    args.update(redirect_uri=urljoin(request.url, url_for('.get_oauth_callback')))
     args.update(client_id=current_app.config['MAPZEN_APP_ID'])
 
     return make_response(render_template('error-authenticate.html', **args), 401)
@@ -103,7 +103,7 @@ def absolute_url(request, location):
     return urljoin(actual_url, location)
 
 @blueprint.route('/oauth/logout', methods=['POST'])
-def logout():
+def post_logout():
     '''
     '''
     if 'id' in session:
@@ -115,15 +115,15 @@ def logout():
     return redirect(absolute_url(request, '/'), 302)
 
 @blueprint.route('/oauth/hello')
-@check_authentication
 @errors_logged
-def hello():
+@check_authentication
+def get_hello():
     return '''
-        <form action="/oauth/logout" method="post">
+        <form action="{}" method="post">
         Hey there, {}.
         <button>log out</button>
         </form>
-        '''.format(session['id']['nickname'])
+        '''.format(url_for('.post_logout'), session['id']['nickname'])
 
 @blueprint.route('/oauth/callback')
 @errors_logged
@@ -151,7 +151,7 @@ def get_oauth_callback():
     #
     data = dict(client_id=current_app.config['MAPZEN_APP_ID'],
                 client_secret=current_app.config['MAPZEN_APP_SECRET'],
-                redirect_uri=urljoin(request.url, '/oauth/callback'),
+                redirect_uri=urljoin(request.url, url_for('.get_oauth_callback')),
                 code=code, grant_type='authorization_code')
 
     resp = post(mapzen_token_url, urlencode(data))
