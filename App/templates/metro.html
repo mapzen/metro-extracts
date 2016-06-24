@@ -109,19 +109,4 @@
 
   var displayMap = initDisplayMap(metro.bbox);
 
-  // var links = [
-  //   { ext : ".osm.pbf", name : "OSM PBF" },
-  //   { ext : ".osm.xml", name : "OSM XML" },
-  //   { ext : ".osm2pgsql-shapefiles.zip", name : "OSM2PGSQL SHP" },
-  //   { ext : ".osm2pgsql-geojson.zip", name : "OSM2PGSQL GEOJSON" },
-  //   { ext : ".imposm-shapefiles.zip", name : "IMPOSM SHP" },
-  //   { ext : ".imposm-geojson.zip", name : "IMPOSM GEOJSON" },
-  //   { ext : ".water.coastline.zip", name : "WATER COASTLINE SHP" },
-  //   { ext : ".land.coastline.zip", name : "LAND COASTLINE SHP" },
-  // ];
-
-  // var links = d3.select("#downloads").selectAll(".link").data(links);
-  // links.enter().append("a").attr("class","link")
-  //   .attr("href",function(d){ return "https://s3.amazonaws.com/metro-extracts.mapzen.com/" + metro.name + d.ext; })
-  //   .text(function(d){ return d.name; })
 {% endblock %}
