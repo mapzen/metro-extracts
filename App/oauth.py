@@ -59,15 +59,15 @@ def check_authentication(untouched_route):
         
         else:
             access_token = session.get('token', {}).get('access_token', None)
-            user_login = session.get('id', {}).get('login', None)
+            user_id = session.get('id', {}).get('id', None)
         
-            if access_token is None or user_login is None:
+            if access_token is None or user_id is None:
                 return make_401_response()
 
-            members_url = 'https://api.github.com/orgs/mapzen/public_members/'
-            member_resp = get(urljoin(members_url, user_login), auth=(access_token, ''))
-        
-            if member_resp.status_code in range(400, 499):
+            resp = get('https://mapzen.com/developers/oauth_api/current_developer',
+                       headers={'Authorization': 'Bearer {}'.format(access_token)})
+            
+            if resp.status_code in range(400, 499):
                 return make_401_response()
         
         return untouched_route(*args, **kwargs)
@@ -81,12 +81,11 @@ def make_401_response():
         http://developer.github.com/v3/oauth/#redirect-users-to-request-github-access
     '''
     state_id = str(uuid4())
-    states = session.get('states', {})
-    states[state_id] = dict(redirect=request.url, created=time())
-    session['states'] = states
-    
-    args = dict(href='https://github.com/login/oauth/authorize', scope='read:org')
-    args.update(client_id=current_app.config['GITHUB_CLIENT_ID'], state=state_id)
+    session['states'] = [dict(redirect=request.url, created=time())]
+
+    args = dict(href='https://mapzen.com/oauth/authorize')
+    args.update(redirect_uri=urljoin(request.url, '/oauth/callback'))
+    args.update(client_id=current_app.config['GITHUB_CLIENT_ID'])
 
     return make_response(render_template('error-authenticate.html', **args), 401)
 
@@ -100,7 +99,7 @@ def absolute_url(request, location):
     actual_url = urlunparse((scheme, request.host, request.path, None, None, None))
     return urljoin(actual_url, location)
 
-@blueprint.route('/logout', methods=['POST'])
+@blueprint.route('/oauth/logout', methods=['POST'])
 def logout():
     '''
     '''
@@ -113,24 +112,15 @@ def logout():
     return redirect(absolute_url(request, '/'), 302)
 
 @blueprint.route('/oauth/hello')
+@check_authentication
 @errors_logged
 def hello():
     return '''
-        <form method="get" action="/oauth/authorize">
-        <input type="submit">
-        <input type="hidden" name="redirect" value="{}">
+        <form action="/oauth/logout" method="post">
+        Hey there, {}.
+        <button>log out</button>
         </form>
-        '''.format(request.url)
-
-@blueprint.route('/oauth/authorize')
-@errors_logged
-def post_authorize():
-    query = urlencode(dict(client_id=current_app.config['GITHUB_CLIENT_ID'],
-                           redirect_uri=urljoin(request.url, '/oauth/callback'),
-                           response_type='code'))
-
-    session['states'] = session.get('states', []) + [dict(redirect=request.args['redirect'])]
-    return redirect('https://mapzen.com/oauth/authorize?'+query, 301)
+        '''.format(session['id']['nickname'])
 
 @blueprint.route('/oauth/callback')
 @errors_logged
