@@ -59,6 +59,9 @@
     color:#000;
     text-transform:uppercase
   }
+  #extracts {
+    margin-bottom: 50px;
+  }
   .country {
     border-top: 1px solid rgb(224,224,224);
     margin-top: 20px;
@@ -89,6 +92,9 @@
   .city:hover {
     text-decoration: underline;
   }
+  .nearby-text {
+    display: none;
+  }
   #make-request {
     display: none;
     background: rgba(110,160,164,.3);
@@ -99,7 +105,6 @@
   }
   #request {
     background: rgb(224,224,224);
-    margin: 50px 0;
     padding: 20px;
   }
   .autocomplete {
@@ -161,7 +166,7 @@
         <p>Hmm, we don't have an extract for <span class="name"></span> yet. Would you like to request one?</p>
         <a class="btn btn-transparent" target="_blank">Create <span class="name"></span> Request</a>
       </div>
-      <div class='row' id='request'>
+      <div id='request'>
         <p>Can't find what you're looking for? Request one!</p>
         <div class='btn btn-transparent'>Submit GH Issue</div>
       </div>
@@ -191,7 +196,8 @@
       tap: (window.self !== window.top && L.Browser.touch) ? false : true,
     }
     var displayMap = L.map('map', options).fitBounds(L.latLngBounds(southwest, northeast))
-    var layer
+    var layer,
+      extractLayers = [];
 
     if (hasWebGL() === true) {
       layer = Tangram.leafletLayer({
@@ -214,6 +220,7 @@
   var mapurl = 'https://s3.amazonaws.com/metro-extracts.mapzen.com/cities.geojson';
 
   var onEachFeature = function (feature, layer) {
+    extractLayers.push(layer);
     if (feature.properties && feature.properties.name) {
       var text = feature.properties.name;
       layer.on('click', function (e) {
@@ -341,6 +348,28 @@
       displayMap.addLayer(outline);
     });
 
+     var bbox = metro.bbox,
+        p1 = L.latLng(bbox[1],bbox[0]),
+        p2 = L.latLng(bbox[3],bbox[2]),
+        p3 = L.latLng(bbox[1],bbox[2]),
+        p4 = L.latLng(bbox[3],bbox[0]);
+      var nearby = [{
+        key : "Nearby Cities",
+        values : []
+      }];
+      extractLayers.forEach(function(l){
+        if (l.getBounds().contains(p1) || l.getBounds().contains(p2) || l.getBounds().contains(p3) || l.getBounds().contains(p4)) 
+          nearby[0].values.push({
+            city : l.feature.properties.name.split("_")[0],
+            country : l.feature.properties.name.split("_")[1],
+            bbox : l.feature.bbox
+          })
+      });
+      if (nearby[0].values.length){
+        d3.select(".nearby-text").style("display","block");
+        drawList(nearby);
+      }
+
     d3.select("#make-request").style("display","block")
       .selectAll(".name").text(metro.properties.name);
     d3.select("#request").style("display","none");
@@ -388,6 +417,7 @@
     clearMap();
     d3.select("#request").style("display","block");
     d3.select("#make-request").style("display","none");
+    d3.select(".nearby-text").style("display","none");
   }
 
   var keyIndex = -1;
