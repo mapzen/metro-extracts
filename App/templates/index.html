@@ -36,9 +36,19 @@
   .drag-icon {
     width: 10px;
     height: 10px;
-    background: #000;
-    border-radius: 10px;
-    cursor: pointer;
+    cursor: nesw-resize;
+    border-color: #aaa;
+  }
+  .drag-icon:nth-child(even) {
+    border-top: 3px solid;
+    border-right: 3px solid;
+  }
+  .drag-icon:nth-child(odd) {
+    border-bottom: 3px solid;
+    border-left: 3px solid;
+  }
+  .drag-icon:hover {
+    border-color: #666;
   }
   .leaflet-container a {
     color: #6ea0a4;
