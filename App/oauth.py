@@ -81,7 +81,7 @@ def make_401_response():
     ''' Create an HTTP 401 Not Authorized response to trigger Mapzen OAuth.
     
         Start by redirecting the user to Mapzen OAuth authorization page:
-        https://github.com/mapzen/wiki/wiki/mapzen.com-OAuth
+        https://github.com/mapzen/wiki/wiki/mapzen.com-OAuth#1-redirect-users-to-request-mapzen-access
     '''
     state_id = str(uuid4())
     session['states'] = [dict(redirect=request.url, created=time())]
@@ -130,7 +130,7 @@ def get_hello():
 def get_oauth_callback():
     ''' Handle Mapzen's OAuth callback after a user authorizes.
     
-        https://github.com/mapzen/wiki/wiki/mapzen.com-OAuth
+        https://github.com/mapzen/wiki/wiki/mapzen.com-OAuth#2-mapzen-redirects-back-to-your-site
     '''
     if 'error' in request.args:
         return render_template('error-oauth.html', reason="you didn't authorize access to your account.")
@@ -147,7 +147,7 @@ def get_oauth_callback():
     
     #
     # Exchange the temporary code for an access token:
-    # https://github.com/mapzen/wiki/wiki/mapzen.com-OAuth
+    # https://github.com/mapzen/wiki/wiki/mapzen.com-OAuth#2-mapzen-redirects-back-to-your-site
     #
     data = dict(client_id=current_app.config['MAPZEN_APP_ID'],
                 client_secret=current_app.config['MAPZEN_APP_SECRET'],
