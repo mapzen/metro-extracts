@@ -92,7 +92,10 @@
   .city:hover {
     text-decoration: underline;
   }
-  .nearby-text {
+  .non-encompassed-text {
+    display: none;
+  }
+  .encompassed-text {
     display: none;
   }
   #make-request {
@@ -152,7 +155,7 @@
         <input id='search_submit' type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
         <div class="autocomplete"></div>
       </div>
-      <p class="nearby-text">We do have some extracts that are near to your request: </p>
+      <p class="encompassed-text">Your extract is included inside of a larger area: </p>
       <div id='extracts'>
         {% for country_metros in metros_tree %}
           <div class="country">
@@ -164,7 +167,8 @@
         {% endfor %}
       </div>
       <div id="make-request">
-        <p>Hmm, we don't have an extract for <span class="name"></span> yet. Would you like to request one?</p>
+        <p class="non-encompassed-text">Hmm, we don't have an extract for <span class="name"></span> yet. Would you like to request one?</p>
+        <p class="encompassed-text">If you'd like to request an extract specifically for <span class="name"></span>, click the button below. Please note, this will take up to one week to process.</p>
         <a class="btn btn-transparent" target="_blank">Create <span class="name"></span> Request</a>
       </div>
       <div id='request'>
@@ -257,10 +261,6 @@
     cities.exit().remove();
   }
 
-  d3.select("#search_submit").on("click",function(){
-    doSearch(document.getElementById("search_input").value);
-  });
-
   var wait = false,
     waitQuery;
 
@@ -346,30 +346,29 @@
     drawRequestBox();
 
     d3.json(wof+geoID+".geojson",function(data){
-      var outline = L.geoJson(data.geometry, { className : "outline" }).addTo(displayMap);
+      outline = L.geoJson(data.geometry, { className : "outline" }).addTo(displayMap);
       displayMap.addLayer(outline);
     });
 
      var bbox = metro.bbox,
         p1 = L.latLng(bbox[1],bbox[0]),
-        p2 = L.latLng(bbox[3],bbox[2]),
-        p3 = L.latLng(bbox[1],bbox[2]),
-        p4 = L.latLng(bbox[3],bbox[0]);
-      var nearby = [{
-        country : "Nearby Cities",
+        p2 = L.latLng(bbox[3],bbox[2]);
+      var encompassed = [{
+        country : "Encompassing Metros",
         metros : []
       }];
       extractLayers.forEach(function(l){
-        if (l.getBounds().contains(p1) || l.getBounds().contains(p2) || l.getBounds().contains(p3) || l.getBounds().contains(p4)) 
-          nearby[0].metros.push({
-            name : l.feature.properties.name.split("_")[0],
+        if (l.getBounds().contains(p1) && l.getBounds().contains(p2)) 
+          encompassed[0].metros.push({
+            name : l.feature.properties.name,
             country : l.feature.properties.name.split("_")[1],
             bbox : l.feature.bbox
           })
       });
-      if (nearby[0].metros.length){
-        d3.select(".nearby-text").style("display","block");
-        drawList(nearby);
+      if (encompassed[0].metros.length){
+        d3.selectAll(".encompassed-text").style("display","block");
+        d3.selectAll(".non-encompassed-text").style("display","none");
+        drawList(encompassed);
       }
 
     d3.select("#make-request").style("display","block")
@@ -419,7 +418,8 @@
     clearMap();
     d3.select("#request").style("display","block");
     d3.select("#make-request").style("display","none");
-    d3.select(".nearby-text").style("display","none");
+    d3.selectAll(".encompassed-text").style("display","none");
+    d3.selectAll(".non-encompassed-text").style("display","block");
   }
 
   var keyIndex = -1;
@@ -429,6 +429,12 @@
       capitalized = words.map(function(w){ return w.charAt(0).toUpperCase() + w.slice(1); });
     return capitalized.join(" ");
   }
+
+  d3.select("#search_submit").on("click",function(){
+    var val = document.getElementById("search_input").value;
+    if (val.length)
+      onSubmit(val);
+  });
 
   d3.select("#search_input").on("keyup",function(d, i, e){
     var inputDiv = document.getElementById("search_input");
@@ -457,18 +463,24 @@
       }).classed("selected",function(d,i){ return i == keyIndex; });
       
     } else if (event.keyCode == 13) {
-      keyIndex = -1;
-      filterList(val);
-      d3.selectAll(".suggestion").remove();
-      doSearch(val);
+      onSubmit(val);
+
     } else if (event.keyCode < 48 || event.keyCode > 90) {
       return; //restrict autocomplete to 0-9,a-z character input
+
     } else {
       keyIndex = -1;
       suggestSearch(val);
       filterList(val);
     }
   });
+
+  function onSubmit(val) {
+    keyIndex = -1;
+    filterList(val);
+    d3.selectAll(".suggestion").remove();
+    doSearch(val);
+  }
 
   function filterList(str) {
     var newData = [];
