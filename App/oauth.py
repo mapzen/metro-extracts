@@ -176,8 +176,8 @@ def get_oauth_callback():
     #
     head = {'Authorization': 'Bearer {}'.format(session['token']['access_token'])}
 
-    _ = get(mapzen_currdev_url, headers=head).json()
-    id = dict(id=_['id'], email=_['email'], nickname=_['nickname'], keys_url=_['keys'])
+    d = get(mapzen_currdev_url, headers=head).json()
+    id = dict(id=d['id'], email=d['email'], nickname=d['nickname'], keys_url=d['keys'])
     session['id'] = id
     
     other = redirect(absolute_url(request, state['redirect']), 302)
