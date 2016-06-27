@@ -8,6 +8,7 @@
     </p>
 
     <form action="{{href}}" method="get">
+        <input type="hidden" name="state" value="{{state}}">
         <input type="hidden" name="client_id" value="{{client_id}}">
         <input type="hidden" name="redirect_uri" value="{{redirect_uri}}">
         <input type="hidden" name="response_type" value="code">

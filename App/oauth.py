@@ -84,11 +84,17 @@ def make_401_response():
         https://github.com/mapzen/wiki/wiki/mapzen.com-OAuth#1-redirect-users-to-request-mapzen-access
     '''
     state_id = str(uuid4())
-    session['states'] = [dict(redirect=request.url, created=time())]
+    states = session.get('states', {})
+    try:
+        states[state_id] = dict(redirect=request.url, created=time())
+    except TypeError:
+        # an older version of this code used a list for session.states.
+        states = {state_id: dict(redirect=request.url, created=time())}
+    session['states'] = states
 
     args = dict(href=mapzen_authorize_url)
     args.update(redirect_uri=urljoin(request.url, url_for('.get_oauth_callback')))
-    args.update(client_id=current_app.config['MAPZEN_APP_ID'])
+    args.update(client_id=current_app.config['MAPZEN_APP_ID'], state=state_id)
 
     return make_response(render_template('error-authenticate.html', **args), 401)
 
@@ -136,14 +142,14 @@ def get_oauth_callback():
         return render_template('error-oauth.html', reason="you didn't authorize access to your account.")
     
     try:
-        code = request.args['code']
+        code, state_id = request.args['code'], request.args['state']
     except:
-        return render_template('error-oauth.html', reason='missing code in callback.')
+        return render_template('error-oauth.html', reason='missing code or state in callback.')
     
     try:
-        state = session['states'].pop()
+        state = session['states'].pop(state_id)
     except:
-        return render_template('error-oauth.html', reason='session state was empty?')
+        return render_template('error-oauth.html', reason='state "{}" not found?'.format(state_id))
     
     #
     # Exchange the temporary code for an access token:
