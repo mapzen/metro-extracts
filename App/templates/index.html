@@ -366,6 +366,7 @@
         d3.select(this.parentNode).style("display","none");
         var bbox = metro.bbox;
         displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]).zoomOut(1);
+        document.getElementById("search_input").value = metro.properties.label;
         requestExtract(metro);
       });
   }
