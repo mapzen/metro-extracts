@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <h2>Authenticate With Mapzen 🗝 </h2>
+    
+    <p>
+        API Users needs to be able to communicate with Mapzen to read repository information on your behalf.
+    </p>
+
+    <form action="{{href}}" method="get">
+        <input type="hidden" name="state" value="{{state}}">
+        <input type="hidden" name="client_id" value="{{client_id}}">
+        <input type="hidden" name="redirect_uri" value="{{redirect_uri}}">
+        <input type="hidden" name="response_type" value="code">
+        <button class="btn btn-mapzen">Go tell Mapzen it’s okay</button>
+    </form>
+
+{% endblock %}
