@@ -31,7 +31,8 @@
   }
   #map path.outline {
     stroke: #000;
-    fill: transparent;
+    fill: #6ea0a4;
+    fill-opacity: .2;
   }
   .drag-icon {
     width: 10px;
@@ -306,8 +307,9 @@
     
     d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
         var bbox = json.features[0].bbox;
-        displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]])
-        if (json.features[0].properties.layer == "locality") displayMap.zoomOut(2);
+        displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]);
+        if (json.features[0].properties.layer == "locality" || json.features[0].properties.layer == "neighbourhood")
+          displayMap.zoomOut(1);
         if (d3.selectAll(".city")[0].length == 0){
           requestExtract(json.features[0]);
         } else {
@@ -505,7 +507,7 @@
           metros : []
         }
         d.metros.forEach(function(e){ 
-          if (e.name.replace(/-/g," ").indexOf(str) != -1)
+          if (e.name.split("_")[0].replace(/-/g," ").indexOf(str) != -1)
             c.metros.push(e);
         });
         if (c.metros.length) newData.push(c);
