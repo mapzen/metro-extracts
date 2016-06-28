@@ -1,0 +1,12 @@
+<p><a href="{{ url_for('ODES.get_extracts') }}">Other extracts</a></p>
+
+<h1>Extract {{extract.id}}</h1>
+<p>{{extract.status}}; {{extract.created_at}}</p>
+
+<ul>
+    {% for (name, href) in extract.get('download_links', {}).items() %}
+        <li>
+            <a href="{{href}}">{{name}}</a>
+        </li>
+    {% endfor %}
+</ul>

@@ -93,7 +93,7 @@ def make_401_response():
     session['states'] = states
 
     args = dict(href=mapzen_authorize_url)
-    args.update(redirect_uri=urljoin(request.url, url_for('.get_oauth_callback')))
+    args.update(redirect_uri=urljoin(request.url, url_for('OAuth.get_oauth_callback')))
     args.update(client_id=current_app.config['MAPZEN_APP_ID'], state=state_id)
 
     return make_response(render_template('error-authenticate.html', **args), 401)
@@ -129,7 +129,7 @@ def get_hello():
         Hey there, {}.
         <button>log out</button>
         </form>
-        '''.format(url_for('.post_logout'), session['id']['nickname'])
+        '''.format(url_for('OAuth.post_logout'), session['id']['nickname'])
 
 @blueprint.route('/oauth/callback')
 @errors_logged
@@ -157,7 +157,7 @@ def get_oauth_callback():
     #
     data = dict(client_id=current_app.config['MAPZEN_APP_ID'],
                 client_secret=current_app.config['MAPZEN_APP_SECRET'],
-                redirect_uri=urljoin(request.url, url_for('.get_oauth_callback')),
+                redirect_uri=urljoin(request.url, url_for('OAuth.get_oauth_callback')),
                 code=code, grant_type='authorization_code')
 
     resp = post(mapzen_token_url, urlencode(data))
