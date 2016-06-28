@@ -21,11 +21,21 @@ def apply_odes_blueprint(app):
     app.register_blueprint(blueprint)
 
 def get_odes_keys(keys_url, access_token):
-    auth_header = 'Bearer {}'.format(access_token)
+    auth_header = {'Authorization': 'Bearer {}'.format(access_token)}
 
-    resp = requests.get(keys_url, headers={'Authorization': auth_header})
-    keys = sorted(resp.json(), key=itemgetter('created_at'), reverse=True)
-    api_keys = [key['key'] for key in keys if key['service'] == 'odes']
+    resp1 = requests.get(keys_url, headers=auth_header)
+    keys = sorted(resp1.json(), key=itemgetter('created_at'), reverse=True)
+    api_keys = [key['key'] for key in keys
+                if key['service'] == 'odes' and key['status'] != 'disabled']
+    
+    if len(api_keys) == 0:
+        data = dict(service='odes', nickname='Metro Extracts key')
+        resp2 = requests.post(keys_url, data=data, headers=auth_header)
+        
+        if resp2.status_code != 200:
+            raise Exception('Error making a new ODES key')
+        
+        api_keys = [resp2.json().get('key')]
     
     return api_keys
 
