@@ -32,7 +32,8 @@
   #map path.outline {
     stroke: #000;
     fill: #6ea0a4;
-    fill-opacity: .2;
+    fill-opacity: .3;
+    stroke-opacity: .5;
   }
   .drag-icon {
     width: 10px;
@@ -287,28 +288,36 @@
     waitQuery;
 
   function suggestSearch(query) {
-    if (!wait) {
-      wait = true;
+    // if (!wait) {
+    //   wait = true;
       doSuggestion(query);
-      setTimeout(function(){ wait = false; }, 500);
-    } else {
-      waitQuery = query;
-    }
+    //   setTimeout(function(){ wait = false; }, 50);
+    // } else {
+    //   waitQuery = query;
+    // }
   }
+
+  var suggestionsObj;
 
   function doSuggestion(query) {
     d3.json("https://search.mapzen.com/v1/autocomplete?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
-        var suggestion = d3.select(".autocomplete")
-          .selectAll(".suggestion").data(json.features);
-        suggestion.enter().append("div").attr("class","suggestion");
-        suggestion.exit().remove();
-        suggestion.text(function(d){ return d.properties.label; })
-          .on("click",function(d){
-            document.getElementById("search_input").value = d.properties.label;
-            doSearch(d.properties.label);
-            filterList(d.properties.label);
-          });
+      if (json.features.length)
+        suggestionsObj = json;
+      showSuggestions(suggestionsObj)
     });
+  }
+
+  function showSuggestions(data) {
+    var suggestion = d3.select(".autocomplete")
+      .selectAll(".suggestion").data(data.features);
+    suggestion.enter().append("div").attr("class","suggestion");
+    suggestion.exit().remove();
+    suggestion.text(function(d){ return d.properties.label; })
+      .on("click",function(d){
+        document.getElementById("search_input").value = d.properties.label;
+        doSearch(d.properties.label);
+        filterList(d.properties.label);
+      });
   }
 
   function doSearch(query) {
@@ -508,6 +517,9 @@
       
     } else if (event.keyCode == 13) {
       onSubmit(val);
+
+    } else if (event.keyCode == 46) { // delete key
+      showSuggestions(suggestionsObj);
 
     } else if (event.keyCode < 48 || event.keyCode > 90) {
       return; //restrict autocomplete to 0-9,a-z character input
