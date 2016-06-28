@@ -16,26 +16,43 @@ def apply_odes_blueprint(app):
     '''
     app.register_blueprint(blueprint)
 
-def get_odes_key(keys_url, access_token):
+def get_odes_keys(keys_url, access_token):
     auth_header = 'Bearer {}'.format(access_token)
 
     resp = requests.get(keys_url, headers={'Authorization': auth_header})
     keys = sorted(resp.json(), key=itemgetter('created_at'), reverse=True)
-    api_key = [key['key'] for key in keys if key['service'] == 'odes'][0]
+    api_keys = [key['key'] for key in keys if key['service'] == 'odes']
     
-    return api_key
+    return api_keys
 
-def load_extracts(api_key):
+def load_extracts(api_keys):
     '''
     '''
-    extracts_url = uritemplate.expand(odes_extracts_url, dict(api_key=api_key))
-    return list(requests.get(extracts_url).json())
+    extracts = list()
+    
+    for api_key in api_keys:
+        vars = dict(api_key=api_key)
+        extracts_url = uritemplate.expand(odes_extracts_url, vars)
+        resp = requests.get(extracts_url)
+    
+        if resp.status_code in range(200, 299):
+            extracts.extend(resp.json())
 
-def load_extract(api_key, id):
+    return extracts
+
+def load_extract(id, api_keys):
     '''
     '''
-    extract_url = uritemplate.expand(odes_extracts_url, dict(id=id, api_key=api_key))
-    return dict(requests.get(extract_url).json())
+    for api_key in api_keys:
+        vars = dict(id=id, api_key=api_key)
+        extract_url = uritemplate.expand(odes_extracts_url, vars)
+        resp = requests.get(extract_url)
+    
+        if resp.status_code in range(200, 299):
+            # Return first matching extract
+            return dict(resp.json())
+    
+    return None
 
 @blueprint.route('/odes')
 def get_odes():
@@ -58,13 +75,13 @@ def post_extracts():
     '''
     return str(session) # 'We will get right on that.'
 
-@blueprint.route('/odes/extracts', methods=['GET'])
+@blueprint.route('/odes/extracts/', methods=['GET'])
 @check_authentication
 def get_extracts():
     '''
     '''
-    api_key = get_odes_key(session['id']['keys_url'], session['token']['access_token'])
-    extracts = load_extracts(api_key)
+    api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
+    extracts = load_extracts(api_keys)
 
     return render_template('extracts.html', extracts=extracts)
 
@@ -73,7 +90,10 @@ def get_extracts():
 def get_extract(extract_id):
     '''
     '''
-    api_key = get_odes_key(session['id']['keys_url'], session['token']['access_token'])
-    extract = load_extract(api_key, extract_id)
+    api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
+    extract = load_extract(extract_id, api_keys)
+    
+    if extract is None:
+        raise ValueError('No extract {}'.format(extract_id))
 
     return render_template('extract.html', extract=extract)
