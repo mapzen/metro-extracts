@@ -4,6 +4,15 @@
   body.data-pages {
     margin-top: 0;
   }
+  h1 {
+    margin-bottom: 10px;
+  }
+  .column-map {
+    position: fixed;
+  }
+  .column-text {
+    float: right;
+  }
   body.data-pages #search_input{
     height:41px;
   }
@@ -68,7 +77,8 @@
     line-height:1;
     font-weight:bold;
     color:#000;
-    text-transform:uppercase
+    text-transform:uppercase;
+    width: 100%;
   }
   #extracts {
     margin-bottom: 50px;
@@ -141,25 +151,26 @@
   .suggestion:last-child {
     margin-bottom: -1px;
   }
+  @media (max-width: 768px) {
+    .column-map {
+      position: relative;
+    }
+  }
 {% endblock %}
 
 {% block content %}
   <div class='container-fluid'>
-    <div class='col-xs-6' style='position: fixed;'>
+    <div class='col-xs-12 col-sm-6 column-map'>
       <div id='map'></div>
     </div>
-    <div class='col-xs-6' style='float: right;'>
-      <div class='row headroom'>
-      <div class='col-xs-12 text-center'>
-        <h1>metro extracts</h1>
-      </div>
-    </div>
-    <div class='row'>
-      <div class='col-xs-12'>
-        <p>Now it’s even easier to get local data so you can start building cool stuff. Each week, we automatically extract the latest <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area shapefiles in a variety of formats for you to use.</p>
-        <p><a>Format Guide</a> | <a>Documentation</a> | <a>Tutorial</a> | <a>Request an Extract</a></p>
-      </div>
-    </div>
+    <div class='col-xs-12 col-sm-6 column-text'>
+      <h1 class="headroom text-center">metro extracts</h1>
+      <p>Now it’s even easier to get local data so you can start building cool stuff. Each week, we automatically extract the latest <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area shapefiles in a variety of formats for you to use.</p>
+      <p>
+        <a href="https://mapzen.com/documentation/metro-extracts/">Documentation</a> |
+        <a href="https://mapzen.com/documentation/metro-extracts/walkthrough/">Tutorial</a> |
+        <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">File Format Guide</a>
+      </p>
       <div class='row inline-submit' id='search-box'>
         <label class='data-filter-label' for='search_input'>Filter Extracts by City or Region</label>
         <input type='search' class='hasclear col-sm-9 col-xs-8' id='search_input' placeholder='example: Los Angeles' type='text'>
@@ -172,7 +183,7 @@
           <div class="country">
             <div class="country-name">{{ country_metros.country }}</div>
             {% for metro in country_metros.metros %}
-              <a class="city" href="metro/{{ metro.name }}">{{ metro.name.split("_")[0] }}</a>
+              <a class="city" href="metro/{{ metro.name }}">{{ metro.name.split("_")[0].replace("-"," ") }}</a>
             {% endfor %}
           </div>
         {% endfor %}
@@ -187,13 +198,15 @@
         <div class='btn btn-transparent'>Submit GH Issue</div>
       </div>
     </div>
+  </div>
 {% endblock %}
 
 {% block script %}
   var nestedCities = {{metros_tree|tojson|safe}},
-    extractLayers = [];
+    extractLayers = [],
+    mapHeight = window.innerWidth < 768 ? 300 : window.innerHeight;
 
-  d3.select("#map").style("height", window.innerHeight + 'px');
+  d3.select("#map").style("height", mapHeight + 'px');
 
   function hasWebGL () {
     try {
