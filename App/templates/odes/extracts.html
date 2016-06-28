@@ -1,0 +1,8 @@
+<ul>
+    {% for extract in extracts %}
+        <li>
+            <a href="{{ url_for('.post_extracts') }}/{{extract.id}}">{{extract.id}}</a>
+            ({{extract.created_at}})
+        </li>
+    {% endfor %}
+</ul>

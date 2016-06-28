@@ -1,0 +1,10 @@
+<h1>Extract {{extract.id}}</h1>
+<p>{{extract.created_at}}</p>
+
+<ul>
+    {% for (name, href) in extract['download_links'].items() %}
+        <li>
+            <a href="{{href}}">{{name}}</a>
+        </li>
+    {% endfor %}
+</ul>
