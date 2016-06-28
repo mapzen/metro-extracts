@@ -1,3 +1,5 @@
+from .oauth import check_authentication
+
 from operator import itemgetter
 
 from flask import Blueprint, url_for, session, render_template, jsonify
@@ -48,7 +50,7 @@ def get_odes():
             <label><input value="-122.24825" name="bbox_e"> East</label><br>
             <input type="submit">
         </form>
-        '''.format(href=url_for('.post_extracts'))
+        '''.format(href=url_for('ODES.post_extracts'))
 
 @blueprint.route('/odes/extracts', methods=['POST'])
 def post_extracts():
@@ -57,6 +59,7 @@ def post_extracts():
     return str(session) # 'We will get right on that.'
 
 @blueprint.route('/odes/extracts', methods=['GET'])
+@check_authentication
 def get_extracts():
     '''
     '''
@@ -66,6 +69,7 @@ def get_extracts():
     return render_template('extracts.html', extracts=extracts)
 
 @blueprint.route('/odes/extracts/<extract_id>', methods=['GET'])
+@check_authentication
 def get_extract(extract_id):
     '''
     '''
