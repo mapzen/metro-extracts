@@ -45,6 +45,7 @@
     <div class="col-sm-6">
       <h2>Download Links</h2>
       <div id="downloads">
+        <p>Need help choosing a format? Check out our <a href="https://mapzen.com/documentation/metro-extracts/">Format Guide</a></p>
         <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.osm.pbf">OSM PBF</a>
         <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.osm.xml">OSM XML</a>
         <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.osm2pgsql-shapefiles.zip">OSM2PGSQL SHP</a>
@@ -54,8 +55,11 @@
         <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.water.coastline.zip">WATER COASTLINE SHP</a>
         <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.land.coastline.zip">LAND COASTLINE SHP</a>
       </div>
-      <h2>Helpful Messaging</h2>
-      <p>Now it’s even easier to get local data so you can start building cool stuff. Each week, we automatically extract the latest <a href="http://openstreetmap.org/">OpenStreetMap</a> data into manageable, metro-area shapefiles in a variety of formats for you to use.</p><p><strong>Don’t see your city?</strong> Contribute by <a href="https://github.com/mapzen/metroextractor-cities/blob/master/cities.json">submitting a pull request on our list of cities</a>, or <a href="https://github.com/mapzen/metroextractor-cities/issues">just ask by opening a new issue</a>.</p><p><strong>Need help?</strong> <a href="https://mapzen.com/documentation/metro-extracts/">Check out the documentation.</a></p><p>Mapzen Metro Extracts are produced via a <a href="https://github.com/mapzen/chef-metroextractor">chef cookbook</a> derived from the work of <a href="http://metro.teczno.com">Michal Migurski</a>.</p><p>For more granular OpenStreetMap data, we offer a free, hosted <a href="https://mapzen.com/documentation/vector-tiles/">Vector Tile service</a> -- sign up for your <a href="https://mapzen.com/developers/">API key here</a>.</p>
+      <a class="btn btn-transparent" href="https://mapzen.com/documentation/metro-extracts/">Documentation</a>
+      <a class="btn btn-transparent" href="https://mapzen.com/documentation/metro-extracts/">Tutorial</a>
+      <h2>About</h2>
+      <p>Mapzen Metro Extracts are produced via a <a href="https://github.com/mapzen/chef-metroextractor">chef cookbook</a> derived from the work of <a href="http://metro.teczno.com">Michal Migurski</a>.</p>
+      <p>For more granular OpenStreetMap data, we offer a free, hosted <a href="https://mapzen.com/documentation/vector-tiles/">Vector Tile service</a> -- sign up for your <a href="https://mapzen.com/developers/">API key here</a>.</p>
     </div>
   </div>
 {% endblock %}
