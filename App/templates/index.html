@@ -109,6 +109,14 @@
   .encompassed-text {
     display: none;
   }
+  #did-you-mean {
+    display: none;
+  }
+  #did-you-mean .name {
+    font-weight: bold;
+    color: #6ea0a4;
+    cursor: pointer;
+  }
   #make-request {
     display: none;
     background: rgba(110,160,164,.3);
@@ -166,6 +174,7 @@
         <input id='search_submit' type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
         <div class="autocomplete"></div>
       </div>
+      <p id="did-you-mean">Did you mean <span class="name"></span>?</p>
       <p class="encompassed-text">Your extract is included inside of a larger area: </p>
       <div id='extracts'>
         {% for country_metros in metros_tree %}
@@ -304,13 +313,19 @@
 
   function doSearch(query) {
     d3.selectAll(".suggestion").remove();
+    d3.selectAll(".encompassed-text").style("display","none");
+    d3.selectAll(".non-encompassed-text").style("display","block");
     
     d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
+        if (json.features[0].properties.label.toLowerCase().indexOf(query.toLowerCase()) == -1) {
+          suggestExtract(json.features[0]);
+          return;
+        }
+        
         var bbox = json.features[0].bbox;
-        displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]);
-        if (json.features[0].properties.layer == "locality" || json.features[0].properties.layer == "neighbourhood")
-          displayMap.zoomOut(1);
+        displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]).zoomOut(1);
         if (d3.selectAll(".city")[0].length == 0){
+          document.getElementById("search_input").value = json.features[0].properties.label;
           requestExtract(json.features[0]);
         } else {
           clearRequest();
@@ -343,6 +358,21 @@
     var northEast = calculateOffset(-Math.PI*3/4, distance, bbox[1], bbox[0]),
     southWest = calculateOffset(Math.PI/4, distance, bbox[3], bbox[2]);
     return [northEast, southWest];
+  }
+
+  function suggestExtract(metro) {
+    d3.select("#did-you-mean").style("display","block")
+      .select(".name").text(metro.properties.label)
+      .on("click",function(){
+        d3.select(this.parentNode).style("display","none");
+        var bbox = metro.bbox;
+        displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]).zoomOut(1);
+        document.getElementById("search_input").value = metro.properties.label;
+        filterList(metro.properties.label);
+        requestExtract(metro);
+      });
+    d3.select("#request").style("display","none");
+    d3.select("#make-request").style("display","none");
   }
 
   var rect, 
@@ -405,20 +435,21 @@
 
     cSW.on("drag",function(e){
       requestBoundingBox[0] = [e.target.getLatLng().lat, e.target.getLatLng().lng];
-      displayMap.removeLayer(rect);
-      rect = new L.Rectangle(new L.LatLngBounds(requestBoundingBox), { className : "blue" });
-      displayMap.addLayer(rect);
+      redrawBox();
     });
     cNE.on("drag",function(e){
       requestBoundingBox[1] = [e.target.getLatLng().lat, e.target.getLatLng().lng];
-      displayMap.removeLayer(rect);
-      rect = new L.Rectangle(new L.LatLngBounds(requestBoundingBox), { className : "blue" });
-      displayMap.addLayer(rect);
+      redrawBox();
     });
 
     dots.forEach(function(l){
       displayMap.addLayer(l);
     });
+  }
+  function redrawBox() {
+    displayMap.removeLayer(rect);
+    rect = new L.Rectangle(new L.LatLngBounds(requestBoundingBox), { className : "blue" });
+    displayMap.addLayer(rect);
   }
   function clearMap() {
     if (rect) displayMap.removeLayer(rect);
@@ -430,10 +461,9 @@
   }
   function clearRequest() {
     clearMap();
+    d3.select("#did-you-mean").style("display","none");
     d3.select("#request").style("display","block");
     d3.select("#make-request").style("display","none");
-    d3.selectAll(".encompassed-text").style("display","none");
-    d3.selectAll(".non-encompassed-text").style("display","block");
   }
 
   var keyIndex = -1;
