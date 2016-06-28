@@ -284,26 +284,13 @@
     cities.exit().remove();
   }
 
-  var wait = false,
-    waitQuery;
-
-  function suggestSearch(query) {
-    // if (!wait) {
-    //   wait = true;
-      doSuggestion(query);
-    //   setTimeout(function(){ wait = false; }, 50);
-    // } else {
-    //   waitQuery = query;
-    // }
-  }
-
-  var suggestionsObj;
+  var xhr;
 
   function doSuggestion(query) {
-    d3.json("https://search.mapzen.com/v1/autocomplete?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
+    if (xhr) xhr.abort();
+    xhr = d3.json("https://search.mapzen.com/v1/autocomplete?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
       if (json.features.length)
-        suggestionsObj = json;
-      showSuggestions(suggestionsObj)
+        showSuggestions(json);
     });
   }
 
@@ -518,15 +505,12 @@
     } else if (event.keyCode == 13) {
       onSubmit(val);
 
-    } else if (event.keyCode == 46) { // delete key
-      showSuggestions(suggestionsObj);
-
-    } else if (event.keyCode < 48 || event.keyCode > 90) {
-      return; //restrict autocomplete to 0-9,a-z character input
+    } else if (event.keyCode != 8 && (event.keyCode < 48 || event.keyCode > 90)) {
+      return; //restrict autocomplete to 0-9,a-z character input, excluding delete
 
     } else {
       keyIndex = -1;
-      suggestSearch(val);
+      doSuggestion(val);
       filterList(val);
     }
   });
