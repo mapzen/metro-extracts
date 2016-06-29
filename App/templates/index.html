@@ -114,12 +114,6 @@
   .city:hover {
     text-decoration: underline;
   }
-  .non-encompassed-text {
-    display: none;
-  }
-  .encompassed-text {
-    display: none;
-  }
   #did-you-mean {
     display: none;
   }
@@ -136,9 +130,26 @@
   #make-request .btn:hover {
     background: rgba(110,160,164,.4);
   }
-  #request {
-    background: rgb(224,224,224);
-    padding: 20px;
+  #request-wrapper .request-messaging {
+    display: none;
+  }
+  #request-wrapper.default .default-request-text {
+    display: block;
+  }
+  #request-wrapper.encompassed .encompassed-text {
+    display: block;
+  }
+  #request-wrapper.request-greater-1 .request-greater-1 {
+    display: block;
+  }
+  #request-wrapper.request-greater-5 .request-greater-5 {
+    display: block;
+  }
+  #request-wrapper.request-greater-5 #make-request {
+    background: rgba(212,100,92, .3);
+  }
+  #request-wrapper.request-greater-5 .btn {
+    display: none;
   }
   .autocomplete {
     border: 1px solid #ddd;
@@ -186,26 +197,26 @@
         <input id='search_submit' type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
         <div class="autocomplete"></div>
       </div>
-      <p id="did-you-mean">Did you mean <span class="name"></span>?</p>
-      <p class="encompassed-text">Your extract is included inside of a larger area: </p>
-      <div id='extracts'>
-        {% for country_metros in metros_tree %}
-          <div class="country">
-            <div class="country-name">{{ country_metros.country }}</div>
-            {% for metro in country_metros.metros %}
-              <a class="city" href="metro/{{ metro.name }}">{{ metro.name.split("_")[0].replace("-"," ") }}</a>
-            {% endfor %}
-          </div>
-        {% endfor %}
-      </div>
-      <div id="make-request">
-        <p class="non-encompassed-text">Hmm, we don't have an extract for <span class="name"></span> yet. Would you like to request one?</p>
-        <p class="encompassed-text">If you'd like to request an extract specifically for <span class="name"></span>, click the button below. Please note, this will take up to one week to process.</p>
-        <a class="btn btn-transparent" target="_blank">Create <span class="name"></span> Request</a>
-      </div>
-      <div id='request'>
-        <p>Can't find what you're looking for? Request one!</p>
-        <div class='btn btn-transparent'>Submit GH Issue</div>
+      <div id="request-wrapper">
+        <p id="did-you-mean">Did you mean <span class="name"></span>?</p>
+        <p class="encompassed-text request-messaging">Your extract is included inside of a larger area: </p>
+        <div id='extracts'>
+          {% for country_metros in metros_tree %}
+            <div class="country">
+              <div class="country-name">{{ country_metros.country }}</div>
+              {% for metro in country_metros.metros %}
+                <a class="city" href="metro/{{ metro.name }}">{{ metro.name.split("_")[0].replace("-"," ") }}</a>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+        <div id="make-request">
+          <p class="default-request-text request-messaging">Hmm, we don't have an extract for <span class="name"></span> yet. Would you like to request one?</p>
+          <p class="encompassed-text request-messaging">If you'd like to request an extract specifically for <span class="name"></span>, click the button below. Please note, this will take up to one week to process.</p>
+          <p class="request-greater-1 request-messaging">We don't have a request for <span class="name"></span> yet, you can request one by clicking the button below. Please note, you have requested a large area and this request will take up to one week.</p>
+          <p class="request-greater-5 request-messaging">Sorry, but your request for <span class="name"></span> is too large to prcoess. Please make your request a smaller area.</p>
+          <a class="btn btn-transparent" target="_blank">Create <span class="name"></span> Request</a>
+        </div>
       </div>
     </div>
   </div>
@@ -226,36 +237,35 @@
       return false
     }
   }
-  function initDisplayMap (geoJSONUrl, geoJSONOptions) {
-    var southwest = L.latLng(0, -125)
-    var northeast = L.latLng(0, 125)
-    var options = {
+  function initDisplayMap (geoJSONUrl) {
+    var southwest = L.latLng(0, -125),
+      northeast = L.latLng(0, 125),
+      options = {
       scrollWheelZoom: false,
       // Disables dragging on touch-detected devices
       dragging: (window.self !== window.top && L.Browser.touch) ? false : true,
       tap: (window.self !== window.top && L.Browser.touch) ? false : true,
-    }
-    var displayMap = L.map('map', options).fitBounds(L.latLngBounds(southwest, northeast))
-    var layer,
-      extractLayers = [];
+    };
+    var displayMap = L.map('map', options).fitBounds(L.latLngBounds(southwest, northeast));
+    var layer;
 
     if (hasWebGL() === true) {
       layer = Tangram.leafletLayer({
         scene: '../static/scene.yaml',
         attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/">Mapzen</a>'
-      })
+      });
     } else {
       layer = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
         attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
-      })
+      });
     }
     layer.addTo(displayMap);
 
     d3.json(geoJSONUrl, function(data){
-      L.geoJson(data, geoJSONOptions).addTo(displayMap);
+      L.geoJson(data, { onEachFeature: onEachFeature }).addTo(displayMap);
     });
 
-    return displayMap
+    return displayMap;
   }
   var mapurl = 'https://s3.amazonaws.com/metro-extracts.mapzen.com/cities.geojson';
 
@@ -268,10 +278,7 @@
   }
 
   // Setup map
-  var geoJSONOptions = {
-    onEachFeature: onEachFeature
-  }
-  var displayMap = initDisplayMap(mapurl, geoJSONOptions)
+  var displayMap = initDisplayMap(mapurl);
 
   d3.selectAll(".country-name")
     .on("click",function(d){
@@ -321,8 +328,6 @@
 
   function doSearch(query) {
     d3.selectAll(".suggestion").remove();
-    d3.selectAll(".encompassed-text").style("display","none");
-    d3.selectAll(".non-encompassed-text").style("display","block");
 
     if (placeID) {
       d3.json("https://search.mapzen.com/v1/place?api_key=search-owZDPeC&ids="+placeID, function(error, json){
@@ -370,9 +375,9 @@
   }
 
   function calculateNewBox(bbox) {
-    var distance = Math.sqrt(Math.pow(bbox[3]-bbox[1],2) + Math.pow(bbox[2]-bbox[0], 2))*25;
-    var northEast = calculateOffset(-Math.PI*3/4, distance, bbox[1], bbox[0]),
-    southWest = calculateOffset(Math.PI/4, distance, bbox[3], bbox[2]);
+    var distance = Math.sqrt(Math.pow(bbox[3]-bbox[1],2) + Math.pow(bbox[2]-bbox[0], 2))*25,
+      northEast = calculateOffset(-Math.PI*3/4, distance, bbox[1], bbox[0]),
+      southWest = calculateOffset(Math.PI/4, distance, bbox[3], bbox[2]);
     return [northEast, southWest];
   }
 
@@ -387,7 +392,6 @@
         filterList(metro.properties.label);
         requestExtract(metro);
       });
-    d3.select("#request").style("display","none");
     d3.select("#make-request").style("display","none");
   }
 
@@ -410,34 +414,41 @@
       displayMap.addLayer(outline);
     });
 
-     var bbox = metro.bbox,
-        p1 = L.latLng(bbox[1],bbox[0]),
-        p2 = L.latLng(bbox[3],bbox[2]);
-      var encompassed = [{
-        country : "Encompassing Metros",
-        metros : []
-      }];
-      extractLayers.forEach(function(l){
-        if (l.getBounds().contains(p1) && l.getBounds().contains(p2)) 
-          encompassed[0].metros.push({
-            name : l.feature.properties.name,
-            country : l.feature.properties.name.split("_")[1],
-            bbox : l.feature.bbox
-          })
-      });
-      if (encompassed[0].metros.length){
-        d3.selectAll(".encompassed-text").style("display","block");
-        d3.selectAll(".non-encompassed-text").style("display","none");
-        drawList(encompassed);
-      }
+    var bbox = metro.bbox,
+      p1 = L.latLng(bbox[1],bbox[0]),
+      p2 = L.latLng(bbox[3],bbox[2]);
+    var encompassed = [{
+      country : "Encompassing Metros",
+      metros : []
+    }];
+    extractLayers.forEach(function(l){
+      if (l.getBounds().contains(p1) && l.getBounds().contains(p2)) 
+        encompassed[0].metros.push({
+          name : l.feature.properties.name,
+          country : l.feature.properties.name.split("_")[1],
+          bbox : l.feature.bbox
+        })
+    });
 
-    d3.select("#make-request").style("display","block")
+    var requestDiv = d3.select("#request-wrapper");
+
+    requestDiv.select("#make-request")
+      .style("display","block")
       .selectAll(".name").text(metro.properties.name);
-    d3.select("#request").style("display","none");
-    d3.select("#make-request").select("a")
-      .on("click",function(){
-        d3.select(this).attr("href","https://github.com/mapzen/data-pages/issues/new?title="+metro.properties.name+"&body=Bounding Box: "+requestBoundingBox);
-      });
+
+    if (encompassed[0].metros.length){
+      requestDiv.attr("class","encompassed");
+      drawList(encompassed);
+      return;
+    }
+
+    var biggestDist = Math.max(requestBoundingBox[1][1] - requestBoundingBox[0][1], requestBoundingBox[1][0] - requestBoundingBox[0][0]);
+    if (biggestDist > 5)
+      requestDiv.attr("class","request-greater-5");
+    else if (biggestDist > 1)
+      requestDiv.attr("class","request-greater-1");
+    else
+      requestDiv.attr("class","default");
   }
   function drawRequestBox() {
     clearMap();
@@ -478,7 +489,6 @@
   function clearRequest() {
     clearMap();
     d3.select("#did-you-mean").style("display","none");
-    d3.select("#request").style("display","block");
     d3.select("#make-request").style("display","none");
   }
 
@@ -497,7 +507,7 @@
       onSubmit(val);
   });
 
-  d3.select("#search_input").on("keyup",function(d, i, e){
+  d3.select("#search_input").on("keyup",function(){
     var inputDiv = document.getElementById("search_input");
     var val = inputDiv.value;
 
@@ -511,18 +521,14 @@
 
     if (event.keyCode == 40) { //arrow down
       keyIndex = Math.min(keyIndex+1, d3.selectAll(".suggestion")[0].length-1);
-      selectSuggestion();
-      
+      selectSuggestion();   
     } else if (event.keyCode == 38) { //arrow up
       keyIndex = Math.max(keyIndex-1, 0);
       selectSuggestion();
-      
-    } else if (event.keyCode == 13) {
+    } else if (event.keyCode == 13) { //enter
       onSubmit(val);
-
     } else if (event.keyCode != 8 && (event.keyCode < 48 || event.keyCode > 90)) {
       return; //restrict autocomplete to 0-9,a-z character input, excluding delete
-
     } else {
       keyIndex = -1;
       placeID = null;
