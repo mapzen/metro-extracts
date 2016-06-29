@@ -45,20 +45,20 @@ def get_cities_geojson():
         x1, y1, x2, y2 = [float(city['bbox'][k])
                           for k in ('left', 'bottom', 'right', 'top')]
 
-        feature = dict(type='Feature', id=city['name'])
+        feature = dict(type='Feature', id=city['id'])
         #feature['bbox'] = [x1, y1, x2, y2]
         feature['geometry'] = dict(type='Polygon')
         feature['geometry']['coordinates'] = [[[x1, y1], [x1, y2], [x2, y2], [x2, y1], [x1, y1]]]
-        feature['properties'] = dict(name=city['name'])
+        feature['properties'] = dict(name=city['id'], display_name=city['name'])
         features.append(feature)
 
     return jsonify(dict(features=features))
 
-@blueprint.route('/metro/<name>')
-def metro(name):
+@blueprint.route('/metro/<metro_id>')
+def get_metro(metro_id):
     with open('cities.json') as file:
         cities = json.load(file)
-        metro = {c['name']: c for c in cities}[name]
+        metro = {c['id']: c for c in cities}[metro_id]
     
     return render_template('metro.html', metro=metro)
 

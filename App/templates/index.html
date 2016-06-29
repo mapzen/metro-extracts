@@ -193,7 +193,7 @@
           <div class="country">
             <div class="country-name">{{ country_metros.country }}</div>
             {% for metro in country_metros.metros %}
-              <a class="city" href="metro/{{ metro.name }}">{{ metro.name.split("_")[0].replace("-"," ") }}</a>
+              <a class="city" href="{{ url_for('Metro-Extracts.get_metro', metro_id=metro['id']) }}">{{ metro.name }}</a>
             {% endfor %}
           </div>
         {% endfor %}

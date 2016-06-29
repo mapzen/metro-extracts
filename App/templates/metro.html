@@ -52,13 +52,13 @@
 {% block content %}
   <div class="container-fluid">
     <div class="col-xs-12">
-      <h1>Metro Extract: {{ metro.name.split("_")[0].replace("-"," ") }}</h1>
+      <h1>Metro Extract: {{ metro.name }}</h1>
     </div>
     <div class="col-sm-6 col-xs-12">
       <div id="map"></div>
     </div>
     <div class="col-sm-6 col-xs-12">
-      <p>To get started with <span class="name">{{ metro.name.split("_")[0].replace("-"," ") }}</span>, download your preferred file format.</p>
+      <p>To get started with <span class="name">{{ metro.name }}</span>, download your preferred file format.</p>
       <p>Need help deciding? Check out our <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">format guide</a>.</p>
       <div id="downloads">
         <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.osm.pbf">OSM PBF</a>
