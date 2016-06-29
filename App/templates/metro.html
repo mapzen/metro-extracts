@@ -88,59 +88,65 @@
 {% endblock %}
 
 {% block script %}
-  var metro = {{metro|tojson|safe}};
+  var Metro = function (){
+    var displayMap;
+    var metro = {{metro|tojson|safe}};
+
+    var MetroApp = {
+      hasWebGL: function() {
+        try {
+          var canvas = document.createElement('canvas')
+          return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')))
+        } catch (x) {
+          return false
+        }
+      },
+      initDisplayMap: function() {
+        var southwest = L.latLng(metro.bbox.bottom, metro.bbox.right)
+        var northeast = L.latLng(metro.bbox.top, metro.bbox.left)
+        var options = {
+          scrollWheelZoom: false,
+          // Disables dragging on touch-detected devices
+          dragging: (window.self !== window.top && L.Browser.touch) ? false : true,
+          tap: (window.self !== window.top && L.Browser.touch) ? false : true,
+        }
+        displayMap = L.map('map', options).fitBounds(L.latLngBounds(southwest, northeast))
+        var layer
+
+        if (this.hasWebGL() === true) {
+          layer = Tangram.leafletLayer({
+            scene: '../static/scene.yaml',
+            attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/">Mapzen</a>'
+          })
+        } else {
+          layer = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
+            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
+          })
+        }
+        layer.addTo(displayMap)
+
+        var rect = new L.Rectangle(new L.LatLngBounds([southwest, northeast]), { className : "blue" });
+        displayMap.addLayer(rect);
+
+        return this;
+      },
+      addEnclosed: function() {
+        var id = request.split("&")[0],
+          name = decodeURIComponent(request.split("&")[1]);
+
+        var div = d3.select("#encompassed");
+        div.style("display","block")
+          .selectAll(".name").text(name);
+        div.select(".link").attr("href","/wof/"+id+".geojson");
+      }
+    };
+    return MetroApp;
+  }
+
+  var metroPage = Metro();
+  metroPage.initDisplayMap();
 
   if (window.location.search)
-    addEnclosed(window.location.search.split("?")[1]);
-
-  function hasWebGL () {
-    try {
-      var canvas = document.createElement('canvas')
-      return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')))
-    } catch (x) {
-      return false
-    }
-  }
-  function initDisplayMap (bbox) {
-    var southwest = L.latLng(metro.bbox.bottom, metro.bbox.right)
-    var northeast = L.latLng(metro.bbox.top, metro.bbox.left)
-    var options = {
-      scrollWheelZoom: false,
-      // Disables dragging on touch-detected devices
-      dragging: (window.self !== window.top && L.Browser.touch) ? false : true,
-      tap: (window.self !== window.top && L.Browser.touch) ? false : true,
-    }
-    var displayMap = L.map('map', options).fitBounds(L.latLngBounds(southwest, northeast))
-    var layer
-
-    if (hasWebGL() === true) {
-      layer = Tangram.leafletLayer({
-        scene: '../static/scene.yaml',
-        attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/">Mapzen</a>'
-      })
-    } else {
-      layer = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
-        attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
-      })
-    }
-    layer.addTo(displayMap)
-
-    var rect = new L.Rectangle(new L.LatLngBounds([southwest, northeast]), { className : "blue" });
-    displayMap.addLayer(rect);
-
-    return displayMap;
-  }
-
-  var displayMap = initDisplayMap(metro.bbox);
-
-  function addEnclosed(request) {
-    var id = request.split("&")[0],
-      name = decodeURIComponent(request.split("&")[1]);
-
-    var div = d3.select("#encompassed");
-    div.style("display","block")
-      .selectAll(".name").text(name);
-    div.select(".link").attr("href","/wof/"+id+".geojson");
-  }
+    metroPage.addEnclosed(window.location.search.split("?")[1]);
 
 {% endblock %}
