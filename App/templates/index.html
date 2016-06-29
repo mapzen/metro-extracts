@@ -196,6 +196,7 @@
         <input id='search_submit' type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
         <div class="autocomplete"></div>
       </div>
+<<<<<<< HEAD
       <div id="request-wrapper">
         <p id="did-you-mean">Did you mean <span class="name"></span>?</p>
         <p class="encompassed-text request-messaging">Your extract is included inside of a larger area: </p>
@@ -204,7 +205,7 @@
             <div class="country">
               <div class="country-name">{{ country_metros.country }}</div>
               {% for metro in country_metros.metros %}
-                <a class="city" href="{{ url_for('Metro-Extracts.get_metro', metro_id=metro['id']) }}">{{ metro.name }}</a>
+                <a class="city" href="{{ metro.href }}">{{ metro.name }}</a>
               {% endfor %}
             </div>
           {% endfor %}
