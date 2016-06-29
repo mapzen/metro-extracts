@@ -288,7 +288,7 @@
       doSearch(d3.select(this).text());
     });
 
-  function drawList(data) {
+  function drawList(data, request_id, display_name) {
     var countries = d3.select("#extracts").selectAll(".country").data(data);
     var enterCountries = countries.enter().append("div").attr("class","country");
     countries.exit().remove();
@@ -301,7 +301,7 @@
     var cities = countries.selectAll(".city").data(function(d){ return d.metros; });
     cities.enter().append("a").attr("class","city");
     cities.text(function(d){ return d.name; })
-      .attr("href",function(d){ return d.href; });
+      .attr("href",function(d){ return d.href + (request_id ? escape(request_id)+"/"+escape(display_name) : ""); });
     cities.exit().remove();
   }
 
@@ -428,6 +428,7 @@
       if (l.getBounds().contains(p1) && l.getBounds().contains(p2)) 
         encompassed[0].metros.push({
           name : l.feature.properties.display_name,
+          href : l.feature.properties.href,
           country : l.feature.properties.name.split("_")[1],
           bbox : l.feature.bbox
         })
@@ -441,7 +442,7 @@
 
     if (encompassed[0].metros.length){
       requestDiv.attr("class","encompassed");
-      drawList(encompassed);
+      drawList(encompassed, geoID, metro.properties.name);
       return;
     }
 
