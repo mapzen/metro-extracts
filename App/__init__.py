@@ -30,10 +30,13 @@ def index():
     metros_tree = list()
     
     for (country, sub_cities) in groupby(ordered_cities, itemgetter('country')):
-        metros_tree.append({
-            'country': country,
-            'metros': sorted(sub_cities, key=itemgetter('name'))
-            })
+        sub_metros = list()
+        
+        for sub_city in sorted(sub_cities, key=itemgetter('name')):
+            sub_city['href'] = url_for('Metro-Extracts.get_metro', metro_id=sub_city['id'])
+            sub_metros.append(sub_city)
+        
+        metros_tree.append({'country': country, 'metros': sub_metros})
     
     return render_template('index.html', metros_tree=metros_tree)
 
