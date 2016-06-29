@@ -257,7 +257,7 @@
 
     return displayMap
   }
-  var mapurl = 'https://s3.amazonaws.com/metro-extracts.mapzen.com/cities.geojson';
+  var mapurl = '{{ url_for('Metro-Extracts.get_cities_geojson') }}';
 
   var onEachFeature = function (feature, layer) {
     extractLayers.push(layer);
