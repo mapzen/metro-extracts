@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, Response, render_template, url_for
+from flask import Blueprint, jsonify, Response, render_template, url_for, request
 from itertools import groupby
 from operator import itemgetter
 from os.path import join, dirname
@@ -58,13 +58,14 @@ def get_cities_geojson():
 
     return jsonify(dict(features=features))
 
-@blueprint.route('/metro/<metro_id>')
-def get_metro(metro_id):
+@blueprint.route('/metro/<metro_id>/')
+@blueprint.route('/metro/<metro_id>/<wof_id>/<wof_name>/')
+def get_metro(metro_id, wof_id=None, wof_name=None):
     with open('cities.json') as file:
         cities = json.load(file)
         metro = {c['id']: c for c in cities}[metro_id]
     
-    return render_template('metro.html', metro=metro)
+    return render_template('metro.html', metro=metro, wof_id=wof_id, wof_name=wof_name)
 
 @blueprint.route('/wof/<id>.geojson')
 def wof_geojson(id):
