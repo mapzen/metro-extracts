@@ -278,7 +278,7 @@
       doSearch(d3.select(this).text());
     });
 
-  function drawList(data) {
+  function drawList(data, request_id) {
     var countries = d3.select("#extracts").selectAll(".country").data(data);
     var enterCountries = countries.enter().append("div").attr("class","country");
     countries.exit().remove();
@@ -291,8 +291,8 @@
     var cities = countries.selectAll(".city").data(function(d){ return d.metros; });
     cities.enter().append("a").attr("class","city");
     cities.text(function(d){ return d.name.split("_")[0].replace(/-/g," "); })
-      .attr("href",function(d){ 
-        return "./metro/"+d.name; 
+      .attr("href",function(d){
+        return "./metro/"+d.name+(request_id ? "?"+request_id : "");
       });
     cities.exit().remove();
   }
@@ -428,7 +428,8 @@
       if (encompassed[0].metros.length){
         d3.selectAll(".encompassed-text").style("display","block");
         d3.selectAll(".non-encompassed-text").style("display","none");
-        drawList(encompassed);
+        console.log(metro.properties);
+        drawList(encompassed, geoID);
       }
 
     d3.select("#make-request").style("display","block")
