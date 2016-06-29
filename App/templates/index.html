@@ -136,10 +136,6 @@
   #make-request .btn:hover {
     background: rgba(110,160,164,.4);
   }
-  #request {
-    background: rgb(224,224,224);
-    padding: 20px;
-  }
   .autocomplete {
     border: 1px solid #ddd;
   }
@@ -201,11 +197,14 @@
       <div id="make-request">
         <p class="non-encompassed-text">Hmm, we don't have an extract for <span class="name"></span> yet. Would you like to request one?</p>
         <p class="encompassed-text">If you'd like to request an extract specifically for <span class="name"></span>, click the button below. Please note, this will take up to one week to process.</p>
-        <a class="btn btn-transparent" target="_blank">Create <span class="name"></span> Request</a>
-      </div>
-      <div id='request'>
-        <p>Can't find what you're looking for? Request one!</p>
-        <div class='btn btn-transparent'>Submit GH Issue</div>
+        <form action="{{ url_for('ODES.post_envelope') }}" method="post">
+          <input name="bbox_n" type="hidden">
+          <input name="bbox_w" type="hidden">
+          <input name="bbox_s" type="hidden">
+          <input name="bbox_e" type="hidden">
+          <input name="wof_id" type="hidden">
+          <button class="btn btn-transparent">Create <span class="name"></span> Request</button>
+        </form>
       </div>
     </div>
   </div>
@@ -372,7 +371,7 @@
   function calculateNewBox(bbox) {
     var distance = Math.sqrt(Math.pow(bbox[3]-bbox[1],2) + Math.pow(bbox[2]-bbox[0], 2))*25;
     var northEast = calculateOffset(-Math.PI*3/4, distance, bbox[1], bbox[0]),
-    southWest = calculateOffset(Math.PI/4, distance, bbox[3], bbox[2]);
+      southWest = calculateOffset(Math.PI/4, distance, bbox[3], bbox[2]);
     return [northEast, southWest];
   }
 
@@ -387,7 +386,6 @@
         filterList(metro.properties.label);
         requestExtract(metro);
       });
-    d3.select("#request").style("display","none");
     d3.select("#make-request").style("display","none");
   }
 
@@ -401,6 +399,8 @@
 
   function requestExtract(metro) {
     var geoID = metro.properties.id;
+    d3.select("input[name='wof_id']").attr("value",geoID);
+
     requestBoundingBox = calculateNewBox(metro.bbox);
 
     drawRequestBox();
@@ -433,7 +433,6 @@
 
     d3.select("#make-request").style("display","block")
       .selectAll(".name").text(metro.properties.name);
-    d3.select("#request").style("display","none");
     d3.select("#make-request").select("a")
       .on("click",function(){
         d3.select(this).attr("href","https://github.com/mapzen/data-pages/issues/new?title="+metro.properties.name+"&body=Bounding Box: "+requestBoundingBox);
@@ -461,11 +460,13 @@
     dots.forEach(function(l){
       displayMap.addLayer(l);
     });
+    fillRequestForm();
   }
   function redrawBox() {
     displayMap.removeLayer(rect);
     rect = new L.Rectangle(new L.LatLngBounds(requestBoundingBox), { className : "blue" });
     displayMap.addLayer(rect);
+    fillRequestForm();
   }
   function clearMap() {
     if (rect) displayMap.removeLayer(rect);
@@ -478,8 +479,14 @@
   function clearRequest() {
     clearMap();
     d3.select("#did-you-mean").style("display","none");
-    d3.select("#request").style("display","block");
     d3.select("#make-request").style("display","none");
+  }
+
+  function fillRequestForm() {
+    d3.select("input[name='bbox_n']").attr("value",requestBoundingBox[1][0]);
+    d3.select("input[name='bbox_w']").attr("value",requestBoundingBox[0][1]);
+    d3.select("input[name='bbox_s']").attr("value",requestBoundingBox[0][0]);
+    d3.select("input[name='bbox_e']").attr("value",requestBoundingBox[1][1]);
   }
 
   var keyIndex = -1,
