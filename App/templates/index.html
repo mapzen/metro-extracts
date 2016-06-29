@@ -196,7 +196,6 @@
         <input id='search_submit' type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
         <div class="autocomplete"></div>
       </div>
-<<<<<<< HEAD
       <div id="request-wrapper">
         <p id="did-you-mean">Did you mean <span class="name"></span>?</p>
         <p class="encompassed-text request-messaging">Your extract is included inside of a larger area: </p>
@@ -302,9 +301,7 @@
     var cities = countries.selectAll(".city").data(function(d){ return d.metros; });
     cities.enter().append("a").attr("class","city");
     cities.text(function(d){ return d.name; })
-      .attr("href",function(d){ 
-        return "./metro/"+d.id; 
-      });
+      .attr("href",function(d){ return d.href; });
     cities.exit().remove();
   }
 
