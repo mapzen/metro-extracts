@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, Response, render_template
+from flask import Blueprint, jsonify, Response, render_template, url_for
 from itertools import groupby
 from operator import itemgetter
 from os.path import join, dirname
@@ -50,6 +50,7 @@ def get_cities_geojson():
         feature['geometry'] = dict(type='Polygon')
         feature['geometry']['coordinates'] = [[[x1, y1], [x1, y2], [x2, y2], [x2, y1], [x1, y1]]]
         feature['properties'] = dict(name=city['id'], display_name=city['name'])
+        feature['properties']['href'] = url_for('Metro-Extracts.get_metro', metro_id=city['id'])
         features.append(feature)
 
     return jsonify(dict(features=features))
