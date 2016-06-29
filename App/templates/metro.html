@@ -110,7 +110,7 @@
 
     if (hasWebGL() === true) {
       layer = Tangram.leafletLayer({
-        scene: '../static/scene.yaml',
+        scene: '{{ url_for('static', filename='scene.yaml') }}',
         attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/">Mapzen</a>'
       })
     } else {
