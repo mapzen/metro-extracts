@@ -103,7 +103,6 @@
     background: #ccc;
   }
   .city {
-    text-transform: capitalize;
     margin: 3px 0 3px 10px;
     cursor: pointer;
     clear: both;
@@ -261,10 +260,7 @@
 
   var onEachFeature = function (feature, layer) {
     extractLayers.push(layer);
-    if (feature.properties && feature.properties.name) {
-      var text = feature.properties.name;
-      layer.bindPopup("<a href='/metro/"+text+"'>"+text.split("_")[0].replace(/-/g," ").capitalize()+"</a>");
-    }
+    layer.bindPopup("<a href='"+feature.properties.href+"'>"+feature.properties.display_name+"</a>");
   }
 
   // Setup map
@@ -290,9 +286,9 @@
       });
     var cities = countries.selectAll(".city").data(function(d){ return d.metros; });
     cities.enter().append("a").attr("class","city");
-    cities.text(function(d){ return d.name.split("_")[0].replace(/-/g," "); })
+    cities.text(function(d){ return d.name; })
       .attr("href",function(d){ 
-        return "./metro/"+d.name; 
+        return "./metro/"+d.id; 
       });
     cities.exit().remove();
   }
@@ -411,9 +407,9 @@
         metros : []
       }];
       extractLayers.forEach(function(l){
-        if (l.getBounds().contains(p1) && l.getBounds().contains(p2)) 
+        if (l.getBounds().contains(p1) && l.getBounds().contains(p2))
           encompassed[0].metros.push({
-            name : l.feature.properties.name,
+            name : l.feature.properties.display_name,
             country : l.feature.properties.name.split("_")[1],
             bbox : l.feature.bbox
           })
@@ -473,15 +469,10 @@
     d3.select("#did-you-mean").style("display","none");
     d3.select("#request").style("display","block");
     d3.select("#make-request").style("display","none");
+    d3.selectAll(".encompassed-text").style("display","none");
   }
 
   var keyIndex = -1;
-
-  String.prototype.capitalize = function() {
-    var words = this.split(" "),
-      capitalized = words.map(function(w){ return w.charAt(0).toUpperCase() + w.slice(1); });
-    return capitalized.join(" ");
-  }
 
   d3.select("#search_submit").on("click",function(){
     var val = document.getElementById("search_input").value;
@@ -537,8 +528,9 @@
 
   function filterList(str) {
     var newData = [];
+    str = str.toLowerCase();
     nestedCities.forEach(function(d){
-      if (d.country.replace(/-/g," ").indexOf(str) != -1) {
+      if (d.country.toLowerCase().indexOf(str) != -1) {
         newData.push(d);
       } else {
         var c = {
@@ -546,7 +538,7 @@
           metros : []
         }
         d.metros.forEach(function(e){ 
-          if (e.name.split("_")[0].replace(/-/g," ").indexOf(str) != -1)
+          if (e.name.toLowerCase().indexOf(str) != -1)
             c.metros.push(e);
         });
         if (c.metros.length) newData.push(c);
