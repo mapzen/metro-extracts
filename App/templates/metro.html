@@ -39,9 +39,6 @@
     padding: 5px 15px;
     margin: 0 10px 10px 0;
   }
-  .name {
-    text-transform: capitalize;
-  }
   @media (max-width: 768px) {
     body.data-pages #map {
       height: 300px;
@@ -52,23 +49,23 @@
 {% block content %}
   <div class="container-fluid">
     <div class="col-xs-12">
-      <h1>Metro Extract: {{ metro.name.split("_")[0].replace("-"," ") }}</h1>
+      <h1>Metro Extract: {{ metro.name }}</h1>
     </div>
     <div class="col-sm-6 col-xs-12">
       <div id="map"></div>
     </div>
     <div class="col-sm-6 col-xs-12">
-      <p>To get started with <span class="name">{{ metro.name.split("_")[0].replace("-"," ") }}</span>, download your preferred file format.</p>
+      <p>To get started with <span class="name">{{ metro.name }}</span>, download your preferred file format.</p>
       <p>Need help deciding? Check out our <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">format guide</a>.</p>
       <div id="downloads">
-        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.osm.pbf">OSM PBF</a>
-        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.osm.xml">OSM XML</a>
-        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.osm2pgsql-shapefiles.zip">OSM2PGSQL SHP</a>
-        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.osm2pgsql-geojson.zip">OSM2PGSQL GEOJSON</a>
-        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.imposm-shapefiles.zip">IMPOSM SHP</a>
-        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.imposm-geojson.zip">IMPOSM GEOJSON</a>
-        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.water.coastline.zip">WATER COASTLINE SHP</a>
-        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.name }}.land.coastline.zip">LAND COASTLINE SHP</a>
+        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.id }}.osm.pbf">OSM PBF</a>
+        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.id }}.osm.xml">OSM XML</a>
+        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.id }}.osm2pgsql-shapefiles.zip">OSM2PGSQL SHP</a>
+        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.id }}.osm2pgsql-geojson.zip">OSM2PGSQL GEOJSON</a>
+        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.id }}.imposm-shapefiles.zip">IMPOSM SHP</a>
+        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.id }}.imposm-geojson.zip">IMPOSM GEOJSON</a>
+        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.id }}.water.coastline.zip">WATER COASTLINE SHP</a>
+        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.id }}.land.coastline.zip">LAND COASTLINE SHP</a>
       </div>
       <h2>About</h2>
       <p>Mapzen Metro Extracts are produced via a <a href="https://github.com/mapzen/chef-metroextractor">chef cookbook</a> derived from the work of <a href="http://metro.teczno.com">Michal Migurski</a>.</p>
@@ -120,13 +117,7 @@
     var rect = new L.Rectangle(new L.LatLngBounds([southwest, northeast]), { className : "blue" });
     displayMap.addLayer(rect);
 
-    return displayMap
-  }
-
-  String.prototype.capitalize = function() {
-    var words = this.split(" "),
-      capitalized = words.map(function(w){ return w.charAt(0).toUpperCase() + w.slice(1); });
-    return capitalized.join(" ");
+    return displayMap;
   }
 
   var displayMap = initDisplayMap(metro.bbox);
