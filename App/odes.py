@@ -15,10 +15,10 @@ blueprint = Blueprint('ODES', __name__, template_folder='templates/odes')
 
 odes_extracts_url = 'https://odes.mapzen.com/extracts{/id}{?api_key}'
 
-def apply_odes_blueprint(app):
+def apply_odes_blueprint(app, url_prefix):
     '''
     '''
-    app.register_blueprint(blueprint)
+    app.register_blueprint(blueprint, url_prefix=url_prefix)
 
 def get_odes_keys(keys_url, access_token):
     auth_header = {'Authorization': 'Bearer {}'.format(access_token)}

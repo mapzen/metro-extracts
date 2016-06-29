@@ -7,8 +7,8 @@ from flask import Flask
 def make_app(url_prefix):
     app = Flask(__name__)
     apply_blueprint(app, url_prefix)
-    apply_oauth_blueprint(app)
-    apply_odes_blueprint(app)
+    apply_oauth_blueprint(app, url_prefix)
+    apply_odes_blueprint(app, url_prefix)
 
     return app
 

@@ -20,10 +20,10 @@ mapzen_token_url = 'https://mapzen.com/oauth/token'
 mapzen_authorize_url = 'https://mapzen.com/oauth/authorize'
 mapzen_currdev_url = 'https://mapzen.com/developers/oauth_api/current_developer'
 
-def apply_oauth_blueprint(app):
+def apply_oauth_blueprint(app, url_prefix):
     '''
     '''
-    app.register_blueprint(blueprint)
+    app.register_blueprint(blueprint, url_prefix=url_prefix)
     app.secret_key = environ.get('FLASK_SECRET_KEY')
     app.config['MAPZEN_APP_ID'] = environ.get('MAPZEN_APP_ID')
     app.config['MAPZEN_APP_SECRET'] = environ.get('MAPZEN_APP_SECRET')
