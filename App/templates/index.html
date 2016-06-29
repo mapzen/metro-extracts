@@ -301,7 +301,7 @@
     var cities = countries.selectAll(".city").data(function(d){ return d.metros; });
     cities.enter().append("a").attr("class","city");
     cities.text(function(d){ return d.name; })
-      .attr("href",function(d){ return d.href + (request_id ? "?"+request_id+"&"+display_name : ""); });
+      .attr("href",function(d){ return d.href + (request_id ? escape(request_id)+"/"+escape(display_name) : ""); });
     cities.exit().remove();
   }
 

@@ -39,10 +39,6 @@
     padding: 5px 15px;
     margin: 0 10px 10px 0;
   }
-  #encompassed {
-    margin-top: 30px;
-    display: none;
-  }
   @media (max-width: 768px) {
     body.data-pages #map {
       height: 300px;
@@ -71,10 +67,12 @@
         <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.id }}.water.coastline.zip">WATER COASTLINE SHP</a>
         <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.id }}.land.coastline.zip">LAND COASTLINE SHP</a>
       </div>
+      {% if wof_id and wof_name %}
       <div id="encompassed">
-        <p>If you'd like to clip this extract to just <span class="name"></span>, please use this outline:</p>
-        <a class="link"><span class="name"></span> GEOJSON</a>
+        <p>If you'd like to clip this extract to just {{wof_name}}, please use this outline:</p>
+        <a class="link" href="{{ url_for('Metro-Extracts.wof_geojson', id=wof_id)}}">{{wof_name}} GEOJSON</a>
       </div>
+      {% endif %}
       <h2>About</h2>
       <p>Mapzen Metro Extracts are produced via a <a href="https://github.com/mapzen/chef-metroextractor">chef cookbook</a> derived from the work of <a href="http://metro.teczno.com">Michal Migurski</a>.</p>
       <p>For more granular OpenStreetMap data, we offer a free, hosted <a href="https://mapzen.com/documentation/vector-tiles/">Vector Tile service</a> — sign up for your <a href="https://mapzen.com/developers/">API key here</a>.</p>
@@ -89,9 +87,6 @@
 
 {% block script %}
   var metro = {{metro|tojson|safe}};
-
-  if (window.location.search)
-    addEnclosed(window.location.search.split("?")[1]);
 
   function hasWebGL () {
     try {
@@ -132,15 +127,5 @@
   }
 
   var displayMap = initDisplayMap(metro.bbox);
-
-  function addEnclosed(request) {
-    var id = request.split("&")[0],
-      name = decodeURIComponent(request.split("&")[1]);
-
-    var div = d3.select("#encompassed");
-    div.style("display","block")
-      .selectAll(".name").text(name);
-    div.select(".link").attr("href","/wof/"+id+".geojson");
-  }
 
 {% endblock %}
