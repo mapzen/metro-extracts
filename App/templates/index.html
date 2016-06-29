@@ -313,9 +313,8 @@
     suggestion.exit().remove();
     suggestion.text(function(d){ return d.properties.label; })
       .on("click",function(d){
-        document.getElementById("search_input").value = d.properties.label;
-        doSearch(d.properties.label);
-        filterList(d.properties.label);
+        placeID = d.properties.source + ":" + d.properties.layer + ":" + d.properties.id;
+        onSubmit(d.properties.label);
       });
   }
 
@@ -323,8 +322,15 @@
     d3.selectAll(".suggestion").remove();
     d3.selectAll(".encompassed-text").style("display","none");
     d3.selectAll(".non-encompassed-text").style("display","block");
-    
-    d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
+
+    if (placeID) {
+      d3.json("https://search.mapzen.com/v1/place?api_key=search-owZDPeC&ids="+placeID, function(error, json){
+        var bbox = json.features[0].bbox;
+        displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]).zoomOut(1);
+        requestExtract(json.features[0]);
+      });
+    } else {
+      d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
         if (json.features[0].properties.label.toLowerCase().indexOf(query.toLowerCase()) == -1) {
           suggestExtract(json.features[0]);
           return;
@@ -338,7 +344,8 @@
         } else {
           clearRequest();
         }
-    });
+      });
+    }
   }
 
   Number.prototype.toRad = function() {
@@ -482,7 +489,8 @@
     d3.select("input[name='bbox_e']").attr("value",requestBoundingBox[1][1]);
   }
 
-  var keyIndex = -1;
+  var keyIndex = -1,
+    placeID = null;
 
   String.prototype.capitalize = function() {
     var words = this.split(" "),
@@ -503,24 +511,18 @@
     if (!val.length) {
       drawList(nestedCities);
       d3.selectAll(".suggestion").remove();
+      placeID = null;
       clearRequest();
       return;
     }
 
-    var currentList = d3.selectAll(".suggestion");
-    if (event.keyCode == 40) {
-      keyIndex = Math.min(keyIndex+1, currentList[0].length-1);
-      currentList.each(function(d, i){ //arrow down
-        if (i == keyIndex)
-          inputDiv.value = d.properties.label;
-      }).classed("selected",function(d,i){ return i == keyIndex; });
+    if (event.keyCode == 40) { //arrow down
+      keyIndex = Math.min(keyIndex+1, d3.selectAll(".suggestion")[0].length-1);
+      selectSuggestion();
       
     } else if (event.keyCode == 38) { //arrow up
       keyIndex = Math.max(keyIndex-1, 0);
-      currentList.each(function(d, i){
-        if (i == keyIndex)
-          inputDiv.value = d.properties.label;
-      }).classed("selected",function(d,i){ return i == keyIndex; });
+      selectSuggestion();
       
     } else if (event.keyCode == 13) {
       onSubmit(val);
@@ -530,16 +532,28 @@
 
     } else {
       keyIndex = -1;
+      placeID = null;
       doSuggestion(val);
       filterList(val);
     }
   });
+
+  function selectSuggestion() {
+    var currentList = d3.selectAll(".suggestion");
+    currentList.each(function(d, i){ 
+      if (i == keyIndex) {
+        document.getElementById("search_input").value = d.properties.label;
+        placeID = d.properties.source + ":" + d.properties.layer + ":" + d.properties.id;
+      }
+    }).classed("selected",function(d,i){ return i == keyIndex; });
+  }
 
   function onSubmit(val) {
     keyIndex = -1;
     filterList(val);
     d3.selectAll(".suggestion").remove();
     doSearch(val);
+    placeID = null;
   }
 
   function filterList(str) {
