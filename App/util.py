@@ -25,8 +25,7 @@ def errors_logged(route_function):
     
     return wrapper
 
-def get_mapzen_navbar():
-    url = 'https://mapzen.com/site-fragments/navbar.html'
+def _get_remote_fragment(url):
     sha = sha1(url.encode('utf8')).hexdigest()
     _, ext = splitext(url)
     path = join(tempfile.tempdir, sha+ext)
@@ -43,5 +42,8 @@ def get_mapzen_navbar():
     with open(path, 'r') as file:
         return file.read()
 
+def get_mapzen_navbar():
+    return _get_remote_fragment('https://mapzen.com/site-fragments/navbar.html')
+
 def get_mapzen_footer():
-    pass
+    return _get_remote_fragment('https://mapzen.com/site-fragments/footer.html')

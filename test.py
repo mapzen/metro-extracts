@@ -24,14 +24,16 @@ class TestUtil (unittest.TestCase):
         rmtree(tempfile.tempdir)
         tempfile.tempdir = self._old_tempdir
     
-    def test_navbar(self):
+    def _test_remote_fragment(self, function, filename):
+        content = '{} {}'.format(uuid4(), filename)
+    
         def response_content1(url, request):
             '''
             '''
             MHP = request.method, url.hostname, url.path
 
-            if MHP == ('GET', 'mapzen.com', '/site-fragments/navbar.html'):
-                return response(200, 'Hello I am the navbar', headers={'Content-Type': 'text/html; charset=utf-8'})
+            if MHP == ('GET', 'mapzen.com', '/site-fragments/{}'.format(filename)):
+                return response(200, content, headers={'Content-Type': 'text/html; charset=utf-8'})
 
             raise Exception(request.method, url, request.headers, request.body)
         
@@ -42,11 +44,17 @@ class TestUtil (unittest.TestCase):
         
         with HTTMock(response_content1):
             # Request it once to get into cache.
-            self.assertIn('Hello I am the navbar', get_mapzen_navbar())
+            self.assertIn(content, function())
 
         with HTTMock(response_content2):
             # Request it again and expect to get it from cache.
-            self.assertIn('Hello I am the navbar', get_mapzen_navbar())
+            self.assertIn(content, function())
+    
+    def test_navbar(self):
+        return self._test_remote_fragment(get_mapzen_navbar, 'navbar.html')
+    
+    def test_footer(self):
+        return self._test_remote_fragment(get_mapzen_footer, 'footer.html')
 
 class TestApp (unittest.TestCase):
 
