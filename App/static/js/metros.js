@@ -196,14 +196,12 @@ var Metros = function() {
         });
       } else {
         d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
-          if (json.features[0].properties.label.toLowerCase().indexOf(query.toLowerCase()) == -1) {
+          if (json.features[0].properties.label.toLowerCase().indexOf(query.toLowerCase()) == -1
+            && d3.selectAll(".city")[0].length == 0) {
             m.suggestPlace(json.features[0]);
-            return;
-          }
-          
-          var bbox = json.features[0].bbox;
-          displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]).zoomOut(1);
-          if (d3.selectAll(".city")[0].length == 0){
+          } else if (d3.selectAll(".city")[0].length == 0){
+            var bbox = json.features[0].bbox;
+            displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]).zoomOut(1);
             document.getElementById("search_input").value = json.features[0].properties.label;
             m.requestExtract(json.features[0]);
           } else {
