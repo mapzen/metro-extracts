@@ -114,8 +114,11 @@ def get_envelope(envelope_id):
     bbox_fields = ('bbox_n', 'bbox_w', 'bbox_s', 'bbox_e')
     bbox = {field: envelope['form'][field] for field in bbox_fields}
 
-    email_fields = ('email_subject', 'email_body_text', 'email_body_html')
-    email = {field: value for (field, value) in envelope['form'].items() if field in email_fields}
+    email = dict(
+        email_subject=render_template('email-subject.txt').strip(),
+        email_body_text=render_template('email-body.txt'),
+        email_body_html=render_template('email-body.html')
+        )
 
     extract = request_extract(bbox, email, api_keys[0])
     session['envelopes'].pop(envelope_id)
