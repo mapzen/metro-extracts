@@ -19,10 +19,10 @@ def load_cities(filename):
 
 cities = load_cities(join(dirname(__file__), '..', 'cities.json'))
 
-def apply_blueprint(app):
+def apply_blueprint(app, url_prefix):
     '''
     '''
-    app.register_blueprint(blueprint)
+    app.register_blueprint(blueprint, url_prefix=url_prefix)
 
 @blueprint.route('/')
 def index():
