@@ -8,6 +8,7 @@
 #map path.blue, .map path.blue {
   fill: #6ea0a4;
   stroke: #6ea0a4;
+  fill-opacity: .4;
 }
 #map path.outline {
   stroke: #000;
