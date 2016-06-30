@@ -1,6 +1,9 @@
 h1 {
   margin: 50px 0 20px;
 }
+.container {
+  margin-bottom: 50px;
+}
 #extracts {
   width: 100%;
   margin-top: 50px;

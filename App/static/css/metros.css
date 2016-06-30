@@ -1,14 +1,5 @@
-body.data-pages {
-  margin-top: 0;
-}
 h1 {
   margin-bottom: 10px;
-}
-.column-map {
-  position: fixed;
-}
-.column-text {
-  float: right;
 }
 body.data-pages #search_input{
   height:41px;
@@ -53,9 +44,6 @@ body.data-pages .inline-submit .btn:hover {
   color:#000;
   text-transform:uppercase;
   width: 100%;
-}
-#extracts {
-  margin-bottom: 50px;
 }
 .country {
   border-top: 1px solid rgb(224,224,224);
@@ -110,6 +98,9 @@ body.data-pages .inline-submit .btn:hover {
 }
 #request-wrapper.encompassed .encompassed-text {
   display: block;
+}
+#request-wrapper.encompassed #make-request {
+  margin-top: 50px;
 }
 #request-wrapper.request-greater-1 .request-greater-1 {
   display: block;
