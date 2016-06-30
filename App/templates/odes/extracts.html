@@ -19,21 +19,17 @@
     <h1 class="text-center">welcome back!</h1>
     <p class="text-center">Below are the extracts that you have requested:</p>
     <div id="extracts">
+      <div class="headers">
+        <span class="label">Name</span>
+        <span class="label">Status</span>
+        <span class="label">Created At</span>
+      </div>
       {% for extract in extracts %}
         <a class="extract" href="{{ url_for('ODES.get_extract', extract_id=extract['id']) }}">
           <!-- <div class="map" id="map-{{extract.id}}"></div> -->
-          <span class="info">
-            <span class="label">Name:</span>
-            {{extract.id}}
-          </span>
-          <span class="info">
-            <span class="label">Status:</span>
-            {{extract.status}}
-          </span>
-          <span class="info">
-            <span class="label">Created At:</span>
-            {{extract.created_at}}
-          </span>
+          <span class="info">{{extract.id}}</span>
+          <span class="info">{{extract.status}}</span>
+          <span class="info time">{{extract.created_at}}</span>
         </a>
       {% endfor %}
     </div>
@@ -45,6 +41,12 @@
 {% endblock %}
 
 {% block script %}
+  var inputFormat = d3.time.format.utc('%Y-%m-%dT%H:%M:%S.%LZ');
+  var outputFormat = d3.time.format("%Y %B %d, at %I:%M %p");
+  d3.selectAll(".time").text(function(){
+    var t = d3.select(this).text();
+    return outputFormat(inputFormat.parse(t));
+  });
   {% for extract in extracts %}
     /* Extracts().init(
       {{ extract.bbox|safe }}, 

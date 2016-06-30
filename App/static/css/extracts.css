@@ -7,6 +7,10 @@ h1 {
   border: 1px solid #eee;
   margin-bottom: -1px;
 }
+.headers{
+  border-bottom: 1px solid #eee;
+  padding: 15px 0;
+}
 .extract {
   display: block;
   clear: both;
@@ -26,13 +30,10 @@ h1 {
 .map path {
   cursor: default;
 }
-.info {
+.info, .label {
   display: inline-block;
   /*width: 24%;*/
   width: 33%;
   text-align: center;
   /*margin-top: 75px;*/
-}
-.info .label {
-  display: block;
 }
