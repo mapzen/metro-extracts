@@ -1,0 +1,29 @@
+#extracts {
+  width: 100%;
+}
+.extract {
+  display: block;
+  clear: both;
+  height: 200px;
+}
+.extract:hover {
+  background: #f7f7f7;
+}
+.map {
+	width: 25%;
+	height: 200px;
+  cursor: default;
+  float: left;
+}
+.map path {
+  cursor: default;
+}
+.info {
+  display: inline-block;
+  width: 24%;
+  text-align: center;
+  margin-top: 75px;
+}
+.info .label {
+  display: block;
+}
