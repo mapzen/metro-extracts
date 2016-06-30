@@ -1,4 +1,5 @@
 from .oauth import check_authentication
+from . import util
 
 from operator import itemgetter
 from uuid import uuid4
@@ -84,12 +85,14 @@ def request_extract(bbox, email, api_key):
     return extract
 
 @blueprint.route('/odes/')
+@util.errors_logged
 def get_odes():
     '''
     '''
-    return render_template('odes/index.html')
+    return render_template('odes/index.html', util=util)
 
 @blueprint.route('/odes/envelopes/', methods=['POST'])
+@util.errors_logged
 def post_envelope():
     '''
     '''
@@ -101,6 +104,7 @@ def post_envelope():
     return redirect(url_for('ODES.get_envelope', envelope_id=envelope_id), 303)
 
 @blueprint.route('/odes/envelopes/<envelope_id>')
+@util.errors_logged
 @check_authentication
 def get_envelope(envelope_id):
     '''
@@ -119,6 +123,7 @@ def get_envelope(envelope_id):
     return redirect(url_for('ODES.get_extract', extract_id=extract['id']), 301)
 
 @blueprint.route('/odes/extracts/', methods=['GET'])
+@util.errors_logged
 @check_authentication
 def get_extracts():
     '''
@@ -126,9 +131,10 @@ def get_extracts():
     api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
     extracts = load_extracts(api_keys)
 
-    return render_template('extracts.html', extracts=extracts)
+    return render_template('extracts.html', extracts=extracts, util=util)
 
 @blueprint.route('/odes/extracts/<extract_id>', methods=['GET'])
+@util.errors_logged
 @check_authentication
 def get_extract(extract_id):
     '''
@@ -139,4 +145,4 @@ def get_extract(extract_id):
     if extract is None:
         raise ValueError('No extract {}'.format(extract_id))
 
-    return render_template('extract.html', extract=extract)
+    return render_template('extract.html', extract=extract, util=util)

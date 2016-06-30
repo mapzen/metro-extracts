@@ -1,17 +1,59 @@
 #!/usr/bin/env python
 import unittest
+import os, tempfile
 from uuid import uuid4
+from shutil import rmtree
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
 from re import compile
 
-from App import odes
-from App.web import make_app
+from App import web, util, odes
 from bs4 import BeautifulSoup
 from httmock import HTTMock, response
 from flask import Flask
 import requests
 
 app = Flask(__name__)
+
+class TestUtil (unittest.TestCase):
+
+    def setUp(self):
+        tempfile.tempdir, self._old_tempdir = tempfile.mkdtemp(prefix='util-'), tempfile.gettempdir()
+    
+    def tearDown(self):
+        rmtree(tempfile.tempdir)
+        tempfile.tempdir = self._old_tempdir
+    
+    def _test_remote_fragment(self, function, filename):
+        content = '{} {}'.format(uuid4(), filename)
+    
+        def response_content1(url, request):
+            '''
+            '''
+            MHP = request.method, url.hostname, url.path
+
+            if MHP == ('GET', 'mapzen.com', '/site-fragments/{}'.format(filename)):
+                return response(200, content, headers={'Content-Type': 'text/html; charset=utf-8'})
+
+            raise Exception(request.method, url, request.headers, request.body)
+        
+        def response_content2(url, request):
+            '''
+            '''
+            raise Exception(request.method, url, request.headers, request.body)
+        
+        with HTTMock(response_content1):
+            # Request it once to get into cache.
+            self.assertIn(content, function())
+
+        with HTTMock(response_content2):
+            # Request it again and expect to get it from cache.
+            self.assertIn(content, function())
+    
+    def test_navbar(self):
+        return self._test_remote_fragment(util.get_mapzen_navbar, 'navbar.html')
+    
+    def test_footer(self):
+        return self._test_remote_fragment(util.get_mapzen_footer, 'footer.html')
 
 class TestApp (unittest.TestCase):
 
@@ -21,12 +63,34 @@ class TestApp (unittest.TestCase):
         return ''.join((self._url_prefix or '', path))
     
     def setUp(self):
-        app = make_app(self._url_prefix)
+        tempfile.tempdir, self._old_tempdir = tempfile.mkdtemp(prefix='util-'), tempfile.gettempdir()
+
+        # pre-request some fake headers and footers
+        def response_content(url, request):
+            response_headers = {'Content-Type': 'text/html; charset=utf-8'}
+
+            if (url.netloc, url.path) == ('mapzen.com', '/site-fragments/navbar.html'):
+                return response(200, '<div>fake navbar HTML</div>', headers=response_headers)
+
+            if (url.netloc, url.path) == ('mapzen.com', '/site-fragments/footer.html'):
+                return response(200, '<div>fake footer HTML</div>', headers=response_headers)
+
+            raise Exception(url)
+        
+        with HTTMock(response_content):
+            util.get_mapzen_navbar()
+            util.get_mapzen_footer()
+
+        app = web.make_app(self._url_prefix)
         app.config['MAPZEN_APP_ID'] = '123'
         app.config['MAPZEN_APP_SECRET'] = '456'
         app.secret_key = '789'
-
+        
         self.client = app.test_client()
+    
+    def tearDown(self):
+        rmtree(tempfile.tempdir)
+        tempfile.tempdir = self._old_tempdir
 
     def test_index(self):
         resp1 = self.client.get(self.prefixed('/'))

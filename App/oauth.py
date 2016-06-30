@@ -1,7 +1,5 @@
 from os import environ
-from sys import stderr
 from urllib.parse import urlencode, urlunparse, urljoin
-from traceback import print_exc
 from functools import wraps
 from uuid import uuid4
 from time import time
@@ -12,6 +10,8 @@ from flask import (
     Blueprint, session, request, render_template, redirect, make_response,
     current_app, Response, url_for
     )
+
+from . import util
 
 blueprint = Blueprint('OAuth', __name__, template_folder='templates/oauth')
 hardcoded_auth = ('mapzen', environ.get('TESTING_PASSWORD'))
@@ -27,22 +27,6 @@ def apply_oauth_blueprint(app, url_prefix):
     app.secret_key = environ.get('FLASK_SECRET_KEY')
     app.config['MAPZEN_APP_ID'] = environ.get('MAPZEN_APP_ID')
     app.config['MAPZEN_APP_SECRET'] = environ.get('MAPZEN_APP_SECRET')
-
-def errors_logged(route_function):
-    '''
-    '''
-    @wraps(route_function)
-    def wrapper(*args, **kwargs):
-        try:
-            result = route_function(*args, **kwargs)
-        except Exception as e:
-            print_exc(file=stderr)
-            raise
-            return Response('Nope.', headers={'Content-Type': 'text/plain'}, status=500)
-        else:
-            return result
-    
-    return wrapper
 
 def check_authentication(untouched_route):
     '''
@@ -96,7 +80,7 @@ def make_401_response():
     args.update(redirect_uri=urljoin(request.url, url_for('OAuth.get_oauth_callback')))
     args.update(client_id=current_app.config['MAPZEN_APP_ID'], state=state_id)
 
-    return make_response(render_template('error-authenticate.html', **args), 401)
+    return make_response(render_template('error-authenticate.html', util=util, **args), 401)
 
 def absolute_url(request, location):
     '''
@@ -121,7 +105,7 @@ def post_logout():
     return redirect(absolute_url(request, '/'), 302)
 
 @blueprint.route('/oauth/hello')
-@errors_logged
+@util.errors_logged
 @check_authentication
 def get_hello():
     return '''
@@ -132,24 +116,27 @@ def get_hello():
         '''.format(url_for('OAuth.post_logout'), session['id']['nickname'])
 
 @blueprint.route('/oauth/callback')
-@errors_logged
+@util.errors_logged
 def get_oauth_callback():
     ''' Handle Mapzen's OAuth callback after a user authorizes.
     
         https://github.com/mapzen/wiki/wiki/mapzen.com-OAuth#2-mapzen-redirects-back-to-your-site
     '''
     if 'error' in request.args:
-        return render_template('error-oauth.html', reason="you didn't authorize access to your account.")
+        return render_template('error-oauth.html', util=util,
+                               reason="you didn't authorize access to your account.")
     
     try:
         code, state_id = request.args['code'], request.args['state']
     except:
-        return render_template('error-oauth.html', reason='missing code or state in callback.')
+        return render_template('error-oauth.html', util=util,
+                               reason='missing code or state in callback.')
     
     try:
         state = session['states'].pop(state_id)
     except:
-        return render_template('error-oauth.html', reason='state "{}" not found?'.format(state_id))
+        return render_template('error-oauth.html', util=util,
+                               reason='state "{}" not found?'.format(state_id))
     
     #
     # Exchange the temporary code for an access token:
@@ -164,10 +151,12 @@ def get_oauth_callback():
     auth = resp.json()
     
     if 'error' in auth:
-        return render_template('error-oauth.html', reason='Mapzen said "%(error)s".' % auth)
+        return render_template('error-oauth.html', util=util,
+                               reason='Mapzen said "%(error)s".' % auth)
     
     elif 'access_token' not in auth:
-        return render_template('error-oauth.html', reason="missing `access_token`.")
+        return render_template('error-oauth.html', util=util,
+                               reason="missing `access_token`.")
     
     session['token'] = auth
     
