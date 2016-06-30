@@ -1,49 +1,7 @@
 {% extends "layout.html" %}
 
 {% block styles %}
-  h1 {
-    text-transform: capitalize;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  body.data-pages #map {
-    width: 100%;
-    height: 600px;
-    border: 1px solid #ddd;
-  }
-  #map path {
-    fill: #d4645c;
-    stroke: #d4645c;
-    stroke-width: 2;
-    stroke-opacity: .3;
-    fill-opacity: .3;
-  }
-  #map path.blue {
-    fill: #6ea0a4;
-    stroke: #6ea0a4;
-  }
-  #map path.outline {
-    stroke: #000;
-    fill: transparent;
-  }
-  .leaflet-container a {
-    color: #6ea0a4;
-  }
-  .leaflet-container .leaflet-control-zoom-in,
-  .leaflet-container .leaflet-control-zoom-out {
-    color: #000;
-  }
-  .link {
-    border: 1px solid #ddd;
-    display: inline-block;
-    padding: 5px 15px;
-    margin: 0 10px 10px 0;
-  }
-  @media (max-width: 768px) {
-    body.data-pages #map {
-      height: 300px;
-    }
-  }
+  <link rel='stylesheet' href='{{ url_for('static', filename='metro.css') }}'>
 {% endblock %}
 
 {% block content %}
@@ -85,61 +43,14 @@
   </div>
 {% endblock %}
 
+{% block js %}
+  <script src='{{ url_for('static', filename='metro.js') }}'></script>
+{% endblock %}
+
 {% block script %}
-  var Metro = function (){
-    var displayMap;
-    var metro = {{metro|tojson|safe}};
-
-    var MetroApp = {
-      hasWebGL: function() {
-        try {
-          var canvas = document.createElement('canvas')
-          return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')))
-        } catch (x) {
-          return false
-        }
-      },
-      initDisplayMap: function() {
-        var southwest = L.latLng(metro.bbox.bottom, metro.bbox.right),
-          northeast = L.latLng(metro.bbox.top, metro.bbox.left),
-          options = {
-            scrollWheelZoom: false,
-            // Disables dragging on touch-detected devices
-            dragging: (window.self !== window.top && L.Browser.touch) ? false : true,
-            tap: (window.self !== window.top && L.Browser.touch) ? false : true,
-          };
-        displayMap = L.map('map', options).fitBounds(L.latLngBounds(southwest, northeast));
-
-        if (this.hasWebGL() === true) {
-          var layer = Tangram.leafletLayer({
-            scene: '../static/scene.yaml',
-            attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/">Mapzen</a>'
-          });
-        } else {
-          var layer = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
-            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
-          });
-        }
-        layer.addTo(displayMap);
-
-        var rect = new L.Rectangle(new L.LatLngBounds([southwest, northeast]), { className : "blue" });
-        displayMap.addLayer(rect);
-      },
-      addEnclosed: function() {
-        var id = request.split("&")[0],
-          name = decodeURIComponent(request.split("&")[1]);
-
-        var div = d3.select("#encompassed");
-        div.style("display","block")
-          .selectAll(".name").text(name);
-        div.select(".link").attr("href","/wof/"+id+".geojson");
-      }
-    };
-    return MetroApp;
-  }
+  var metro = {{metro|tojson|safe}};
 
   var metroPage = Metro();
-  metroPage.initDisplayMap();
 
   if (window.location.search)
     metroPage.addEnclosed(window.location.search.split("?")[1]);
