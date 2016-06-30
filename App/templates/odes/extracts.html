@@ -1,8 +1,11 @@
-<ul>
+{% extends "layout.html" %}
+
+{% block content %}
+  <div class="container-fluid">
+
     {% for extract in extracts %}
-        <li>
-            <a href="{{ url_for('ODES.get_extract', extract_id=extract['id']) }}">{{extract.id}}</a>
-            ({{extract.status}}; {{extract.created_at}})
-        </li>
+      <a href="{{ url_for('ODES.get_extract', extract_id=extract['id']) }}">{{extract.id}}</a>
+      ({{extract.status}}; {{extract.created_at}})
     {% endfor %}
-</ul>
+  </div>
+{% endblock %}
