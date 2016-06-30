@@ -110,7 +110,10 @@ def get_envelope(envelope_id):
     bbox_fields = ('bbox_n', 'bbox_w', 'bbox_s', 'bbox_e')
     bbox = {field: envelope['form'][field] for field in bbox_fields}
 
-    extract = request_extract(bbox, dict(), api_keys[0])
+    email_fields = ('email_subject', 'email_body_text', 'email_body_html')
+    email = {field: value for (field, value) in envelope['form'].items() if field in email_fields}
+
+    extract = request_extract(bbox, email, api_keys[0])
     session['envelopes'].pop(envelope_id)
 
     return redirect(url_for('ODES.get_extract', extract_id=extract['id']), 301)
