@@ -44,13 +44,14 @@
 {% endblock %}
 
 {% block js %}
-  <script src='{{ url_for('static', filename='metro.js') }}'></script>
+  <script src='{{ url_for('static', filename='js/metro.js') }}'></script>
 {% endblock %}
 
 {% block script %}
-  var metro = {{metro|tojson|safe}};
+  var metro = {{metro|tojson|safe}},
+    sceneURL = "{{ url_for('static', filename='scene.yaml') }}";
 
-  var metroPage = Metro();
+  var metroPage = Metro().init(metro, sceneURL);
 
   if (window.location.search)
     metroPage.addEnclosed(window.location.search.split("?")[1]);

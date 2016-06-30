@@ -56,12 +56,16 @@
 {% endblock %}
 
 {% block js %}
-  <script src='{{ url_for('static', filename='metros.js') }}'></script>
+  <script src='{{ url_for('static', filename='js/metros.js') }}'></script>
 {% endblock %}
 
 {% block script %}
 
-  var metrosPage = Metros().init({{metros_tree|tojson|safe}}, '{{ url_for('Metro-Extracts.get_cities_geojson') }}');
+  var metrosPage = Metros().init(
+    {{metros_tree|tojson|safe}}, 
+    "{{ url_for('Metro-Extracts.get_cities_geojson') }}", 
+    "{{ url_for('static', filename='scene.yaml') }}"
+  );
 
   var mapHeight = window.innerWidth < 768 ? 300 : window.innerHeight;
   d3.select("#map").style("height", mapHeight + 'px');

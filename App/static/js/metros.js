@@ -8,6 +8,7 @@ Number.prototype.toDeg = function() {
 var Metros = function() {
   var nestedCities,
     geoJSONUrl,
+    sceneURL,
     displayMap,
     extractLayers = [],
     xhr,
@@ -20,9 +21,10 @@ var Metros = function() {
     requestBoundingBox;
 
   var MetrosApp = {
-    init : function(nestedData, jsonURL) {
+    init : function(nestedData, jsonURL, scene) {
       nestedCities = nestedData;
       geoJSONUrl = jsonURL;
+      sceneURL = sceneURL;
       this.initDisplayMap();
       return this;
     },
@@ -47,7 +49,7 @@ var Metros = function() {
 
       if (this.hasWebGL() === true) {
         var layer = Tangram.leafletLayer({
-          scene: '../static/scene.yaml',
+          scene: sceneURL,
           attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/">Mapzen</a>'
         });
       } else {
