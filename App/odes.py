@@ -68,11 +68,12 @@ def load_extract(id, api_keys):
     
     return None
 
-def request_extract(bbox, api_key):
+def request_extract(bbox, email, api_key):
     '''
     '''
+    data = dict(list(bbox.items()) + list(email.items()))
     post_url = uritemplate.expand(odes_extracts_url, dict(api_key=api_key))
-    resp = requests.post(post_url, data=bbox)
+    resp = requests.post(post_url, data=data)
     extract = resp.json()
     
     if 'error' in extract:
@@ -109,7 +110,7 @@ def get_envelope(envelope_id):
     bbox_fields = ('bbox_n', 'bbox_w', 'bbox_s', 'bbox_e')
     bbox = {field: envelope['form'][field] for field in bbox_fields}
 
-    extract = request_extract(bbox, api_keys[0])
+    extract = request_extract(bbox, dict(), api_keys[0])
     session['envelopes'].pop(envelope_id)
 
     return redirect(url_for('ODES.get_extract', extract_id=extract['id']), 301)

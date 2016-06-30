@@ -201,7 +201,6 @@ class TestApp (unittest.TestCase):
 
             if MHP == ('GET', 'odes.mapzen.com', '/extracts'):
                 if url.query == 'api_key=odes-xxxxxxx':
-                    bbox = dict(parse_qsl(request.body))
                     data = u'''[\r{\r  "id": 999,\r  "status": "created",\r  "created_at": "2016-06-02T03:29:25.233Z",\r  "processed_at": "2016-06-02T04:20:11.000Z",\r  "bbox": {\r    "e": -122.24825,\r    "n": 37.81230,\r    "s": 37.79724,\r    "w": -122.26447\r  }\r}\r]'''
                     return response(200, data.encode('utf8'), headers=response_headers)
 
@@ -243,27 +242,20 @@ class TestApp (unittest.TestCase):
 
             if MHP == ('POST', 'odes.mapzen.com', '/extracts'):
                 if url.query == 'api_key=odes-xxxxxxx':
-                    bbox = dict(parse_qsl(request.body))
+                    body = dict(parse_qsl(request.body))
+                    self.assertEqual(body['email_subject'], 'Yo')
+                    self.assertEqual(body['email_body_text'], 'Yo.\n')
+                    self.assertEqual(body['email_body_html'], '<p>Yo.</p>')
+                    
                     data = u'''{\r  "id": 999,\r  "status": "created",\r  "created_at": "2016-06-02T03:29:25.233Z",\r  "processed_at": "2016-06-02T04:20:11.000Z",\r  "bbox": {\r    "e": -122.24825,\r    "n": 37.81230,\r    "s": 37.79724,\r    "w": -122.26447\r  }\r}'''
-                    return response(200, data.encode('utf8'), headers=response_headers)
-
-            if MHP == ('GET', 'odes.mapzen.com', '/extracts/999'):
-                if url.query == 'api_key=odes-xxxxxxx':
-                    bbox = dict(parse_qsl(request.body))
-                    data = u'''{\r  "id": 999,\r  "status": "created",\r  "created_at": "2016-06-02T03:29:25.233Z",\r  "processed_at": "2016-06-02T04:20:11.000Z",\r  "bbox": {\r    "e": -122.24825,\r    "n": 37.81230,\r    "s": 37.79724,\r    "w": -122.26447\r  }\r}'''
-                    return response(200, data.encode('utf8'), headers=response_headers)
-
-            if MHP == ('GET', 'odes.mapzen.com', '/extracts'):
-                if url.query == 'api_key=odes-xxxxxxx':
-                    bbox = dict(parse_qsl(request.body))
-                    data = u'''[\r{\r  "id": 999,\r  "status": "created",\r  "created_at": "2016-06-02T03:29:25.233Z",\r  "processed_at": "2016-06-02T04:20:11.000Z",\r  "bbox": {\r    "e": -122.24825,\r    "n": 37.81230,\r    "s": 37.79724,\r    "w": -122.26447\r  }\r}\r]'''
                     return response(200, data.encode('utf8'), headers=response_headers)
 
             raise Exception(request.method, url, request.headers, request.body)
         
         with HTTMock(response_content):
             bbox = dict(bbox_n=37.81230, bbox_w=-122.26447, bbox_s=37.79724, bbox_e=-122.24825)
-            extract = odes.request_extract(bbox, 'odes-xxxxxxx')
+            email = dict(email_subject='Yo', email_body_text='Yo.\n', email_body_html='<p>Yo.</p>')
+            extract = odes.request_extract(bbox, email, 'odes-xxxxxxx')
 
 class TestAppPrefix (TestApp):
     _url_prefix = '/{}'.format(uuid4())
