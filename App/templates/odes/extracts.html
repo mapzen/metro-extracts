@@ -6,11 +6,22 @@
 
 {% block content %}
   <div class="container">
+    <div class="col-xs-12">
+      <ol class="breadcrumb">
+        <li>
+          <a href="{{ url_for('Metro-Extracts.index') }}">Metro Extracts</a>
+        </li>
+        <li class="active">Requested Extracts</li>
+      </ol>
+    </div>
+  </div>
+  <div class="container">
     <h1 class="text-center">welcome back!</h1>
+    <p class="text-center">Below are the extracts that you have requested:</p>
     <div id="extracts">
       {% for extract in extracts %}
         <a class="extract" href="{{ url_for('ODES.get_extract', extract_id=extract['id']) }}">
-          <div class="map" id="map-{{extract.id}}"></div>
+          <!-- <div class="map" id="map-{{extract.id}}"></div> -->
           <span class="info">
             <span class="label">Name:</span>
             {{extract.id}}
@@ -30,15 +41,15 @@
 {% endblock %}
 
 {% block js %}
-  <script src='{{ url_for('static', filename='js/extracts.js') }}'></script>
+  <!-- <script src='{{ url_for('static', filename='js/extracts.js') }}'></script> -->
 {% endblock %}
 
 {% block script %}
   {% for extract in extracts %}
-    Extracts().init(
+    /* Extracts().init(
       {{ extract.bbox|safe }}, 
       {{ extract.id|safe }},
       "{{ url_for('static', filename='scene.yaml') }}"
-    );
+    ); */
   {% endfor %}
 {% endblock %}
