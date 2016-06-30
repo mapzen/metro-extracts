@@ -1,0 +1,39 @@
+h1 {
+  margin: 50px 0 20px;
+}
+#extracts {
+  width: 100%;
+  margin-top: 50px;
+  border: 1px solid #eee;
+  margin-bottom: -1px;
+}
+.headers{
+  border-bottom: 1px solid #eee;
+  padding: 15px 0;
+}
+.extract {
+  display: block;
+  clear: both;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+  /*height: 200px;*/
+}
+.extract:hover {
+  background: #f7f7f7;
+}
+.map {
+	width: 25%;
+	height: 200px;
+  cursor: default;
+  float: left;
+}
+.map path {
+  cursor: default;
+}
+.info, .label {
+  display: inline-block;
+  /*width: 24%;*/
+  width: 33%;
+  text-align: center;
+  /*margin-top: 75px;*/
+}
