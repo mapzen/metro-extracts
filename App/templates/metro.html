@@ -124,8 +124,6 @@
 
         var rect = new L.Rectangle(new L.LatLngBounds([southwest, northeast]), { className : "blue" });
         displayMap.addLayer(rect);
-
-        return this;
       },
       addEnclosed: function() {
         var id = request.split("&")[0],
