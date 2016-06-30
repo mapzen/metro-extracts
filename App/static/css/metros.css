@@ -99,6 +99,9 @@ body.data-pages .inline-submit .btn:hover {
 #request-wrapper.encompassed .encompassed-text {
   display: block;
 }
+#request-wrapper.encompassed #make-request {
+  margin-top: 50px;
+}
 #request-wrapper.request-greater-1 .request-greater-1 {
   display: block;
 }

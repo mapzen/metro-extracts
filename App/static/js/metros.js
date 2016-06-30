@@ -272,7 +272,6 @@ var Metros = function() {
       this.clearMap();
       d3.select("#did-you-mean").style("display","none");
       d3.select("#make-request").style("display","none");
-      d3.selectAll(".encompassed-text").style("display","none");
     },
     calculateOffset : function(theta, d, lat1, lng1) {
       var lat1 = lat1.toRad(), 
