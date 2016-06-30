@@ -1,16 +1,54 @@
 #!/usr/bin/env python
 import unittest
+import os, tempfile
 from uuid import uuid4
+from shutil import rmtree
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
 from re import compile
 
 from App.web import make_app
+from App.util import get_mapzen_navbar, get_mapzen_footer
 from bs4 import BeautifulSoup
 from httmock import HTTMock, response
 from flask import Flask
 import requests
 
 app = Flask(__name__)
+
+class TestUtil (unittest.TestCase):
+
+    def setUp(self):
+        tempfile.tempdir, self._old_tempdir = tempfile.mkdtemp(prefix='util-'), tempfile.gettempdir()
+        print('Made', tempfile.tempdir)
+    
+    def tearDown(self):
+        print('Killing', tempfile.tempdir)
+        rmtree(tempfile.tempdir)
+        tempfile.tempdir = self._old_tempdir
+    
+    def test_navbar(self):
+        def response_content1(url, request):
+            '''
+            '''
+            MHP = request.method, url.hostname, url.path
+
+            if MHP == ('GET', 'mapzen.com', '/site-fragments/navbar.html'):
+                return response(200, 'Hello I am the navbar', headers={'Content-Type': 'text/html; charset=utf-8'})
+
+            raise Exception(request.method, url, request.headers, request.body)
+        
+        def response_content2(url, request):
+            '''
+            '''
+            raise Exception(request.method, url, request.headers, request.body)
+        
+        with HTTMock(response_content1):
+            # Request it once to get into cache.
+            self.assertIn('Hello I am the navbar', get_mapzen_navbar())
+
+        with HTTMock(response_content2):
+            # Request it again and expect to get it from cache.
+            self.assertIn('Hello I am the navbar', get_mapzen_navbar())
 
 class TestApp (unittest.TestCase):
 
