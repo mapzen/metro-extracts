@@ -19,10 +19,8 @@ class TestUtil (unittest.TestCase):
 
     def setUp(self):
         tempfile.tempdir, self._old_tempdir = tempfile.mkdtemp(prefix='util-'), tempfile.gettempdir()
-        print('Made', tempfile.tempdir)
     
     def tearDown(self):
-        print('Killing', tempfile.tempdir)
         rmtree(tempfile.tempdir)
         tempfile.tempdir = self._old_tempdir
     
