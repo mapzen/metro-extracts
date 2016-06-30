@@ -24,7 +24,7 @@ var Metros = function() {
     init : function(nestedData, jsonURL, scene) {
       nestedCities = nestedData;
       geoJSONUrl = jsonURL;
-      sceneURL = sceneURL;
+      sceneURL = scene;
       this.initDisplayMap();
       return this;
     },
