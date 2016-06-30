@@ -6,8 +6,7 @@ from shutil import rmtree
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
 from re import compile
 
-from App.web import make_app
-from App.util import get_mapzen_navbar, get_mapzen_footer
+from App import web, util
 from bs4 import BeautifulSoup
 from httmock import HTTMock, response
 from flask import Flask
@@ -51,10 +50,10 @@ class TestUtil (unittest.TestCase):
             self.assertIn(content, function())
     
     def test_navbar(self):
-        return self._test_remote_fragment(get_mapzen_navbar, 'navbar.html')
+        return self._test_remote_fragment(util.get_mapzen_navbar, 'navbar.html')
     
     def test_footer(self):
-        return self._test_remote_fragment(get_mapzen_footer, 'footer.html')
+        return self._test_remote_fragment(util.get_mapzen_footer, 'footer.html')
 
 class TestApp (unittest.TestCase):
 
@@ -64,17 +63,39 @@ class TestApp (unittest.TestCase):
         return ''.join((self._url_prefix or '', path))
     
     def setUp(self):
-        app = make_app(self._url_prefix)
+        tempfile.tempdir, self._old_tempdir = tempfile.mkdtemp(prefix='util-'), tempfile.gettempdir()
+
+        # pre-request some fake headers and footers
+        def response_content(url, request):
+            response_headers = {'Content-Type': 'text/html; charset=utf-8'}
+
+            if (url.netloc, url.path) == ('mapzen.com', '/site-fragments/navbar.html'):
+                return response(200, '<div>fake navbar HTML</div>', headers=response_headers)
+
+            if (url.netloc, url.path) == ('mapzen.com', '/site-fragments/footer.html'):
+                return response(200, '<div>fake footer HTML</div>', headers=response_headers)
+
+            raise Exception(url)
+        
+        with HTTMock(response_content):
+            util.get_mapzen_navbar()
+            util.get_mapzen_footer()
+
+        app = web.make_app(self._url_prefix)
         app.config['MAPZEN_APP_ID'] = '123'
         app.config['MAPZEN_APP_SECRET'] = '456'
         app.secret_key = '789'
-
+        
         self.client = app.test_client()
+    
+    def tearDown(self):
+        rmtree(tempfile.tempdir)
+        tempfile.tempdir = self._old_tempdir
 
     def test_index(self):
         resp1 = self.client.get(self.prefixed('/'))
         soup1 = BeautifulSoup(resp1.data, 'html.parser')
-        head1 = soup1.find_all('h1')[-1].text
+        head1 = soup1.find('h1').text
 
         self.assertEqual(resp1.status_code, 200)
         self.assertIn('metro extracts', head1)
@@ -82,7 +103,7 @@ class TestApp (unittest.TestCase):
         link1 = soup1.find_all(text='San Francisco')[0].find_parent('a')
         resp2 = self.client.get(link1['href'])
         soup2 = BeautifulSoup(resp2.data, 'html.parser')
-        head2 = soup2.find_all('h1')[-1].text
+        head2 = soup2.find('h1').text
 
         self.assertEqual(resp2.status_code, 200)
         self.assertIn('San Francisco', head2)
