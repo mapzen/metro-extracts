@@ -1,11 +1,11 @@
-#map path {
+#map path, .map path {
   fill: #d4645c;
   stroke: #d4645c;
   stroke-width: 2;
   stroke-opacity: .3;
   fill-opacity: .3;
 }
-#map path.blue {
+#map path.blue, .map path.blue {
   fill: #6ea0a4;
   stroke: #6ea0a4;
 }
