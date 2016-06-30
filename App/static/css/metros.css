@@ -24,23 +24,6 @@ body.data-pages .inline-submit .btn:hover {
 #map {
   border-right: 1px solid rgb(224,224,224);
 }
-#map path {
-  fill: #d4645c;
-  stroke: #d4645c;
-  stroke-width: 2;
-  stroke-opacity: .3;
-  fill-opacity: .3;
-}
-#map path.blue {
-  fill: #6ea0a4;
-  stroke: #6ea0a4;
-}
-#map path.outline {
-  stroke: #000;
-  fill: #6ea0a4;
-  fill-opacity: .3;
-  stroke-opacity: .5;
-}
 .drag-icon {
   width: 10px;
   height: 10px;
@@ -57,13 +40,6 @@ body.data-pages .inline-submit .btn:hover {
 }
 .drag-icon:hover {
   border-color: #666;
-}
-.leaflet-container a {
-  color: #6ea0a4;
-}
-.leaflet-container .leaflet-control-zoom-in,
-.leaflet-container .leaflet-control-zoom-out {
-  color: #000;
 }
 
 #search-box {
