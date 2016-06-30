@@ -68,6 +68,20 @@ def load_extract(id, api_keys):
     
     return None
 
+def request_extract(bbox, api_key):
+    '''
+    '''
+    post_url = uritemplate.expand(odes_extracts_url, dict(api_key=api_key))
+    resp = requests.post(post_url, data=bbox)
+    extract = resp.json()
+    
+    if 'error' in extract:
+        raise Exception("Uh oh: {}".format(extract['error']))
+    elif resp.status_code != 200:
+        raise Exception("Uh oh")
+    
+    return extract
+
 @blueprint.route('/odes/')
 def get_odes():
     '''
@@ -92,19 +106,12 @@ def get_envelope(envelope_id):
     '''
     api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
     envelope = session['envelopes'][envelope_id]
-    fields = ('bbox_n', 'bbox_w', 'bbox_s', 'bbox_e')
-    data = {field: envelope['form'][field] for field in fields}
+    bbox_fields = ('bbox_n', 'bbox_w', 'bbox_s', 'bbox_e')
+    bbox = {field: envelope['form'][field] for field in bbox_fields}
 
-    post_url = uritemplate.expand(odes_extracts_url, dict(api_key=api_keys[0]))
-    resp = requests.post(post_url, data=data)
-    extract = resp.json()
-    
-    if 'error' in extract:
-        raise Exception("Uh oh: {}".format(extract['error']))
-    elif resp.status_code != 200:
-        raise Exception("Uh oh")
-    
+    extract = request_extract(bbox, api_keys[0])
     session['envelopes'].pop(envelope_id)
+
     return redirect(url_for('ODES.get_extract', extract_id=extract['id']), 301)
 
 @blueprint.route('/odes/extracts/', methods=['GET'])

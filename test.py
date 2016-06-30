@@ -4,6 +4,7 @@ from uuid import uuid4
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
 from re import compile
 
+from App import odes
 from App.web import make_app
 from bs4 import BeautifulSoup
 from httmock import HTTMock, response
@@ -231,6 +232,38 @@ class TestApp (unittest.TestCase):
             
             self.assertEqual(resp4.status_code, 200)
             self.assertIsNotNone(soup4.find(text=compile(r'\b999\b')))
+    
+    def test_request_extract(self):
+
+        def response_content(url, request):
+            '''
+            '''
+            MHP = request.method, url.hostname, url.path
+            response_headers = {'Content-Type': 'application/json; charset=utf-8'}
+
+            if MHP == ('POST', 'odes.mapzen.com', '/extracts'):
+                if url.query == 'api_key=odes-xxxxxxx':
+                    bbox = dict(parse_qsl(request.body))
+                    data = u'''{\r  "id": 999,\r  "status": "created",\r  "created_at": "2016-06-02T03:29:25.233Z",\r  "processed_at": "2016-06-02T04:20:11.000Z",\r  "bbox": {\r    "e": -122.24825,\r    "n": 37.81230,\r    "s": 37.79724,\r    "w": -122.26447\r  }\r}'''
+                    return response(200, data.encode('utf8'), headers=response_headers)
+
+            if MHP == ('GET', 'odes.mapzen.com', '/extracts/999'):
+                if url.query == 'api_key=odes-xxxxxxx':
+                    bbox = dict(parse_qsl(request.body))
+                    data = u'''{\r  "id": 999,\r  "status": "created",\r  "created_at": "2016-06-02T03:29:25.233Z",\r  "processed_at": "2016-06-02T04:20:11.000Z",\r  "bbox": {\r    "e": -122.24825,\r    "n": 37.81230,\r    "s": 37.79724,\r    "w": -122.26447\r  }\r}'''
+                    return response(200, data.encode('utf8'), headers=response_headers)
+
+            if MHP == ('GET', 'odes.mapzen.com', '/extracts'):
+                if url.query == 'api_key=odes-xxxxxxx':
+                    bbox = dict(parse_qsl(request.body))
+                    data = u'''[\r{\r  "id": 999,\r  "status": "created",\r  "created_at": "2016-06-02T03:29:25.233Z",\r  "processed_at": "2016-06-02T04:20:11.000Z",\r  "bbox": {\r    "e": -122.24825,\r    "n": 37.81230,\r    "s": 37.79724,\r    "w": -122.26447\r  }\r}\r]'''
+                    return response(200, data.encode('utf8'), headers=response_headers)
+
+            raise Exception(request.method, url, request.headers, request.body)
+        
+        with HTTMock(response_content):
+            bbox = dict(bbox_n=37.81230, bbox_w=-122.26447, bbox_s=37.79724, bbox_e=-122.24825)
+            extract = odes.request_extract(bbox, 'odes-xxxxxxx')
 
 class TestAppPrefix (TestApp):
     _url_prefix = '/{}'.format(uuid4())
