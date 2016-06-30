@@ -28,7 +28,7 @@ def errors_logged(route_function):
 def _get_remote_fragment(url):
     sha = sha1(url.encode('utf8')).hexdigest()
     _, ext = splitext(url)
-    path = join(tempfile.tempdir, sha+ext)
+    path = join(tempfile.gettempdir(), sha+ext)
     
     def new_enough(filename):
         ctime, oldest = os.stat(filename).st_ctime, time() - 300

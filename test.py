@@ -74,7 +74,7 @@ class TestApp (unittest.TestCase):
     def test_index(self):
         resp1 = self.client.get(self.prefixed('/'))
         soup1 = BeautifulSoup(resp1.data, 'html.parser')
-        head1 = soup1.find('h1').text
+        head1 = soup1.find_all('h1')[-1].text
 
         self.assertEqual(resp1.status_code, 200)
         self.assertIn('metro extracts', head1)
@@ -82,7 +82,7 @@ class TestApp (unittest.TestCase):
         link1 = soup1.find_all(text='San Francisco')[0].find_parent('a')
         resp2 = self.client.get(link1['href'])
         soup2 = BeautifulSoup(resp2.data, 'html.parser')
-        head2 = soup2.find('h1').text
+        head2 = soup2.find_all('h1')[-1].text
 
         self.assertEqual(resp2.status_code, 200)
         self.assertIn('San Francisco', head2)
