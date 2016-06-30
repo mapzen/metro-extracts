@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block styles %}
-  <link rel='stylesheet' href='{{ url_for('static', filename='metros.css') }}'>
+  <link rel='stylesheet' href='{{ url_for('static', filename='css/metros.css') }}'>
 {% endblock %}
 
 {% block content %}
@@ -24,7 +24,7 @@
         <div class="autocomplete"></div>
       </div>
       <div id="request-wrapper">
-        <p id="did-you-mean">Did you mean <span class="name"></span>?</p>
+        <p id="did-you-mean" class="request-messaging">Did you mean <span class="name"></span>?</p>
         <p class="encompassed-text request-messaging">Your extract is included inside of a larger area: </p>
         <div id="extracts">
           {% for country_metros in metros_tree %}
@@ -60,15 +60,14 @@
 {% endblock %}
 
 {% block script %}
-
+  var mapHeight = window.innerWidth < 768 ? 300 : window.innerHeight;
+  d3.select("#map").style("height", mapHeight + 'px');
+  
   var metrosPage = Metros().init(
     {{metros_tree|tojson|safe}}, 
     "{{ url_for('Metro-Extracts.get_cities_geojson') }}", 
     "{{ url_for('static', filename='scene.yaml') }}"
   );
-
-  var mapHeight = window.innerWidth < 768 ? 300 : window.innerHeight;
-  d3.select("#map").style("height", mapHeight + 'px');
 
   d3.selectAll(".country-name")
     .on("click",function(d){

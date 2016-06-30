@@ -1,12 +1,32 @@
-<p><a href="{{ url_for('ODES.get_extracts') }}">Other extracts</a></p>
+{% extends "layout.html" %}
 
-<h1>Extract {{extract.id}}</h1>
-<p>{{extract.status}}; {{extract.created_at}}</p>
+{% block content %}
+  <div class="container-fluid">
+    <div class="col-xs-12 text-center">
+      <h1>Extract {{extract.id}}</h1>
+    </div>
+    <div class="col-sm-6 col-xs-12">
+      <div id="map"></div>
+    </div>
+    <div class="col-sm-6 col-xs-12">
+      <p><a href="{{ url_for('ODES.get_extracts') }}">Other extracts</a></p>
+      <p>{{extract.status}}; {{extract.created_at}}</p>
 
-<ul>
-    {% for (name, href) in extract.get('download_links', {}).items() %}
-        <li>
-            <a href="{{href}}">{{name}}</a>
-        </li>
-    {% endfor %}
-</ul>
+      {% for (name, href) in extract.get('download_links', {}).items() %}
+          <a class="link" href="{{href}}">{{name}}</a>
+      {% endfor %}
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block js %}
+  <script src='{{ url_for('static', filename='js/extract.js') }}'></script>
+{% endblock %}
+
+{% block script %}
+  var extractPage = Extract().init(
+    {{ extract.bbox|safe }}, 
+    "{{ url_for('static', filename='scene.yaml') }}"
+  );
+{% endblock %}
