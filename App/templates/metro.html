@@ -7,14 +7,27 @@
 {% block content %}
   <div class="container-fluid">
     <div class="col-xs-12">
+      <ol class="breadcrumb">
+        <li>
+          <a href="{ url_for('Metro-Extracts.index') }}">Metro Extracts</a>
+        </li>
+        <li class="active">{{ metro.name }}</li>
+      </ol>
+    </div>
+    <div class="col-xs-12">
       <h1>Metro Extract: {{ metro.name }}</h1>
     </div>
     <div class="col-sm-6 col-xs-12">
       <div id="map"></div>
     </div>
     <div class="col-sm-6 col-xs-12">
-      <p>To get started with <span class="name">{{ metro.name }}</span>, download your preferred file format.</p>
-      <p>Need help deciding? Check out our <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">format guide</a>.</p>
+      <div class="btn-group">
+        <a class="btn btn-transparent" href="https://mapzen.com/documentation/metro-extracts/">Documentation</a>
+        <a class="btn btn-transparent" href="https://mapzen.com/documentation/metro-extracts/walkthrough/">Tutorial</a>
+        <a class="btn btn-transparent" href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">File Format Guide</a>
+      </div>
+      <h2>Downloads</h2>
+      <p>If you're unsure of which file to pick, check out our <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">format guide</a>.</p>
       <div id="downloads">
         <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.id }}.osm.pbf">OSM PBF</a>
         <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.id }}.osm.xml">OSM XML</a>
@@ -34,11 +47,6 @@
       <h2>About</h2>
       <p>Mapzen Metro Extracts are produced via a <a href="https://github.com/mapzen/chef-metroextractor">chef cookbook</a> derived from the work of <a href="http://metro.teczno.com">Michal Migurski</a>.</p>
       <p>For more granular OpenStreetMap data, we offer a free, hosted <a href="https://mapzen.com/documentation/vector-tiles/">Vector Tile service</a> — sign up for your <a href="https://mapzen.com/developers/">API key here</a>.</p>
-      <div class="btn-group">
-        <a class="btn btn-transparent" href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">File Format Guide</a>
-        <a class="btn btn-transparent" href="https://mapzen.com/documentation/metro-extracts/">Documentation</a>
-        <a class="btn btn-transparent" href="https://mapzen.com/documentation/metro-extracts/walkthrough/">Tutorial</a>
-      </div>
     </div>
   </div>
 {% endblock %}
