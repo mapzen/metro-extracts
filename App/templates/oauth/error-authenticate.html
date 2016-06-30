@@ -1,11 +1,15 @@
 {% extends "layout.html" %}
-{% block content %}
 
-    <h2>Authenticate With Mapzen 🗝 </h2>
+{% block content %}
+  <div class="container text-center">
+    <h2 class="">Authenticate With Mapzen 🗝 </h2>
     
     <p>
         API Users needs to be able to communicate with Mapzen to read repository information on your behalf.
     </p>
+
+
+    <h3 style="margin: 50px 0">what shall we do to tell people about the auth flow??</h3>
 
     <form action="{{href}}" method="get">
         <input type="hidden" name="state" value="{{state}}">
@@ -14,5 +18,5 @@
         <input type="hidden" name="response_type" value="code">
         <button class="btn btn-mapzen">Go tell Mapzen it’s okay</button>
     </form>
-
+  </div>
 {% endblock %}
