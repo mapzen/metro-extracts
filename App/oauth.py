@@ -1,7 +1,5 @@
 from os import environ
-from sys import stderr
 from urllib.parse import urlencode, urlunparse, urljoin
-from traceback import print_exc
 from functools import wraps
 from uuid import uuid4
 from time import time
@@ -12,6 +10,8 @@ from flask import (
     Blueprint, session, request, render_template, redirect, make_response,
     current_app, Response, url_for
     )
+
+from .util import errors_logged
 
 blueprint = Blueprint('OAuth', __name__, template_folder='templates/oauth')
 hardcoded_auth = ('mapzen', environ.get('TESTING_PASSWORD'))
@@ -27,22 +27,6 @@ def apply_oauth_blueprint(app, url_prefix):
     app.secret_key = environ.get('FLASK_SECRET_KEY')
     app.config['MAPZEN_APP_ID'] = environ.get('MAPZEN_APP_ID')
     app.config['MAPZEN_APP_SECRET'] = environ.get('MAPZEN_APP_SECRET')
-
-def errors_logged(route_function):
-    '''
-    '''
-    @wraps(route_function)
-    def wrapper(*args, **kwargs):
-        try:
-            result = route_function(*args, **kwargs)
-        except Exception as e:
-            print_exc(file=stderr)
-            raise
-            return Response('Nope.', headers={'Content-Type': 'text/plain'}, status=500)
-        else:
-            return result
-    
-    return wrapper
 
 def check_authentication(untouched_route):
     '''

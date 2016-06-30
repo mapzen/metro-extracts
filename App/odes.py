@@ -1,4 +1,5 @@
 from .oauth import check_authentication
+from .util import errors_logged
 
 from operator import itemgetter
 from uuid import uuid4
@@ -69,12 +70,14 @@ def load_extract(id, api_keys):
     return None
 
 @blueprint.route('/odes/')
+@errors_logged
 def get_odes():
     '''
     '''
     return render_template('odes/index.html')
 
 @blueprint.route('/odes/envelopes/', methods=['POST'])
+@errors_logged
 def post_envelope():
     '''
     '''
@@ -86,6 +89,7 @@ def post_envelope():
     return redirect(url_for('ODES.get_envelope', envelope_id=envelope_id), 303)
 
 @blueprint.route('/odes/envelopes/<envelope_id>')
+@errors_logged
 @check_authentication
 def get_envelope(envelope_id):
     '''
@@ -108,6 +112,7 @@ def get_envelope(envelope_id):
     return redirect(url_for('ODES.get_extract', extract_id=extract['id']), 301)
 
 @blueprint.route('/odes/extracts/', methods=['GET'])
+@errors_logged
 @check_authentication
 def get_extracts():
     '''
@@ -118,6 +123,7 @@ def get_extracts():
     return render_template('extracts.html', extracts=extracts)
 
 @blueprint.route('/odes/extracts/<extract_id>', methods=['GET'])
+@errors_logged
 @check_authentication
 def get_extract(extract_id):
     '''

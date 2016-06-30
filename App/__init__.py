@@ -7,6 +7,8 @@ import json
 import requests
 import uritemplate
 
+from .util import errors_logged
+
 blueprint = Blueprint('Metro-Extracts', __name__)
 
 def load_cities(filename):
@@ -25,6 +27,7 @@ def apply_blueprint(app, url_prefix):
     app.register_blueprint(blueprint, url_prefix=url_prefix)
 
 @blueprint.route('/')
+@errors_logged
 def index():
     ordered_cities = sorted(cities, key=itemgetter('country'))
     metros_tree = list()
@@ -41,6 +44,7 @@ def index():
     return render_template('index.html', metros_tree=metros_tree)
 
 @blueprint.route('/cities.geojson')
+@errors_logged
 def get_cities_geojson():
     features = list()
     
@@ -60,6 +64,7 @@ def get_cities_geojson():
 
 @blueprint.route('/metro/<metro_id>/')
 @blueprint.route('/metro/<metro_id>/<wof_id>/<wof_name>/')
+@errors_logged
 def get_metro(metro_id, wof_id=None, wof_name=None):
     with open('cities.json') as file:
         cities = json.load(file)
@@ -68,6 +73,7 @@ def get_metro(metro_id, wof_id=None, wof_name=None):
     return render_template('metro.html', metro=metro, wof_id=wof_id, wof_name=wof_name)
 
 @blueprint.route('/wof/<id>.geojson')
+@errors_logged
 def wof_geojson(id):
     ''' Proxy requests to http://whosonfirst.mapzen.com/spelunker/id/{id}.geojson
     '''
