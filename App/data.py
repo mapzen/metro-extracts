@@ -13,8 +13,13 @@ class WoF:
         self.name = name
 
 class ODES:
-    def __init__(self, id):
+    def __init__(self, id, status=None, created_at=None, processed_at=None, links=None, bbox=None):
         self.id = id
+        self.status = status
+        self.created_at = created_at
+        self.processed_at = processed_at
+        self.links = links
+        self.bbox = bbox
 
 class Extract:
     def __init__(self, id, envelope, odes, user_id, created, wof):

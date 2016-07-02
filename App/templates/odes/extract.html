@@ -14,11 +14,11 @@
         <li>
           <a href="{{ url_for('ODES.get_extracts') }}">Requested Extracts</a>
         </li>
-        <li class="active">{{extract.id}}</li>
+        <li class="active">{{extract.id or extract.odes.id}}</li>
       </ol>
     </div>
     <div class="col-xs-12 text-center">
-      <h1>Requested Extract: {{extract.id}}</h1>
+      <h1>Requested Extract: {{extract.id or extract.odes.id}}</h1>
     </div>
     <div class="col-sm-6 col-xs-12">
       <div id="map"></div>
@@ -31,7 +31,7 @@
       </div>
       <h2>Downloads</h2>
       <p>If you're unsure of which file to pick, check out our <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">format guide</a>.</p>
-      {% for (name, href) in extract.get('download_links', {}).items() %}
+      {% for (name, href) in extract.odes.links.items() %}
           <a class="link" href="{{href}}">{{name}}</a>
       {% endfor %}
 
@@ -49,7 +49,7 @@
 
 {% block script %}
   var extractPage = Extract().init(
-    {{ extract.bbox|safe }}, 
+    {{ extract.odes.bbox|safe }}, 
     "{{ url_for('static', filename='scene.yaml') }}"
   );
 {% endblock %}

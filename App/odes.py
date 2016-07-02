@@ -51,7 +51,11 @@ def get_odes_extracts(db, api_keys):
         resp = requests.get(extracts_url)
     
         if resp.status_code in range(200, 299):
-            odeses.extend([data.ODES(oj['id']) for oj in resp.json()])
+            odeses.extend([data.ODES(oj['id'], status=oj['status'], bbox=oj['bbox'],
+                                     links=oj.get('download_links', {}),
+                                     processed_at=oj['processed_at'],
+                                     created_at=oj['created_at'])
+                           for oj in resp.json()])
     
     for odes in odeses:
         extract = data.get_extract(db, odes=odes)
@@ -63,19 +67,39 @@ def get_odes_extracts(db, api_keys):
 
     return extracts
 
-def get_odes_extract(id, api_keys):
+def get_odes_extract(db, id, api_keys):
     '''
     '''
+    extract, odes = None, None
+    
     for api_key in api_keys:
         vars = dict(id=id, api_key=api_key)
         extract_url = uritemplate.expand(odes_extracts_url, vars)
         resp = requests.get(extract_url)
     
         if resp.status_code in range(200, 299):
-            # Return first matching extract
-            return dict(resp.json())
+            # Stop at first matching ODES extract
+            oj = resp.json()
+            odes = data.ODES(oj['id'], status=oj['status'], bbox=oj['bbox'],
+                             links=oj.get('download_links', {}),
+                             processed_at=oj['processed_at'],
+                             created_at=oj['created_at'])
+            break
     
-    return None
+    if odes is None:
+        # maybe the ID was an extract ID?
+        extract = data.get_extract(db, extract_id=id)
+        
+        # recursively look up the ODES ID.
+        return get_odes_extract(db, extract.odes.id, api_keys)
+    
+    extract = data.get_extract(db, odes=odes)
+    
+    if extract is None:
+        # there is an ODES extract, but nothing in our local DB...
+        return data.Extract(None, None, odes, None, None, None)
+    
+    return extract
 
 @blueprint.route('/odes/')
 @util.errors_logged
@@ -145,13 +169,12 @@ def get_extracts():
 def get_extract(extract_id):
     '''
     '''
-    with data.connect('postgres:///metro_extracts') as db:
-        extract = data.get_extract(db, extract_id=extract_id)
-    
     api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
-    odes_extract = get_odes_extract(extract.odes.id, api_keys)
+
+    with data.connect('postgres:///metro_extracts') as db:
+        extract = get_odes_extract(db, extract_id, api_keys)
     
-    if odes_extract is None:
+    if extract is None:
         raise ValueError('No extract {}'.format(extract_id))
 
-    return render_template('extract.html', extract=odes_extract, util=util)
+    return render_template('extract.html', extract=extract, util=util)
