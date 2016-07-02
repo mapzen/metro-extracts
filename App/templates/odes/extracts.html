@@ -25,11 +25,11 @@
         <span class="label">Created At</span>
       </div>
       {% for extract in extracts %}
-        <a class="extract" href="{{ url_for('ODES.get_extract', extract_id=extract['id']) }}">
-          <!-- <div class="map" id="map-{{extract.id}}"></div> -->
-          <span class="info">{{extract.id}}</span>
-          <span class="info">{{extract.status}}</span>
-          <span class="info time">{{extract.created_at}}</span>
+        <a class="extract" href="{{ url_for('ODES.get_extract', extract_id=(extract.id or extract.odes.id)) }}">
+          <!-- <div class="map" id="map-{{extract.odes.id}}"></div> -->
+          <span class="info">{{extract.id or extract.odes.id}}</span>
+          <span class="info">{{extract.odes.status}}</span>
+          <span class="info time">{{extract.odes.created_at}}</span>
         </a>
       {% endfor %}
     </div>
@@ -49,8 +49,8 @@
   });
   {% for extract in extracts %}
     /* Extracts().init(
-      {{ extract.bbox|safe }}, 
-      {{ extract.id|safe }},
+      {{ extract.odes.bbox|safe }}, 
+      {{ extract.odes.id|safe }},
       "{{ url_for('static', filename='scene.yaml') }}"
     ); */
   {% endfor %}

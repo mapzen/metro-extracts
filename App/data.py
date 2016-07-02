@@ -45,8 +45,8 @@ def add_extract_envelope(db, envelope, wof):
     
     return extract_id
 
-def get_extract(db, extract_id=None, envelope_id=None):
-    assert not (extract_id is None and envelope_id is None)
+def get_extract(db, extract_id=None, envelope_id=None, odes=None):
+    assert not (extract_id is None and envelope_id is None and odes is None)
     
     values, conditions = [], []
     
@@ -58,16 +58,24 @@ def get_extract(db, extract_id=None, envelope_id=None):
         conditions.append('envelope_id = %s')
         values.append(envelope_id)
     
+    if odes is not None:
+        conditions.append('odes_id = %s')
+        values.append(odes.id)
+    
     db.execute('''
         SELECT id, envelope_id, envelope_bbox, odes_id, user_id, wof_name, wof_id, created
         FROM extracts WHERE {}
         '''.format(' AND '.join(conditions)),
         tuple(values))
     
-    id, env_id, env_bbox, odes_id, user_id, wof_name, wof_id, created = db.fetchone()
+    try:
+        id, env_id, env_bbox, odes_id, user_id, wof_name, wof_id, created = db.fetchone()
+    except TypeError:
+        return None
+
     wof = WoF(wof_id, wof_name)
     envelope = Envelope(env_id, env_bbox)
-    odes = ODES(odes_id)
+    odes = odes or ODES(odes_id)
 
     return Extract(id, envelope, odes, user_id, created, wof)
 

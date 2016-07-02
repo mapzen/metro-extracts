@@ -40,10 +40,10 @@ def get_odes_keys(keys_url, access_token):
     
     return api_keys
 
-def load_extracts(api_keys):
+def get_odes_extracts(db, api_keys):
     '''
     '''
-    extracts = list()
+    odeses, extracts = list(), list()
     
     for api_key in api_keys:
         vars = dict(api_key=api_key)
@@ -51,11 +51,19 @@ def load_extracts(api_keys):
         resp = requests.get(extracts_url)
     
         if resp.status_code in range(200, 299):
-            extracts.extend(resp.json())
+            odeses.extend([data.ODES(oj['id']) for oj in resp.json()])
+    
+    for odes in odeses:
+        extract = data.get_extract(db, odes=odes)
+        
+        if extract is None:
+            extract = data.Extract(None, None, odes, None, None, None)
+        
+        extracts.append(extract)
 
     return extracts
 
-def load_extract(id, api_keys):
+def get_odes_extract(id, api_keys):
     '''
     '''
     for api_key in api_keys:
@@ -123,9 +131,12 @@ def get_envelope(envelope_id):
 def get_extracts():
     '''
     '''
-    api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
-    extracts = load_extracts(api_keys)
+    keys_url, access_token = session['id']['keys_url'], session['token']['access_token']
+    api_keys = get_odes_keys(keys_url, access_token)
 
+    with data.connect('postgres:///metro_extracts') as db:
+        extracts = get_odes_extracts(db, api_keys)
+    
     return render_template('extracts.html', extracts=extracts, util=util)
 
 @blueprint.route('/odes/extracts/<extract_id>', methods=['GET'])
@@ -138,7 +149,7 @@ def get_extract(extract_id):
         extract = data.get_extract(db, extract_id=extract_id)
     
     api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
-    odes_extract = load_extract(extract.odes.id, api_keys)
+    odes_extract = get_odes_extract(extract.odes.id, api_keys)
     
     if odes_extract is None:
         raise ValueError('No extract {}'.format(extract_id))
