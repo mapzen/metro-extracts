@@ -6,10 +6,11 @@ from shutil import rmtree
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
 from re import compile
 
-from App import web, util
+from App import web, util, data
 from bs4 import BeautifulSoup
 from httmock import HTTMock, response
 from flask import Flask
+from mock import Mock
 import requests
 
 app = Flask(__name__)
@@ -302,6 +303,80 @@ class TestAppPrefix (TestApp):
 
 class TestAppDoublePrefix (TestApp):
     _url_prefix = '/{}/{}'.format(uuid4(), uuid4())
+
+class TestData (unittest.TestCase):
+
+    def test_add_extract_envelope(self):
+        db = Mock()
+        envelope = data.Envelope('xyz', [-122.26447, 37.79724, -122.24825, 37.81230])
+        wof = data.WoF(85921881, 'Oakland')
+        extract_id = data.add_extract_envelope(db, envelope, wof)
+        
+        self.assertEqual(db.mock_calls[0][0], 'execute')
+        self.assertEqual(db.mock_calls[0][1][1], (extract_id, envelope.id, envelope.bbox, wof.name, wof.id))
+        self.assertEqual(db.mock_calls[0][1][0], '''
+        INSERT INTO extracts
+        (id, envelope_id, envelope_bbox, wof_name, wof_id, created)
+        VALUES (%s, %s, %s, %s, %s, NOW())
+        ''')
+    
+    def test_get_extract(self):
+        db = Mock()
+        db.fetchone.return_value = ('123', '456', [1,2,3,4], 7, 8, 'Oakland', 85921881, None)
+
+        extract = data.get_extract(db, '123')
+        
+        self.assertEqual(db.mock_calls[0][0], 'execute')
+        self.assertEqual(db.mock_calls[0][1][1], ('123', ))
+        self.assertEqual(db.mock_calls[0][1][0], '''
+        SELECT id, envelope_id, envelope_bbox, odes_id, user_id, wof_name, wof_id, created
+        FROM extracts WHERE id = %s
+        ''')
+        
+        self.assertEqual(extract.id, '123')
+        self.assertEqual(extract.odes_id, 7)
+        self.assertEqual(extract.user_id, 8)
+        self.assertEqual(extract.envelope.id, '456')
+        self.assertEqual(extract.envelope.bbox, [1,2,3,4])
+        self.assertEqual(extract.wof.id, 85921881)
+        self.assertEqual(extract.wof.name, 'Oakland')
+
+    def test_get_envelope_extract(self):
+        db = Mock()
+        db.fetchone.return_value = ('123', '456', [1,2,3,4], 7, 8, 'Oakland', 85921881, None)
+
+        extract = data.get_envelope_extract(db, '456')
+        
+        self.assertEqual(db.mock_calls[0][0], 'execute')
+        self.assertEqual(db.mock_calls[0][1][1], ('456', ))
+        self.assertEqual(db.mock_calls[0][1][0], '''
+        SELECT id, envelope_id, envelope_bbox, odes_id, user_id, wof_name, wof_id, created
+        FROM extracts WHERE envelope_id = %s
+        ''')
+        
+        self.assertEqual(extract.id, '123')
+        self.assertEqual(extract.odes_id, 7)
+        self.assertEqual(extract.user_id, 8)
+        self.assertEqual(extract.envelope.id, '456')
+        self.assertEqual(extract.envelope.bbox, [1,2,3,4])
+        self.assertEqual(extract.wof.id, 85921881)
+        self.assertEqual(extract.wof.name, 'Oakland')
+
+    def test_set_extract(self):
+        db = Mock()
+        envelope = data.Envelope('xyz', [-122.26447, 37.79724, -122.24825, 37.81230])
+        wof = data.WoF(85921881, 'Oakland')
+        extract = data.Extract('123', envelope, 4, 5, None, wof)
+        data.set_extract(db, extract)
+        
+        self.assertEqual(db.mock_calls[0][0], 'execute')
+        self.assertEqual(db.mock_calls[0][1][1], ('xyz', [-122.26447, 37.79724, -122.24825, 37.8123], 4, 5, 'Oakland', 85921881, '123'))
+        self.assertEqual(db.mock_calls[0][1][0], '''
+        UPDATE extracts
+        SET envelope_id = %s, envelope_bbox = %s, odes_id = %s,
+            user_id = %s, wof_name = %s, wof_id = %s
+        WHERE id = %s
+        ''')
 
 if __name__ == '__main__':
     unittest.main()

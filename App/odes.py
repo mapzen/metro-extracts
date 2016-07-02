@@ -1,5 +1,5 @@
 from .oauth import check_authentication
-from . import util
+from . import util, data
 
 from operator import itemgetter
 from uuid import uuid4
@@ -81,12 +81,13 @@ def get_odes():
 def post_envelope():
     '''
     '''
-    envelope_id = str(uuid4())
-    envelopes = session.get('envelopes', {})
-    envelopes[envelope_id] = dict(form=request.form, created=time())
-    session['envelopes'] = envelopes
+    bbox = [float(request.form[k]) for k in ('bbox_w', 'bbox_s', 'bbox_e', 'bbox_n')]
+    envelope = data.Envelope(str(uuid4()), bbox)
     
-    return redirect(url_for('ODES.get_envelope', envelope_id=envelope_id), 303)
+    with data.connect('postgres:///metro_extracts') as db:
+        data.add_extract_envelope(db, envelope, data.WoF(None, None))
+
+    return redirect(url_for('ODES.get_envelope', envelope_id=envelope.id), 303)
 
 @blueprint.route('/odes/envelopes/<envelope_id>')
 @util.errors_logged
@@ -94,22 +95,27 @@ def post_envelope():
 def get_envelope(envelope_id):
     '''
     '''
+    with data.connect('postgres:///metro_extracts') as db:
+        extract = data.get_envelope_extract(db, envelope_id)
+
     api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
-    envelope = session['envelopes'][envelope_id]
-    fields = ('bbox_n', 'bbox_w', 'bbox_s', 'bbox_e')
-    data = {field: envelope['form'][field] for field in fields}
+    params = {key: extract.envelope.bbox[index] for (index, key)
+              in enumerate(('bbox_w', 'bbox_s', 'bbox_e', 'bbox_n'))}
 
     post_url = uritemplate.expand(odes_extracts_url, dict(api_key=api_keys[0]))
-    resp = requests.post(post_url, data=data)
-    extract = resp.json()
+    resp = requests.post(post_url, data=params)
+    extract_json = resp.json()
     
-    if 'error' in extract:
-        raise Exception("Uh oh: {}".format(extract['error']))
+    if 'error' in extract_json:
+        raise Exception("Uh oh: {}".format(extract_json['error']))
     elif resp.status_code != 200:
         raise Exception("Uh oh")
     
-    session['envelopes'].pop(envelope_id)
-    return redirect(url_for('ODES.get_extract', extract_id=extract['id']), 301)
+    with data.connect('postgres:///metro_extracts') as db:
+        extract.odes_id = extract_json['id']
+        data.set_extract(db, extract)
+    
+    return redirect(url_for('ODES.get_extract', extract_id=extract.id), 301)
 
 @blueprint.route('/odes/extracts/', methods=['GET'])
 @util.errors_logged
@@ -128,10 +134,13 @@ def get_extracts():
 def get_extract(extract_id):
     '''
     '''
-    api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
-    extract = load_extract(extract_id, api_keys)
+    with data.connect('postgres:///metro_extracts') as db:
+        extract = data.get_extract(db, extract_id)
     
-    if extract is None:
+    api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
+    odes_extract = load_extract(extract.odes_id, api_keys)
+    
+    if odes_extract is None:
         raise ValueError('No extract {}'.format(extract_id))
 
-    return render_template('extract.html', extract=extract, util=util)
+    return render_template('extract.html', extract=odes_extract, util=util)

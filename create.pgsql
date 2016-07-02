@@ -13,7 +13,7 @@ CREATE TABLE extracts (
     odes_id         INTEGER NULL,
 
     -- Who and when.
-    user_id         INTEGER NOT NULL,
+    user_id         INTEGER NULL,
     created         TIMESTAMP NOT NULL,
     
     -- Where does this extract cover?
