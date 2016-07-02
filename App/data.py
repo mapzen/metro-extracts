@@ -39,7 +39,7 @@ def connect(dsn):
 def add_extract_envelope(db, envelope, wof):
     '''
     '''
-    extract_id = str(uuid4())
+    extract_id = str(uuid4())[-12:]
     
     db.execute('''
         INSERT INTO extracts

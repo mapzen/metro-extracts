@@ -14,7 +14,7 @@ CREATE TABLE extracts (
 
     -- Who and when.
     user_id         INTEGER NULL,
-    created         TIMESTAMP NOT NULL,
+    created         TIMESTAMP WITH TIME ZONE NOT NULL,
     
     -- Where does this extract cover?
     wof_name        TEXT NULL,

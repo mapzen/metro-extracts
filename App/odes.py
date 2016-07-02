@@ -117,11 +117,13 @@ def get_odes():
 def post_envelope():
     '''
     '''
-    bbox = [float(request.form[k]) for k in ('bbox_w', 'bbox_s', 'bbox_e', 'bbox_n')]
-    envelope = data.Envelope(str(uuid4()), bbox)
+    form = request.form
+    bbox = [float(form[k]) for k in ('bbox_w', 'bbox_s', 'bbox_e', 'bbox_n')]
+    wof_name, wof_id = form.get('wof_name'), form.get('wof_id') and int(form['wof_id'])
+    envelope = data.Envelope(str(uuid4())[-12:], bbox)
     
     with data.connect('postgres:///metro_extracts') as db:
-        data.add_extract_envelope(db, envelope, data.WoF(None, None))
+        data.add_extract_envelope(db, envelope, data.WoF(wof_id, wof_name))
 
     return redirect(url_for('ODES.get_envelope', envelope_id=envelope.id), 303)
 
@@ -148,6 +150,7 @@ def get_envelope(envelope_id):
         raise Exception("Uh oh")
     
     with data.connect('postgres:///metro_extracts') as db:
+        extract.user_id = session['id']['id']
         extract.odes.id = extract_json['id']
         data.set_extract(db, extract)
     

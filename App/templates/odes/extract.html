@@ -14,11 +14,11 @@
         <li>
           <a href="{{ url_for('ODES.get_extracts') }}">Requested Extracts</a>
         </li>
-        <li class="active">{{extract.id or extract.odes.id}}</li>
+        <li class="active">{{extract.wof.name or extract.id or extract.odes.id}}</li>
       </ol>
     </div>
     <div class="col-xs-12 text-center">
-      <h1>Requested Extract: {{extract.id or extract.odes.id}}</h1>
+      <h1>Requested Extract: {{extract.wof.name or extract.id or extract.odes.id}}</h1>
     </div>
     <div class="col-sm-6 col-xs-12">
       <div id="map"></div>
