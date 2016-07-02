@@ -334,7 +334,7 @@ class TestData (unittest.TestCase):
         ''')
         
         self.assertEqual(extract.id, '123')
-        self.assertEqual(extract.odes_id, 7)
+        self.assertEqual(extract.odes.id, 7)
         self.assertEqual(extract.user_id, 8)
         self.assertEqual(extract.envelope.id, '456')
         self.assertEqual(extract.envelope.bbox, [1,2,3,4])
@@ -355,7 +355,7 @@ class TestData (unittest.TestCase):
         ''')
         
         self.assertEqual(extract.id, '123')
-        self.assertEqual(extract.odes_id, 7)
+        self.assertEqual(extract.odes.id, 7)
         self.assertEqual(extract.user_id, 8)
         self.assertEqual(extract.envelope.id, '456')
         self.assertEqual(extract.envelope.bbox, [1,2,3,4])
@@ -366,7 +366,8 @@ class TestData (unittest.TestCase):
         db = Mock()
         envelope = data.Envelope('xyz', [-122.26447, 37.79724, -122.24825, 37.81230])
         wof = data.WoF(85921881, 'Oakland')
-        extract = data.Extract('123', envelope, 4, 5, None, wof)
+        odes = data.ODES(4)
+        extract = data.Extract('123', envelope, odes, 5, None, wof)
         data.set_extract(db, extract)
         
         self.assertEqual(db.mock_calls[0][0], 'execute')

@@ -12,11 +12,15 @@ class WoF:
         self.id = id
         self.name = name
 
+class ODES:
+    def __init__(self, id):
+        self.id = id
+
 class Extract:
-    def __init__(self, id, envelope, odes_id, user_id, created, wof):
+    def __init__(self, id, envelope, odes, user_id, created, wof):
         self.id = id
         self.envelope = envelope
-        self.odes_id = odes_id
+        self.odes = odes
         self.user_id = user_id
         self.created = created
         self.wof = wof
@@ -51,8 +55,9 @@ def get_extract(db, extract_id):
     id, env_id, env_bbox, odes_id, user_id, wof_name, wof_id, created = db.fetchone()
     wof = WoF(wof_id, wof_name)
     envelope = Envelope(env_id, env_bbox)
+    odes = ODES(odes_id)
 
-    return Extract(id, envelope, odes_id, user_id, created, wof)
+    return Extract(id, envelope, odes, user_id, created, wof)
 
 def get_envelope_extract(db, envelope_id):
     db.execute('''
@@ -64,8 +69,9 @@ def get_envelope_extract(db, envelope_id):
     id, env_id, env_bbox, odes_id, user_id, wof_name, wof_id, created = db.fetchone()
     wof = WoF(wof_id, wof_name)
     envelope = Envelope(env_id, env_bbox)
+    odes = ODES(odes_id)
 
-    return Extract(id, envelope, odes_id, user_id, created, wof)
+    return Extract(id, envelope, odes, user_id, created, wof)
 
 def set_extract(db, extract):
     db.execute('''
@@ -74,5 +80,5 @@ def set_extract(db, extract):
             user_id = %s, wof_name = %s, wof_id = %s
         WHERE id = %s
         ''',
-        (extract.envelope.id, extract.envelope.bbox, extract.odes_id,
+        (extract.envelope.id, extract.envelope.bbox, extract.odes.id,
         extract.user_id, extract.wof.name, extract.wof.id, extract.id))

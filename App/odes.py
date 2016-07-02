@@ -112,7 +112,7 @@ def get_envelope(envelope_id):
         raise Exception("Uh oh")
     
     with data.connect('postgres:///metro_extracts') as db:
-        extract.odes_id = extract_json['id']
+        extract.odes.id = extract_json['id']
         data.set_extract(db, extract)
     
     return redirect(url_for('ODES.get_extract', extract_id=extract.id), 301)
@@ -138,7 +138,7 @@ def get_extract(extract_id):
         extract = data.get_extract(db, extract_id)
     
     api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
-    odes_extract = load_extract(extract.odes_id, api_keys)
+    odes_extract = load_extract(extract.odes.id, api_keys)
     
     if odes_extract is None:
         raise ValueError('No extract {}'.format(extract_id))
