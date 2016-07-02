@@ -3,6 +3,7 @@ import unittest
 import os, tempfile
 from uuid import uuid4
 from shutil import rmtree
+from os.path import join, dirname
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
 from re import compile
 
@@ -13,7 +14,7 @@ from flask import Flask
 from mock import Mock
 import requests
 
-app = Flask(__name__)
+os.environ['DATABASE_URL'] = os.environ.get('DATABASE_URL', 'postgres:///metro_extracts_testing')
 
 class TestUtil (unittest.TestCase):
 
@@ -87,6 +88,11 @@ class TestApp (unittest.TestCase):
         app.config['MAPZEN_APP_SECRET'] = '456'
         app.secret_key = '789'
         
+        # set up the testing database.
+        with data.connect(app.config['DB_DSN']) as db:
+            with open(join(dirname(__file__), 'create.pgsql')) as file:
+                db.execute(file.read())
+
         self.client = app.test_client()
     
     def tearDown(self):

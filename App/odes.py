@@ -1,12 +1,14 @@
 from .oauth import check_authentication
 from . import util, data
 
+from os import environ
 from operator import itemgetter, attrgetter
 from uuid import uuid4
 from time import time
 
 from flask import (
-    Blueprint, url_for, session, render_template, jsonify, redirect, request
+    Blueprint, url_for, session, render_template, jsonify, redirect, request,
+    current_app
     )
 
 import requests
@@ -20,6 +22,7 @@ def apply_odes_blueprint(app, url_prefix):
     '''
     '''
     app.register_blueprint(blueprint, url_prefix=url_prefix)
+    app.config['DB_DSN'] = environ.get('DATABASE_URL')
 
 def get_odes_keys(keys_url, access_token):
     auth_header = {'Authorization': 'Bearer {}'.format(access_token)}
@@ -122,7 +125,7 @@ def post_envelope():
     wof_name, wof_id = form.get('wof_name'), form.get('wof_id') and int(form['wof_id'])
     envelope = data.Envelope(str(uuid4())[-12:], bbox)
     
-    with data.connect('postgres:///metro_extracts') as db:
+    with data.connect(current_app.config['DB_DSN']) as db:
         data.add_extract_envelope(db, envelope, data.WoF(wof_id, wof_name))
 
     return redirect(url_for('ODES.get_envelope', envelope_id=envelope.id), 303)
@@ -133,7 +136,7 @@ def post_envelope():
 def get_envelope(envelope_id):
     '''
     '''
-    with data.connect('postgres:///metro_extracts') as db:
+    with data.connect(current_app.config['DB_DSN']) as db:
         extract = data.get_extract(db, envelope_id=envelope_id)
 
     api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
@@ -149,7 +152,7 @@ def get_envelope(envelope_id):
     elif resp.status_code != 200:
         raise Exception("Uh oh")
     
-    with data.connect('postgres:///metro_extracts') as db:
+    with data.connect(current_app.config['DB_DSN']) as db:
         extract.user_id = session['id']['id']
         extract.odes.id = extract_json['id']
         data.set_extract(db, extract)
@@ -165,7 +168,7 @@ def get_extracts():
     keys_url, access_token = session['id']['keys_url'], session['token']['access_token']
     api_keys = get_odes_keys(keys_url, access_token)
 
-    with data.connect('postgres:///metro_extracts') as db:
+    with data.connect(current_app.config['DB_DSN']) as db:
         extracts = get_odes_extracts(db, api_keys)
     
     return render_template('extracts.html', extracts=extracts, util=util)
@@ -178,7 +181,7 @@ def get_extract(extract_id):
     '''
     api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
 
-    with data.connect('postgres:///metro_extracts') as db:
+    with data.connect(current_app.config['DB_DSN']) as db:
         extract = get_odes_extract(db, extract_id, api_keys)
     
     if extract is None:

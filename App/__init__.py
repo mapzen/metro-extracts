@@ -1,18 +1,12 @@
-import os
-import psycopg2
-
-if 'DATABASE_URL' in os.environ:
-    with psycopg2.connect(os.environ['DATABASE_URL']) as db:
-        print('I have a database:', db)
-
 from flask import Blueprint, jsonify, Response, render_template, url_for, request
 from itertools import groupby
 from operator import itemgetter
 from os.path import join, dirname
-import json
+import json, os
 
 import requests
 import uritemplate
+import psycopg2
 
 from . import util
 
