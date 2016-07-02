@@ -57,11 +57,11 @@ def get_extract(db, extract_id=None, envelope_id=None, odes=None):
     
     if extract_id is not None:
         conditions.append('id = %s')
-        values.append(extract_id)
+        values.append(str(extract_id))
     
     if envelope_id is not None:
         conditions.append('envelope_id = %s')
-        values.append(envelope_id)
+        values.append(str(envelope_id))
     
     if odes is not None:
         conditions.append('odes_id = %s')

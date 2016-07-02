@@ -1,7 +1,7 @@
 from .oauth import check_authentication
 from . import util, data
 
-from operator import itemgetter
+from operator import itemgetter, attrgetter
 from uuid import uuid4
 from time import time
 
@@ -57,7 +57,7 @@ def get_odes_extracts(db, api_keys):
                                      created_at=oj['created_at'])
                            for oj in resp.json()])
     
-    for odes in odeses:
+    for odes in sorted(odeses, key=attrgetter('created_at'), reverse=True):
         extract = data.get_extract(db, odes=odes)
         
         if extract is None:
@@ -70,33 +70,37 @@ def get_odes_extracts(db, api_keys):
 def get_odes_extract(db, id, api_keys):
     '''
     '''
-    extract, odes = None, None
+    extract, odes = data.get_extract(db, extract_id=id), None
     
-    for api_key in api_keys:
-        vars = dict(id=id, api_key=api_key)
-        extract_url = uritemplate.expand(odes_extracts_url, vars)
-        resp = requests.get(extract_url)
+    if extract is None:
+        # Nothing by that name in the database, so ask the ODES API.
+        for api_key in api_keys:
+            vars = dict(id=id, api_key=api_key)
+            extract_url = uritemplate.expand(odes_extracts_url, vars)
+            resp = requests.get(extract_url)
     
-        if resp.status_code in range(200, 299):
-            # Stop at first matching ODES extract
-            oj = resp.json()
-            odes = data.ODES(oj['id'], status=oj['status'], bbox=oj['bbox'],
-                             links=oj.get('download_links', {}),
-                             processed_at=oj['processed_at'],
-                             created_at=oj['created_at'])
-            break
+            if resp.status_code in range(200, 299):
+                # Stop at first matching ODES extract
+                oj = resp.json()
+                odes = data.ODES(oj['id'], status=oj['status'], bbox=oj['bbox'],
+                                 links=oj.get('download_links', {}),
+                                 processed_at=oj['processed_at'],
+                                 created_at=oj['created_at'])
+                break
+    
+        if odes is None:
+            # Nothing at all for this ID anywhere.
+            return None
     
     if odes is None:
-        # maybe the ID was an extract ID?
-        extract = data.get_extract(db, extract_id=id)
-        
-        # recursively look up the ODES ID.
+        # A DB extract was found, but nothing in ODES - very weird!
         return get_odes_extract(db, extract.odes.id, api_keys)
     
+    # We have a known ODES, so look for it in the database.
     extract = data.get_extract(db, odes=odes)
     
     if extract is None:
-        # there is an ODES extract, but nothing in our local DB...
+        # Known ODES, but nothing in the DB so make one up.
         return data.Extract(None, None, odes, None, None, None)
     
     return extract
