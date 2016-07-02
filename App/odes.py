@@ -96,7 +96,7 @@ def get_envelope(envelope_id):
     '''
     '''
     with data.connect('postgres:///metro_extracts') as db:
-        extract = data.get_envelope_extract(db, envelope_id)
+        extract = data.get_extract(db, envelope_id=envelope_id)
 
     api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
     params = {key: extract.envelope.bbox[index] for (index, key)
@@ -135,7 +135,7 @@ def get_extract(extract_id):
     '''
     '''
     with data.connect('postgres:///metro_extracts') as db:
-        extract = data.get_extract(db, extract_id)
+        extract = data.get_extract(db, extract_id=extract_id)
     
     api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
     odes_extract = load_extract(extract.odes.id, api_keys)

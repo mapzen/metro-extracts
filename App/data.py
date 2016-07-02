@@ -45,26 +45,24 @@ def add_extract_envelope(db, envelope, wof):
     
     return extract_id
 
-def get_extract(db, extract_id):
-    db.execute('''
-        SELECT id, envelope_id, envelope_bbox, odes_id, user_id, wof_name, wof_id, created
-        FROM extracts WHERE id = %s
-        ''',
-        (extract_id, ))
+def get_extract(db, extract_id=None, envelope_id=None):
+    assert not (extract_id is None and envelope_id is None)
     
-    id, env_id, env_bbox, odes_id, user_id, wof_name, wof_id, created = db.fetchone()
-    wof = WoF(wof_id, wof_name)
-    envelope = Envelope(env_id, env_bbox)
-    odes = ODES(odes_id)
-
-    return Extract(id, envelope, odes, user_id, created, wof)
-
-def get_envelope_extract(db, envelope_id):
+    values, conditions = [], []
+    
+    if extract_id is not None:
+        conditions.append('id = %s')
+        values.append(extract_id)
+    
+    if envelope_id is not None:
+        conditions.append('envelope_id = %s')
+        values.append(envelope_id)
+    
     db.execute('''
         SELECT id, envelope_id, envelope_bbox, odes_id, user_id, wof_name, wof_id, created
-        FROM extracts WHERE envelope_id = %s
-        ''',
-        (envelope_id, ))
+        FROM extracts WHERE {}
+        '''.format(' AND '.join(conditions)),
+        tuple(values))
     
     id, env_id, env_bbox, odes_id, user_id, wof_name, wof_id, created = db.fetchone()
     wof = WoF(wof_id, wof_name)

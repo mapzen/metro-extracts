@@ -320,11 +320,11 @@ class TestData (unittest.TestCase):
         VALUES (%s, %s, %s, %s, %s, NOW())
         ''')
     
-    def test_get_extract(self):
+    def test_get_extract_by_id(self):
         db = Mock()
         db.fetchone.return_value = ('123', '456', [1,2,3,4], 7, 8, 'Oakland', 85921881, None)
 
-        extract = data.get_extract(db, '123')
+        extract = data.get_extract(db, extract_id='123')
         
         self.assertEqual(db.mock_calls[0][0], 'execute')
         self.assertEqual(db.mock_calls[0][1][1], ('123', ))
@@ -341,11 +341,11 @@ class TestData (unittest.TestCase):
         self.assertEqual(extract.wof.id, 85921881)
         self.assertEqual(extract.wof.name, 'Oakland')
 
-    def test_get_envelope_extract(self):
+    def test_get_extract_by_envelope(self):
         db = Mock()
         db.fetchone.return_value = ('123', '456', [1,2,3,4], 7, 8, 'Oakland', 85921881, None)
 
-        extract = data.get_envelope_extract(db, '456')
+        extract = data.get_extract(db, envelope_id='456')
         
         self.assertEqual(db.mock_calls[0][0], 'execute')
         self.assertEqual(db.mock_calls[0][1][1], ('456', ))
