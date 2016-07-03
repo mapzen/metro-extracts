@@ -111,10 +111,10 @@ class TestApp (unittest.TestCase):
     def test_oauth_index(self):
         resp = self.client.get(self.prefixed('/oauth/hello'))
         soup = BeautifulSoup(resp.data, 'html.parser')
-        head = soup.find('h2').text
+        button = soup.find('button').text
 
         self.assertEqual(resp.status_code, 401)
-        self.assertIn('Authenticate With Mapzen', head)
+        self.assertIn('Log In With Mapzen', button)
     
     def _do_login(self, codes):
         '''
