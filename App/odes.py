@@ -6,6 +6,7 @@ from operator import itemgetter, attrgetter
 from uuid import uuid4
 from time import time
 
+from jinja2 import Environment, PackageLoader
 from flask import (
     Blueprint, url_for, session, render_template, jsonify, redirect, request,
     current_app
@@ -108,21 +109,38 @@ def get_odes_extract(db, id, api_keys):
     
     return extract
 
-def request_extract(bbox, email, api_key):
+def request_extract(extract, url_for, api_key):
     '''
     '''
-    data = {key: bbox[i] for (i, key) in enumerate(('bbox_w', 'bbox_s', 'bbox_e', 'bbox_n'))}
-    data.update(email)
+    env = Environment(loader=PackageLoader(__name__, 'templates'))
+    args = dict(
+        name = extract.wof.name or 'wherever',
+        created = extract.created,
+        link = url_for('ODES.get_extract', extract_id='foo')
+        )
+
+    email = dict(
+        email_subject=env.get_template('email-subject.txt').render(**args),
+        email_body_text=env.get_template('email-body.txt').render(**args),
+        email_body_html=env.get_template('email-body.html').render(**args)
+        )
+
+    params = {key: extract.envelope.bbox[i] for (i, key) in enumerate(('bbox_w', 'bbox_s', 'bbox_e', 'bbox_n'))}
+    params.update(email)
+
     post_url = uritemplate.expand(odes_extracts_url, dict(api_key=api_key))
-    resp = requests.post(post_url, data=data)
-    extract = resp.json()
+    resp = requests.post(post_url, data=params)
+    oj = resp.json()
     
-    if 'error' in extract:
-        raise Exception("Uh oh: {}".format(extract['error']))
+    if 'error' in oj:
+        raise Exception("Uh oh: {}".format(oj['error']))
     elif resp.status_code != 200:
         raise Exception("Uh oh")
     
-    return extract
+    return data.ODES(oj['id'], status=oj['status'], bbox=oj['bbox'],
+                     links=oj.get('download_links', {}),
+                     processed_at=oj['processed_at'],
+                     created_at=oj['created_at'])
 
 @blueprint.route('/odes/')
 @util.errors_logged
@@ -156,17 +174,12 @@ def get_envelope(envelope_id):
         extract = data.get_extract(db, envelope_id=envelope_id)
 
     api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
-    email = dict(
-        email_subject=render_template('email-subject.txt').strip(),
-        email_body_text=render_template('email-body.txt'),
-        email_body_html=render_template('email-body.html')
-        )
 
-    extract_json = request_extract(extract.envelope.bbox, email, api_keys[0])
+    odes = request_extract(extract, url_for, api_keys[0])
     
     with data.connect(current_app.config['DB_DSN']) as db:
         extract.user_id = session['id']['id']
-        extract.odes.id = extract_json['id']
+        extract.odes.id = odes.id
         data.set_extract(db, extract)
     
     return redirect(url_for('ODES.get_extract', extract_id=extract.id), 301)

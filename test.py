@@ -319,19 +319,28 @@ class TestApp (unittest.TestCase):
             if MHP == ('POST', 'odes.mapzen.com', '/extracts'):
                 if url.query == 'api_key=odes-xxxxxxx':
                     body = dict(parse_qsl(request.body))
-                    self.assertEqual(body['email_subject'], 'Yo')
-                    self.assertEqual(body['email_body_text'], 'Yo.\n')
-                    self.assertEqual(body['email_body_html'], '<p>Yo.</p>')
+                    self.assertIn('finished', body['email_subject'])
+                    self.assertIn('Nowhere', body['email_body_text'])
+                    self.assertIn('1066', body['email_body_text'])
+                    self.assertIn('http://example.com/nnnnn', body['email_body_text'])
+                    self.assertIn('Nowhere', body['email_body_html'])
+                    self.assertIn('1066', body['email_body_html'])
+                    self.assertIn('http://example.com/nnnnn', body['email_body_html'])
                     
                     data = u'''{\r  "id": 999,\r  "status": "created",\r  "created_at": "2016-06-02T03:29:25.233Z",\r  "processed_at": "2016-06-02T04:20:11.000Z",\r  "bbox": {\r    "e": -122.24825,\r    "n": 37.81230,\r    "s": 37.79724,\r    "w": -122.26447\r  }\r}'''
                     return response(200, data.encode('utf8'), headers=response_headers)
 
             raise Exception(request.method, url, request.headers, request.body)
+            
+        url_for = Mock()
+        url_for.return_value = 'http://example.com/nnnnn'
         
         with HTTMock(response_content):
             bbox = (-122.26447, 37.79724, -122.24825, 37.81230)
-            email = dict(email_subject='Yo', email_body_text='Yo.\n', email_body_html='<p>Yo.</p>')
-            extract = odes.request_extract(bbox, email, 'odes-xxxxxxx')
+            envelope = data.Envelope(None, bbox)
+            wof = data.WoF(None, 'Nowhere')
+            extract = data.Extract(None, envelope, None, None, '1066', wof)
+            o = odes.request_extract(extract, url_for, 'odes-xxxxxxx')
 
 class TestAppPrefix (TestApp):
     _url_prefix = '/{}'.format(uuid4())
