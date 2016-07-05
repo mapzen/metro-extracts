@@ -219,7 +219,7 @@ var Metros = function() {
 
       this.drawRequestBox();
 
-      d3.json("/wof/"+geoID+".geojson",function(data){
+      d3.json("wof/"+geoID+".geojson",function(data){
         outline = L.geoJson(data.geometry, { className : "outline" }).addTo(displayMap);
         displayMap.addLayer(outline);
       });
