@@ -1,1 +1,3 @@
-Yo, your extract is ready.
+Hooray, your requested extract has finished.
+
+You can download it here:
