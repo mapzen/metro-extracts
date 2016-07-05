@@ -129,10 +129,15 @@ ol {
         <table>
           <tr>
             <td>
-             <h2>Hooray! Your metro extract request has finished.</h2>
-            </td>
-            <td>
+              <h2>Hooray! Your metro extract request has finished.</h2>
               <p>Here are download links:</p>
+              {% for extract in extracts %}
+                <a class="extract" href="{{ url_for('ODES.get_extract', extract_id=extract['id']) }}">
+                  <span class="info">{{extract.id}}</span>
+                  <span class="info">{{extract.status}}</span>
+                  <span class="info time">{{extract.created_at}}</span>
+                </a>
+              {% endfor %}
             </td>
           </tr>
         </table>
