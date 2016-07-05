@@ -26,6 +26,7 @@ body {
   height: 100%;
   -webkit-text-size-adjust: none;
   width: 100% !important;
+  text-align: center;
 }
 
 
@@ -58,31 +59,41 @@ table.footer-wrap {
 
 table.footer-wrap a {
   color: #999999;
+  text-decoration: underline;
 }
 
 
 /* -------------------------------------
     TYPOGRAPHY
 ------------------------------------- */
-h1, 
-h2, 
-h3 {
-  color: #111111;
-  font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-  font-weight: 200;
+
+h1 {
+  color: #d4645c;
+  font-family: "Playfair Display", serif;
+  font-size: 60px;
+  text-align: center;
+  font-weight: 300;
   line-height: 1.2em;
-  margin: 40px 0 10px;
+  margin: 0px 0 30px;
 }
-h2 {
-  font-size: 28px;
+.content a {
+  color: #6ea0a4;
+  text-decoration: none;
+  font-weight: bold;
 }
-h3 {
-  font-size: 22px;
+.content .btn {
+  background-color: #6ea0a4;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 400;
+  display: inline-block;
+  padding: 10px 16px;
+  font-weight: bold;
+  text-decoration: none;
+  margin: 10px 0 50px;
 }
 
-p, 
-ul, 
-ol {
+p {
   font-size: 14px;
   font-weight: normal;
   margin-bottom: 10px;
@@ -129,15 +140,16 @@ ol {
         <table>
           <tr>
             <td>
-              <h2>Hooray! Your metro extract request has finished.</h2>
-              <p>Here are download links:</p>
-              {% for extract in extracts %}
-                <a class="extract" href="{{ url_for('ODES.get_extract', extract_id=extract['id']) }}">
-                  <span class="info">{{extract.id}}</span>
-                  <span class="info">{{extract.status}}</span>
-                  <span class="info time">{{extract.created_at}}</span>
-                </a>
-              {% endfor %}
+              <h1>metro extracts</h1>
+              <p>Hooray, the metro extract that you requested at {{ timestamp }} has finished.</p>
+              <a href="{{ url }}" class="btn">View {{ wof:name }}</a>
+              <p>If you have any questions, please get in touch with us at <a href="mailto:{{ some email }}">support@mapzen.com</a>
+              <p>
+                <a href="{{ static for other extracts }}">Previous Requests</a> |
+                <a href="https://mapzen.com/documentation/metro-extracts/">Documentation</a> |
+                <a href="https://mapzen.com/documentation/metro-extracts/walkthrough/">Tutorial</a> |
+                <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">File Format Guide</a>
+              </p>
             </td>
           </tr>
         </table>
