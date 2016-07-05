@@ -213,6 +213,7 @@ var Metros = function() {
     requestExtract : function(metro) {
       var geoID = metro.properties.id;
       d3.select("input[name='wof_id']").attr("value",geoID);
+      d3.select("input[name='wof_name']").attr("value",metro.properties.label);
 
       requestBoundingBox = this.calculateNewBox(metro.bbox);
 
@@ -293,6 +294,7 @@ var Metros = function() {
     },
     drawRequestBox : function() {
       this.clearMap();
+      var m = this;
       rect = new L.Rectangle(new L.LatLngBounds(requestBoundingBox), { className : "blue" });
       displayMap.addLayer(rect);
       
@@ -305,11 +307,11 @@ var Metros = function() {
 
       cSW.on("drag",function(e){
         requestBoundingBox[0] = [e.target.getLatLng().lat, e.target.getLatLng().lng];
-        redrawBox();
+        m.redrawBox();
       });
       cNE.on("drag",function(e){
         requestBoundingBox[1] = [e.target.getLatLng().lat, e.target.getLatLng().lng];
-        redrawBox();
+        m.redrawBox();
       });
 
       dots.forEach(function(l){

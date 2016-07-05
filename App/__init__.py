@@ -2,10 +2,11 @@ from flask import Blueprint, jsonify, Response, render_template, url_for, reques
 from itertools import groupby
 from operator import itemgetter
 from os.path import join, dirname
-import json
+import json, os
 
 import requests
 import uritemplate
+import psycopg2
 
 from . import util
 
