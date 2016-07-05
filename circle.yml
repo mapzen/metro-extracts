@@ -1,6 +1,13 @@
 machine:
   python:
     version: 3.5.1
+  environment:
+    DATABASE_URL: postgres://extracts:extracts@localhost/extracts
+dependencies:
+  override:
+    - sudo apt-get update -y && sudo apt-get install -y postgresql-9.4
+    - sudo -u postgres psql -c "CREATE USER extracts WITH PASSWORD 'extracts'"
+    - sudo -u postgres psql -c "CREATE DATABASE extracts WITH OWNER extracts"
 test:
   override:
     - ./test.py

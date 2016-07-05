@@ -3,16 +3,18 @@ import unittest
 import os, tempfile
 from uuid import uuid4
 from shutil import rmtree
+from os.path import join, dirname
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
 from re import compile
 
-from App import web, util
+from App import web, util, data
 from bs4 import BeautifulSoup
 from httmock import HTTMock, response
 from flask import Flask
+from mock import Mock
 import requests
 
-app = Flask(__name__)
+os.environ['DATABASE_URL'] = os.environ.get('DATABASE_URL', 'postgres:///metro_extracts_testing')
 
 class TestUtil (unittest.TestCase):
 
@@ -86,6 +88,11 @@ class TestApp (unittest.TestCase):
         app.config['MAPZEN_APP_SECRET'] = '456'
         app.secret_key = '789'
         
+        # set up the testing database.
+        with data.connect(app.config['DB_DSN']) as db:
+            with open(join(dirname(__file__), 'create.pgsql')) as file:
+                db.execute(file.read())
+
         self.client = app.test_client()
     
     def tearDown(self):
@@ -269,6 +276,11 @@ class TestApp (unittest.TestCase):
                     data = u'''[\r{\r  "id": 999,\r  "status": "created",\r  "created_at": "2016-06-02T03:29:25.233Z",\r  "processed_at": "2016-06-02T04:20:11.000Z",\r  "bbox": {\r    "e": -122.24825,\r    "n": 37.81230,\r    "s": 37.79724,\r    "w": -122.26447\r  }\r}\r]'''
                     return response(200, data.encode('utf8'), headers=response_headers)
 
+            if (request.method, url.hostname) == ('GET', 'odes.mapzen.com') and url.path.startswith('/extracts/'):
+                if url.query == 'api_key=odes-xxxxxxx':
+                    data = u'''{"error":"extract not found"}'''
+                    return response(404, data.encode('utf8'), headers=response_headers)
+
             raise Exception(request.method, url, request.headers, request.body)
         
         with HTTMock(response_content1):
@@ -289,7 +301,7 @@ class TestApp (unittest.TestCase):
             soup3 = BeautifulSoup(resp3.data, 'html.parser')
             
             self.assertEqual(resp3.status_code, 200)
-            self.assertIsNotNone(soup3.find(text=compile(r'\b999\b')))
+            self.assertIsNotNone(soup3.find(text=compile(r'\b37.8123')))
             
             resp4 = self.client.get(self.prefixed('/odes/extracts/'))
             soup4 = BeautifulSoup(resp4.data, 'html.parser')
@@ -302,6 +314,103 @@ class TestAppPrefix (TestApp):
 
 class TestAppDoublePrefix (TestApp):
     _url_prefix = '/{}/{}'.format(uuid4(), uuid4())
+
+class TestData (unittest.TestCase):
+
+    def test_add_extract_envelope(self):
+        db = Mock()
+        envelope = data.Envelope('xyz', [-122.26447, 37.79724, -122.24825, 37.81230])
+        wof = data.WoF(85921881, 'Oakland')
+        extract_id = data.add_extract_envelope(db, envelope, wof)
+        
+        self.assertEqual(db.mock_calls[0][0], 'execute')
+        self.assertEqual(db.mock_calls[0][1][1], (extract_id, envelope.id, envelope.bbox, wof.name, wof.id))
+        self.assertEqual(db.mock_calls[0][1][0], '''
+        INSERT INTO extracts
+        (id, envelope_id, envelope_bbox, wof_name, wof_id, created)
+        VALUES (%s, %s, %s, %s, %s, NOW())
+        ''')
+    
+    def test_get_extract_by_id(self):
+        db = Mock()
+        db.fetchone.return_value = ('123', '456', [1,2,3,4], 7, 8, 'Oakland', 85921881, None)
+
+        extract = data.get_extract(db, extract_id='123')
+        
+        self.assertEqual(db.mock_calls[0][0], 'execute')
+        self.assertEqual(db.mock_calls[0][1][1], ('123', ))
+        self.assertEqual(db.mock_calls[0][1][0], '''
+        SELECT id, envelope_id, envelope_bbox, odes_id, user_id, wof_name, wof_id, created
+        FROM extracts WHERE id = %s
+        ''')
+        
+        self.assertEqual(extract.id, '123')
+        self.assertEqual(extract.odes.id, 7)
+        self.assertEqual(extract.user_id, 8)
+        self.assertEqual(extract.envelope.id, '456')
+        self.assertEqual(extract.envelope.bbox, [1,2,3,4])
+        self.assertEqual(extract.wof.id, 85921881)
+        self.assertEqual(extract.wof.name, 'Oakland')
+
+    def test_get_extract_by_envelope(self):
+        db = Mock()
+        db.fetchone.return_value = ('123', '456', [1,2,3,4], 7, 8, 'Oakland', 85921881, None)
+
+        extract = data.get_extract(db, envelope_id='456')
+        
+        self.assertEqual(db.mock_calls[0][0], 'execute')
+        self.assertEqual(db.mock_calls[0][1][1], ('456', ))
+        self.assertEqual(db.mock_calls[0][1][0], '''
+        SELECT id, envelope_id, envelope_bbox, odes_id, user_id, wof_name, wof_id, created
+        FROM extracts WHERE envelope_id = %s
+        ''')
+        
+        self.assertEqual(extract.id, '123')
+        self.assertEqual(extract.odes.id, 7)
+        self.assertEqual(extract.user_id, 8)
+        self.assertEqual(extract.envelope.id, '456')
+        self.assertEqual(extract.envelope.bbox, [1,2,3,4])
+        self.assertEqual(extract.wof.id, 85921881)
+        self.assertEqual(extract.wof.name, 'Oakland')
+
+    def test_get_extract_by_odes(self):
+        db = Mock()
+        db.fetchone.return_value = ('123', '456', [1,2,3,4], 7, 8, 'Oakland', 85921881, None)
+        
+        odes = data.ODES(7)
+        extract = data.get_extract(db, odes=odes)
+        
+        self.assertEqual(db.mock_calls[0][0], 'execute')
+        self.assertEqual(db.mock_calls[0][1][1], (7, ))
+        self.assertEqual(db.mock_calls[0][1][0], '''
+        SELECT id, envelope_id, envelope_bbox, odes_id, user_id, wof_name, wof_id, created
+        FROM extracts WHERE odes_id = %s
+        ''')
+        
+        self.assertEqual(extract.id, '123')
+        self.assertEqual(id(extract.odes), id(odes))
+        self.assertEqual(extract.user_id, 8)
+        self.assertEqual(extract.envelope.id, '456')
+        self.assertEqual(extract.envelope.bbox, [1,2,3,4])
+        self.assertEqual(extract.wof.id, 85921881)
+        self.assertEqual(extract.wof.name, 'Oakland')
+
+    def test_set_extract(self):
+        db = Mock()
+        envelope = data.Envelope('xyz', [-122.26447, 37.79724, -122.24825, 37.81230])
+        wof = data.WoF(85921881, 'Oakland')
+        odes = data.ODES(4)
+        extract = data.Extract('123', envelope, odes, 5, None, wof)
+        data.set_extract(db, extract)
+        
+        self.assertEqual(db.mock_calls[0][0], 'execute')
+        self.assertEqual(db.mock_calls[0][1][1], ('xyz', [-122.26447, 37.79724, -122.24825, 37.8123], 4, 5, 'Oakland', 85921881, '123'))
+        self.assertEqual(db.mock_calls[0][1][0], '''
+        UPDATE extracts
+        SET envelope_id = %s, envelope_bbox = %s, odes_id = %s,
+            user_id = %s, wof_name = %s, wof_id = %s
+        WHERE id = %s
+        ''')
 
 if __name__ == '__main__':
     unittest.main()

@@ -213,6 +213,7 @@ var Metros = function() {
     requestExtract : function(metro) {
       var geoID = metro.properties.id;
       d3.select("input[name='wof_id']").attr("value",geoID);
+      d3.select("input[name='wof_name']").attr("value",metro.properties.label);
 
       requestBoundingBox = this.calculateNewBox(metro.bbox);
 

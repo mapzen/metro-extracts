@@ -1,12 +1,14 @@
 from .oauth import check_authentication
-from . import util
+from . import util, data
 
-from operator import itemgetter
+from os import environ
+from operator import itemgetter, attrgetter
 from uuid import uuid4
 from time import time
 
 from flask import (
-    Blueprint, url_for, session, render_template, jsonify, redirect, request
+    Blueprint, url_for, session, render_template, jsonify, redirect, request,
+    current_app
     )
 
 import requests
@@ -20,6 +22,7 @@ def apply_odes_blueprint(app, url_prefix):
     '''
     '''
     app.register_blueprint(blueprint, url_prefix=url_prefix)
+    app.config['DB_DSN'] = environ.get('DATABASE_URL')
 
 def get_odes_keys(keys_url, access_token):
     auth_header = {'Authorization': 'Bearer {}'.format(access_token)}
@@ -40,10 +43,10 @@ def get_odes_keys(keys_url, access_token):
     
     return api_keys
 
-def load_extracts(api_keys):
+def get_odes_extracts(db, api_keys):
     '''
     '''
-    extracts = list()
+    odeses, extracts = list(), list()
     
     for api_key in api_keys:
         vars = dict(api_key=api_key)
@@ -51,23 +54,59 @@ def load_extracts(api_keys):
         resp = requests.get(extracts_url)
     
         if resp.status_code in range(200, 299):
-            extracts.extend(resp.json())
+            odeses.extend([data.ODES(oj['id'], status=oj['status'], bbox=oj['bbox'],
+                                     links=oj.get('download_links', {}),
+                                     processed_at=oj['processed_at'],
+                                     created_at=oj['created_at'])
+                           for oj in resp.json()])
+    
+    for odes in sorted(odeses, key=attrgetter('created_at'), reverse=True):
+        extract = data.get_extract(db, odes=odes)
+        
+        if extract is None:
+            extract = data.Extract(None, None, odes, None, None, None)
+        
+        extracts.append(extract)
 
     return extracts
 
-def load_extract(id, api_keys):
+def get_odes_extract(db, id, api_keys):
     '''
     '''
-    for api_key in api_keys:
-        vars = dict(id=id, api_key=api_key)
-        extract_url = uritemplate.expand(odes_extracts_url, vars)
-        resp = requests.get(extract_url)
+    extract, odes = data.get_extract(db, extract_id=id), None
     
-        if resp.status_code in range(200, 299):
-            # Return first matching extract
-            return dict(resp.json())
+    if extract is None:
+        # Nothing by that name in the database, so ask the ODES API.
+        for api_key in api_keys:
+            vars = dict(id=id, api_key=api_key)
+            extract_url = uritemplate.expand(odes_extracts_url, vars)
+            resp = requests.get(extract_url)
     
-    return None
+            if resp.status_code in range(200, 299):
+                # Stop at first matching ODES extract
+                oj = resp.json()
+                odes = data.ODES(oj['id'], status=oj['status'], bbox=oj['bbox'],
+                                 links=oj.get('download_links', {}),
+                                 processed_at=oj['processed_at'],
+                                 created_at=oj['created_at'])
+                break
+    
+        if odes is None:
+            # Nothing at all for this ID anywhere.
+            return None
+    
+    if odes is None:
+        # A DB extract was found, but nothing in ODES - very weird!
+        return get_odes_extract(db, extract.odes.id, api_keys)
+    
+    # We have a known ODES, so look for it in the database.
+    extract = data.get_extract(db, odes=odes)
+    
+    if extract is None:
+        # Known ODES, but nothing in the DB so make one up.
+        return data.Extract(None, None, odes, None, None, None)
+    
+    return extract
 
 @blueprint.route('/odes/')
 @util.errors_logged
@@ -81,12 +120,15 @@ def get_odes():
 def post_envelope():
     '''
     '''
-    envelope_id = str(uuid4())
-    envelopes = session.get('envelopes', {})
-    envelopes[envelope_id] = dict(form=request.form, created=time())
-    session['envelopes'] = envelopes
+    form = request.form
+    bbox = [float(form[k]) for k in ('bbox_w', 'bbox_s', 'bbox_e', 'bbox_n')]
+    wof_name, wof_id = form.get('wof_name'), form.get('wof_id') and int(form['wof_id'])
+    envelope = data.Envelope(str(uuid4())[-12:], bbox)
     
-    return redirect(url_for('ODES.get_envelope', envelope_id=envelope_id), 303)
+    with data.connect(current_app.config['DB_DSN']) as db:
+        data.add_extract_envelope(db, envelope, data.WoF(wof_id, wof_name))
+
+    return redirect(url_for('ODES.get_envelope', envelope_id=envelope.id), 303)
 
 @blueprint.route('/odes/envelopes/<envelope_id>')
 @util.errors_logged
@@ -94,22 +136,28 @@ def post_envelope():
 def get_envelope(envelope_id):
     '''
     '''
+    with data.connect(current_app.config['DB_DSN']) as db:
+        extract = data.get_extract(db, envelope_id=envelope_id)
+
     api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
-    envelope = session['envelopes'][envelope_id]
-    fields = ('bbox_n', 'bbox_w', 'bbox_s', 'bbox_e')
-    data = {field: envelope['form'][field] for field in fields}
+    params = {key: extract.envelope.bbox[index] for (index, key)
+              in enumerate(('bbox_w', 'bbox_s', 'bbox_e', 'bbox_n'))}
 
     post_url = uritemplate.expand(odes_extracts_url, dict(api_key=api_keys[0]))
-    resp = requests.post(post_url, data=data)
-    extract = resp.json()
+    resp = requests.post(post_url, data=params)
+    extract_json = resp.json()
     
-    if 'error' in extract:
-        raise Exception("Uh oh: {}".format(extract['error']))
+    if 'error' in extract_json:
+        raise Exception("Uh oh: {}".format(extract_json['error']))
     elif resp.status_code != 200:
         raise Exception("Uh oh")
     
-    session['envelopes'].pop(envelope_id)
-    return redirect(url_for('ODES.get_extract', extract_id=extract['id']), 301)
+    with data.connect(current_app.config['DB_DSN']) as db:
+        extract.user_id = session['id']['id']
+        extract.odes.id = extract_json['id']
+        data.set_extract(db, extract)
+    
+    return redirect(url_for('ODES.get_extract', extract_id=extract.id), 301)
 
 @blueprint.route('/odes/extracts/', methods=['GET'])
 @util.errors_logged
@@ -117,9 +165,12 @@ def get_envelope(envelope_id):
 def get_extracts():
     '''
     '''
-    api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
-    extracts = load_extracts(api_keys)
+    keys_url, access_token = session['id']['keys_url'], session['token']['access_token']
+    api_keys = get_odes_keys(keys_url, access_token)
 
+    with data.connect(current_app.config['DB_DSN']) as db:
+        extracts = get_odes_extracts(db, api_keys)
+    
     return render_template('extracts.html', extracts=extracts, util=util)
 
 @blueprint.route('/odes/extracts/<extract_id>', methods=['GET'])
@@ -129,7 +180,9 @@ def get_extract(extract_id):
     '''
     '''
     api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
-    extract = load_extract(extract_id, api_keys)
+
+    with data.connect(current_app.config['DB_DSN']) as db:
+        extract = get_odes_extract(db, extract_id, api_keys)
     
     if extract is None:
         raise ValueError('No extract {}'.format(extract_id))
