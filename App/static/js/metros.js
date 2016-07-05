@@ -294,6 +294,7 @@ var Metros = function() {
     },
     drawRequestBox : function() {
       this.clearMap();
+      var m = this;
       rect = new L.Rectangle(new L.LatLngBounds(requestBoundingBox), { className : "blue" });
       displayMap.addLayer(rect);
       
@@ -306,11 +307,11 @@ var Metros = function() {
 
       cSW.on("drag",function(e){
         requestBoundingBox[0] = [e.target.getLatLng().lat, e.target.getLatLng().lng];
-        redrawBox();
+        m.redrawBox();
       });
       cNE.on("drag",function(e){
         requestBoundingBox[1] = [e.target.getLatLng().lat, e.target.getLatLng().lng];
-        redrawBox();
+        m.redrawBox();
       });
 
       dots.forEach(function(l){
