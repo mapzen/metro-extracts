@@ -21,9 +21,9 @@ var Extract = function (){
         northeast = L.latLng(bbox.n, bbox.e),
         options = {
           scrollWheelZoom: false,
-          // Disables dragging on touch-detected devices
-          dragging: (window.self !== window.top && L.Browser.touch) ? false : true,
-          tap: (window.self !== window.top && L.Browser.touch) ? false : true,
+          zoomControl:false,
+          dragging: false,
+          tap: false
         };
       displayMap = L.map('map', options).fitBounds(L.latLngBounds(southwest, northeast));
 
