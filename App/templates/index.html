@@ -5,52 +5,50 @@
 {% endblock %}
 
 {% block content %}
-  <div class='container-fluid'>
-    <div class='col-xs-12 col-sm-6'>
-      <div id='map'></div>
+  <div class='col-xs-12 col-sm-6 map-wrapper'>
+    <div id='map'></div>
+  </div>
+  <div class='col-xs-12 col-sm-6'>
+    <h1 class="headroom text-center">metro extracts</h1>
+    <p>Now it’s even easier to get local data so you can start building cool stuff. Each week, we automatically extract the latest <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area shapefiles in a variety of formats for you to use.</p>
+    <p>
+      <a href="https://mapzen.com/documentation/metro-extracts/">Documentation</a> |
+      <a href="https://mapzen.com/documentation/metro-extracts/walkthrough/">Tutorial</a> |
+      <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">File Format Guide</a>
+    </p>
+    <div class='row inline-submit' id='search-box'>
+      <label class='data-filter-label' for='search_input'>Filter Extracts by City or Region</label>
+      <input type='search' class='hasclear col-sm-9 col-xs-8' id='search_input' placeholder='example: Los Angeles' type='text'>
+      <input id='search_submit' type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
+      <div class="autocomplete"></div>
     </div>
-    <div class='col-xs-12 col-sm-6'>
-      <h1 class="headroom text-center">metro extracts</h1>
-      <p>Now it’s even easier to get local data so you can start building cool stuff. Each week, we automatically extract the latest <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area shapefiles in a variety of formats for you to use.</p>
-      <p>
-        <a href="https://mapzen.com/documentation/metro-extracts/">Documentation</a> |
-        <a href="https://mapzen.com/documentation/metro-extracts/walkthrough/">Tutorial</a> |
-        <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">File Format Guide</a>
-      </p>
-      <div class='row inline-submit' id='search-box'>
-        <label class='data-filter-label' for='search_input'>Filter Extracts by City or Region</label>
-        <input type='search' class='hasclear col-sm-9 col-xs-8' id='search_input' placeholder='example: Los Angeles' type='text'>
-        <input id='search_submit' type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
-        <div class="autocomplete"></div>
+    <div id="request-wrapper">
+      <p id="did-you-mean" class="request-messaging">Did you mean <span class="name"></span>?</p>
+      <p class="encompassed-text request-messaging">Your extract is included inside of a larger area: </p>
+      <div id="extracts">
+        {% for country_metros in metros_tree %}
+          <div class="country">
+            <div class="country-name">{{ country_metros.country }}</div>
+            {% for metro in country_metros.metros %}
+              <a class="city" href="{{ metro.href }}">{{ metro.name }}</a>
+            {% endfor %}
+          </div>
+        {% endfor %}
       </div>
-      <div id="request-wrapper">
-        <p id="did-you-mean" class="request-messaging">Did you mean <span class="name"></span>?</p>
-        <p class="encompassed-text request-messaging">Your extract is included inside of a larger area: </p>
-        <div id="extracts">
-          {% for country_metros in metros_tree %}
-            <div class="country">
-              <div class="country-name">{{ country_metros.country }}</div>
-              {% for metro in country_metros.metros %}
-                <a class="city" href="{{ metro.href }}">{{ metro.name }}</a>
-              {% endfor %}
-            </div>
-          {% endfor %}
-        </div>
-        <div id="make-request">
-          <p class="default-request-text request-messaging">Hmm, we don't have an extract for <span class="name"></span> yet. Would you like to request one?</p>
-          <p class="encompassed-text request-messaging">If you'd like to request an extract specifically for <span class="name"></span>, click the button below. Please note, this can take a few hours to process.</p>
-          <p class="request-greater-1 request-messaging">We don't have a request for <span class="name"></span> yet, you can request one by clicking the button below. Please note, you have requested a large area and this request will take more than a few hours to process.</p>
-          <p class="request-greater-5 request-messaging">Sorry, but your request for <span class="name"></span> is too large to prcoess. Please make your request a smaller area.</p>
-          <form action="{{ url_for('ODES.post_envelope') }}" method="post">
-            <input name="bbox_n" type="hidden" />
-            <input name="bbox_w" type="hidden" />
-            <input name="bbox_s" type="hidden" />
-            <input name="bbox_e" type="hidden" />
-            <input name="wof_id" type="hidden" />
-            <input name="wof_name" type="hidden" />
-            <button class="btn btn-transparent">Create <span class="name"></span> Request</button>
-          </form>
-        </div>
+      <div id="make-request">
+        <p class="default-request-text request-messaging">Hmm, we don't have an extract for <span class="name"></span> yet. Would you like to request one?</p>
+        <p class="encompassed-text request-messaging">If you'd like to request an extract specifically for <span class="name"></span>, click the button below. Please note, this can take a few hours to process.</p>
+        <p class="request-greater-1 request-messaging">We don't have a request for <span class="name"></span> yet, you can request one by clicking the button below. Please note, you have requested a large area and this request will take more than a few hours to process.</p>
+        <p class="request-greater-5 request-messaging">Sorry, but your request for <span class="name"></span> is too large to prcoess. Please make your request a smaller area.</p>
+        <form action="{{ url_for('ODES.post_envelope') }}" method="post">
+          <input name="bbox_n" type="hidden" />
+          <input name="bbox_w" type="hidden" />
+          <input name="bbox_s" type="hidden" />
+          <input name="bbox_e" type="hidden" />
+          <input name="wof_id" type="hidden" />
+          <input name="wof_name" type="hidden" />
+          <button class="btn btn-transparent">Create <span class="name"></span> Request</button>
+        </form>
       </div>
     </div>
   </div>

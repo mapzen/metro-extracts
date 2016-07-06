@@ -11,7 +11,9 @@ body.data-pages .inline-submit .btn {
 body.data-pages .inline-submit .btn:hover { 
   background: #555; 
 }
-
+.map-wrapper {
+  padding: 0;
+}
 #map {
   border-right: 1px solid rgb(224,224,224);
 }
@@ -70,9 +72,6 @@ body.data-pages .inline-submit .btn:hover {
   color: #000;
   font-weight: normal;
   display: block;
-}
-.city:hover {
-  text-decoration: underline;
 }
 #did-you-mean {
   display: none;

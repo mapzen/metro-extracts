@@ -5,40 +5,36 @@
 {% endblock %}
 
 {% block content %}
-  <div class="container-fluid">
-    <div class="col-xs-12">
-      <ol class="breadcrumb">
-        <li>
-          <a href="{{ url_for('Metro-Extracts.index') }}">Metro Extracts</a>
-        </li>
-        <li>
-          <a href="{{ url_for('ODES.get_extracts') }}">Requested Extracts</a>
-        </li>
-        <li class="active">{{extract.wof.name or extract.id or extract.odes.id}}</li>
-      </ol>
+  <div class="col-xs-12">
+    <ol class="breadcrumb">
+      <li>
+        <a href="{{ url_for('Metro-Extracts.index') }}">Metro Extracts</a>
+      </li>
+      <li>
+        <a href="{{ url_for('ODES.get_extracts') }}">Requested Extracts</a>
+      </li>
+      <li class="active">{{extract.wof.name or extract.id or extract.odes.id}}</li>
+    </ol>
+  </div>
+  <div class="col-sm-6 col-xs-12">
+    <div id="map"></div>
+  </div>
+  <div class="col-sm-6 col-xs-12">
+    <h2>Requested Extract: {{extract.wof.name or extract.id or extract.odes.id}}</h2>
+    <div class="btn-group" style="margin: 0 auto;">
+      <a href="https://mapzen.com/documentation/metro-extracts/">Documentation</a> | 
+      <a href="https://mapzen.com/documentation/metro-extracts/walkthrough/">Tutorial</a> | 
+      <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">File Format Guide</a>
     </div>
-    <div class="col-xs-12 text-center">
-      <h1>Requested Extract: {{extract.wof.name or extract.id or extract.odes.id}}</h1>
-    </div>
-    <div class="col-sm-6 col-xs-12">
-      <div id="map"></div>
-    </div>
-    <div class="col-sm-6 col-xs-12">
-      <div class="btn-group">
-        <a class="btn btn-transparent" href="https://mapzen.com/documentation/metro-extracts/">Documentation</a>
-        <a class="btn btn-transparent" href="https://mapzen.com/documentation/metro-extracts/walkthrough/">Tutorial</a>
-        <a class="btn btn-transparent" href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">File Format Guide</a>
-      </div>
-      <h2>Downloads</h2>
-      <p>If you're unsure of which file to pick, check out our <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">format guide</a>.</p>
-      {% for (name, href) in extract.odes.links.items() %}
-          <a class="link" href="{{href}}">{{name}}</a>
-      {% endfor %}
+    <h3>Downloads</h3>
+    {% for (name, href) in extract.odes.links.items() %}
+        <a class="link" href="{{href}}">{{name}}</a>
+    {% endfor %}
+    <p>If you're unsure of which file to pick, check out our <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">format guide</a>.</p>
 
-      <h2>About</h2>
-      <p>Mapzen Metro Extracts are produced via a <a href="https://github.com/mapzen/chef-metroextractor">chef cookbook</a> derived from the work of <a href="http://metro.teczno.com">Michal Migurski</a>.</p>
-      <p>For more granular OpenStreetMap data, we offer a free, hosted <a href="https://mapzen.com/documentation/vector-tiles/">Vector Tile service</a> — sign up for your <a href="https://mapzen.com/developers/">API key here</a>.</p>
-    </div>
+    <h3>About</h3>
+    <p>Mapzen Metro Extracts are produced via a <a href="https://github.com/mapzen/chef-metroextractor">chef cookbook</a> derived from the work of <a href="http://metro.teczno.com">Michal Migurski</a>.</p>
+    <p>For more granular OpenStreetMap data, we offer a free, hosted <a href="https://mapzen.com/documentation/vector-tiles/">Vector Tile service</a>. <b>Sign up for your free <a href="https://mapzen.com/developers/">API key here</a>.</b></p>
   </div>
 
 {% endblock %}
@@ -48,6 +44,9 @@
 {% endblock %}
 
 {% block script %}
+  var mapHeight = window.innerWidth < 768 ? 300 : window.innerHeight - 114;
+  d3.select("#map").style("height", mapHeight + 'px');
+
   var extractPage = Extract().init(
     {{ extract.odes.bbox|safe }}, 
     "{{ url_for('static', filename='scene.yaml') }}"

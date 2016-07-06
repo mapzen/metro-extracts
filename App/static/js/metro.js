@@ -22,11 +22,11 @@ var Metro = function (){
         northeast = L.latLng(metro.bbox.top, metro.bbox.left),
         options = {
           scrollWheelZoom: false,
-          // Disables dragging on touch-detected devices
-          dragging: (window.self !== window.top && L.Browser.touch) ? false : true,
-          tap: (window.self !== window.top && L.Browser.touch) ? false : true,
+          zoomControl:false,
+          dragging: false,
+          tap: false
         };
-      displayMap = L.map('map', options).fitBounds(L.latLngBounds(southwest, northeast));
+      displayMap = L.map('map', options).fitBounds(L.latLngBounds(southwest, northeast)).zoomOut(1);
 
       if (this.hasWebGL() === true) {
         var layer = Tangram.leafletLayer({
@@ -40,7 +40,7 @@ var Metro = function (){
       }
       layer.addTo(displayMap);
 
-      var rect = new L.Rectangle(new L.LatLngBounds([southwest, northeast]), { className : "blue" });
+      var rect = new L.Rectangle(new L.LatLngBounds([southwest, northeast]));
       displayMap.addLayer(rect);
     }
   };
