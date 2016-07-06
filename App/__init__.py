@@ -87,3 +87,12 @@ def wof_geojson(id):
                if key in ('Content-Type', 'Content-Length')}
     
     return Response(wof_resp.content, headers=headers)
+
+@blueprint.route('/whereami')
+@util.errors_logged
+def whereami():
+    return jsonify(
+        host=request.headers.get('Host'),
+        cf_fwd_proto=request.headers.get('CloudFront-Forwarded-Proto'),
+        x_fwd_proto=request.headers.get('X-Forwarded-Proto')
+        )
