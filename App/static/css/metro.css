@@ -1,12 +1,6 @@
-h1 {
-  text-transform: capitalize;
-  text-align: center;
-  margin-bottom: 50px;
-}
 body.data-pages #map {
   width: 100%;
   border: 1px solid #ddd;
-  margin-bottom: 100px;
 }
 #map, #map path {
   cursor: default;

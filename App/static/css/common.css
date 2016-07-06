@@ -1,3 +1,6 @@
+.col-sm-6 {
+  margin-bottom: 100px;
+}
 #map path, .map path {
   fill: #d4645c;
   stroke: #d4645c;
