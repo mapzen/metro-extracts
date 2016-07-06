@@ -26,7 +26,7 @@ var Metro = function (){
           dragging: false,
           tap: false
         };
-      displayMap = L.map('map', options).fitBounds(L.latLngBounds(southwest, northeast)).zoomOut(1);
+      displayMap = L.map('map', options).fitBounds(L.latLngBounds(southwest, northeast));
 
       if (this.hasWebGL() === true) {
         var layer = Tangram.leafletLayer({
