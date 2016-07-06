@@ -2,4 +2,4 @@ Hooray, your requested extract for {{ name }} at {{ created }} has finished.
 
 You can download it here: {{ link }}
 
-If you have any questions, please get in touch with us at support@mapzen.com.
+If you have any questions, please get in touch with us at hello@mapzen.com.
