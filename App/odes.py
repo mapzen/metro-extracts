@@ -2,10 +2,12 @@ from .oauth import check_authentication
 from . import util, data
 
 from os import environ
+from urllib.parse import urljoin
 from operator import itemgetter, attrgetter
 from uuid import uuid4
 from time import time
 
+from jinja2 import Environment, PackageLoader
 from flask import (
     Blueprint, url_for, session, render_template, jsonify, redirect, request,
     current_app
@@ -108,6 +110,40 @@ def get_odes_extract(db, id, api_keys):
     
     return extract
 
+def request_odes_extract(extract, request, url_for, api_key):
+    '''
+    '''
+    env = Environment(loader=PackageLoader(__name__, 'templates'))
+    args = dict(
+        name = extract.wof.name or 'an unnamed place',
+        link = urljoin(util.get_base_url(request), url_for('ODES.get_extract', extract_id=extract.id)),
+        extracts_link = urljoin(util.get_base_url(request), url_for('ODES.get_extracts')),
+        created = extract.created
+        )
+
+    email = dict(
+        email_subject=env.get_template('email-subject.txt').render(**args),
+        email_body_text=env.get_template('email-body.txt').render(**args),
+        email_body_html=env.get_template('email-body.html').render(**args)
+        )
+
+    params = {key: extract.envelope.bbox[i] for (i, key) in enumerate(('bbox_w', 'bbox_s', 'bbox_e', 'bbox_n'))}
+    params.update(email)
+
+    post_url = uritemplate.expand(odes_extracts_url, dict(api_key=api_key))
+    resp = requests.post(post_url, data=params)
+    oj = resp.json()
+    
+    if 'error' in oj:
+        raise Exception("Uh oh: {}".format(oj['error']))
+    elif resp.status_code != 200:
+        raise Exception("Uh oh")
+    
+    return data.ODES(oj['id'], status=oj['status'], bbox=oj['bbox'],
+                     links=oj.get('download_links', {}),
+                     processed_at=oj['processed_at'],
+                     created_at=oj['created_at'])
+
 @blueprint.route('/odes/')
 @util.errors_logged
 def get_odes():
@@ -140,21 +176,11 @@ def get_envelope(envelope_id):
         extract = data.get_extract(db, envelope_id=envelope_id)
 
     api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
-    params = {key: extract.envelope.bbox[index] for (index, key)
-              in enumerate(('bbox_w', 'bbox_s', 'bbox_e', 'bbox_n'))}
-
-    post_url = uritemplate.expand(odes_extracts_url, dict(api_key=api_keys[0]))
-    resp = requests.post(post_url, data=params)
-    extract_json = resp.json()
-    
-    if 'error' in extract_json:
-        raise Exception("Uh oh: {}".format(extract_json['error']))
-    elif resp.status_code != 200:
-        raise Exception("Uh oh")
+    odes = request_odes_extract(extract, request, url_for, api_keys[0])
     
     with data.connect(current_app.config['DB_DSN']) as db:
         extract.user_id = session['id']['id']
-        extract.odes.id = extract_json['id']
+        extract.odes.id = odes.id
         data.set_extract(db, extract)
     
     return redirect(url_for('ODES.get_extract', extract_id=extract.id), 301)
