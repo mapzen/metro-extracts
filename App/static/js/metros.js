@@ -147,8 +147,6 @@ var Metros = function() {
         .select(".name").text(metro.properties.label)
         .on("click",function(){
           d3.select(this.parentNode).style("display","none");
-          var bbox = metro.bbox;
-          displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]).zoomOut(1);
           document.getElementById("search_input").value = metro.properties.label;
           m.filterList(metro.properties.label);
           m.requestExtract(metro);
@@ -190,8 +188,6 @@ var Metros = function() {
 
       if (placeID) {
         d3.json("https://search.mapzen.com/v1/place?api_key=search-owZDPeC&ids="+placeID, function(error, json){
-          var bbox = json.features[0].bbox;
-          displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]).zoomOut(1);
           m.requestExtract(json.features[0]);
         });
       } else {
@@ -200,8 +196,6 @@ var Metros = function() {
             && d3.selectAll(".city")[0].length == 0) {
             m.suggestPlace(json.features[0]);
           } else if (d3.selectAll(".city")[0].length == 0){
-            var bbox = json.features[0].bbox;
-            displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]).zoomOut(1);
             document.getElementById("search_input").value = json.features[0].properties.label;
             m.requestExtract(json.features[0]);
           } else {
@@ -211,6 +205,11 @@ var Metros = function() {
       }
     },
     requestExtract : function(metro) {
+
+      var bbox = metro.bbox,
+        zoomOut = (metro.geometry.type == "Point") ? 7 : 1;
+      displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]).zoomOut(zoomOut);
+
       var geoID = metro.properties.id;
       d3.select("input[name='wof_id']").attr("value",geoID);
       d3.select("input[name='wof_name']").attr("value",metro.properties.label);
@@ -219,10 +218,11 @@ var Metros = function() {
 
       this.drawRequestBox();
 
-      d3.json("wof/"+geoID+".geojson",function(data){
-        outline = L.geoJson(data.geometry, { className : "outline" }).addTo(displayMap);
-        displayMap.addLayer(outline);
-      });
+      if (metro.geometry.type == "Feature")
+        d3.json("wof/"+geoID+".geojson",function(data){
+          outline = L.geoJson(data.geometry, { className : "outline" }).addTo(displayMap);
+          displayMap.addLayer(outline);
+        });
 
       var bbox = metro.bbox,
         p1 = L.latLng(bbox[1],bbox[0]),
@@ -287,7 +287,8 @@ var Metros = function() {
       return [lat2.toDeg(), lng2.toDeg()];
     },
     calculateNewBox : function(bbox) {
-      var distance = Math.sqrt(Math.pow(bbox[3]-bbox[1],2) + Math.pow(bbox[2]-bbox[0], 2))*25,
+      var d = Math.sqrt(Math.pow(bbox[3]-bbox[1],2) + Math.pow(bbox[2]-bbox[0], 2))*25,
+        distance = (d == 0) ? 25 : d,
         northEast = this.calculateOffset(-Math.PI*3/4, distance, bbox[1], bbox[0]),
         southWest = this.calculateOffset(Math.PI/4, distance, bbox[3], bbox[2]);
       return [northEast, southWest];
