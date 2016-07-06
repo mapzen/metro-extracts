@@ -142,17 +142,10 @@ var Metros = function() {
       this.doSearch(val);
       placeID = null;
     },
-    suggestPlace : function(metro) {
+    searchError : function(query) {
       var m = this;
-      d3.select("#did-you-mean").style("display","block")
-        .select(".name").text(metro.properties.label)
-        .on("click",function(){
-          d3.select(this.parentNode).style("display","none");
-          document.getElementById("search_input").value = metro.properties.label;
-          m.filterList(metro.properties.label);
-          m.requestExtract(metro);
-        });
-      d3.select("#make-request").style("display","none");
+      d3.select("#request-wrapper").attr("class","error");
+      d3.select("#search-error").select(".name").text(query);
     },
     processKeyup : function(event) {
       var inputDiv = document.getElementById("search_input");
@@ -195,11 +188,11 @@ var Metros = function() {
         d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
           if (!json.features.length) {
             d3.json("https://search.mapzen.com/v1/search?text="+query+"&api_key=search-owZDPeC", function(e, j) {
-              m.requestExtract(j.features[0], true);
+              if (j.features.length)
+                m.requestExtract(j.features[0], true);
+              else
+                m.searchError(query);
             });
-          } else if (json.features[0].properties.label.toLowerCase().indexOf(query.toLowerCase()) == -1
-            && d3.selectAll(".city")[0].length == 0) {
-            m.suggestPlace(json.features[0]);
           } else if (d3.selectAll(".city")[0].length == 0){
             document.getElementById("search_input").value = json.features[0].properties.label;
             m.requestExtract(json.features[0]);
@@ -274,7 +267,7 @@ var Metros = function() {
     },
     clearRequest : function() {
       this.clearMap();
-      d3.select("#did-you-mean").style("display","none");
+      d3.select("#request-wrapper").attr("class","");
       d3.select("#make-request").style("display","none");
     },
     calculateOffset : function(theta, d, lat1, lng1) {
