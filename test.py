@@ -337,18 +337,20 @@ class TestApp (unittest.TestCase):
 
             raise Exception(request.method, url, request.headers, request.body)
             
-        url_for = Mock()
+        url_for, request = Mock(), Mock()
         url_for.return_value = '/path/to/extracts/' + extract_id
+        request.headers.get.return_value = 'nothing'
         
         with HTTMock(response_content):
             bbox = (-122.26447, 37.79724, -122.24825, 37.81230)
             envelope = data.Envelope(None, bbox)
             wof = data.WoF(None, wof_name)
             extract = data.Extract(extract_id, envelope, None, None, created, wof)
-            o = odes.request_odes_extract(extract, url_for, 'odes-xxxxxxx')
+            o = odes.request_odes_extract(extract, request, url_for, 'odes-xxxxxxx')
         
         self.assertEqual(o.id, 999)
         self.assertEqual(url_for.mock_calls[0], mock.call('ODES.get_extract', extract_id=extract_id))
+        self.assertEqual(url_for.mock_calls[1], mock.call('ODES.get_extracts'))
 
 class TestAppPrefix (TestApp):
     _url_prefix = '/{}'.format(uuid4())

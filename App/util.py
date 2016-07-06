@@ -3,6 +3,7 @@ from traceback import print_exc
 from functools import wraps
 from hashlib import sha1
 from os.path import exists, join, splitext
+from urllib.parse import urlunparse
 from time import time
 import os, tempfile
 
@@ -47,3 +48,12 @@ def get_mapzen_navbar():
 
 def get_mapzen_footer():
     return _get_remote_fragment('https://mapzen.com/site-fragments/footer.html')
+
+def get_base_url(request):
+    scheme = request.headers.get('CloudFront-Forwarded-Proto') \
+          or request.headers.get('X-Forwarded-Proto') \
+          or 'http'
+    
+    netloc = request.headers.get('Host') or request.host
+    
+    return urlunparse((scheme, netloc, '/', None, None, None))
