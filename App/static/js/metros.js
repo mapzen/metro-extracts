@@ -288,7 +288,7 @@ var Metros = function() {
     },
     calculateNewBox : function(bbox) {
       var d = Math.sqrt(Math.pow(bbox[3]-bbox[1],2) + Math.pow(bbox[2]-bbox[0], 2))*25,
-        distance = (d == 0) ? 10 : d,
+        distance = (d == 0) ? 25 : d,
         northEast = this.calculateOffset(-Math.PI*3/4, distance, bbox[1], bbox[0]),
         southWest = this.calculateOffset(Math.PI/4, distance, bbox[3], bbox[2]);
       return [northEast, southWest];
