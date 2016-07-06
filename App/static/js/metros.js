@@ -213,7 +213,6 @@ var Metros = function() {
       var bbox = metro.bbox ? metro.bbox : metro.geometry.coordinates.concat(metro.geometry.coordinates),
         zoomOut = (bbox[0] == bbox[2]) ? 8 : 1;
       displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]).zoomOut(zoomOut);
-      console.log(zoomOut, metro);
 
       var geoID = metro.properties.id;
       d3.select("input[name='wof_id']").attr("value",geoID);
