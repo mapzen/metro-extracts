@@ -42,15 +42,6 @@ var Metro = function (){
 
       var rect = new L.Rectangle(new L.LatLngBounds([southwest, northeast]), { className : "blue" });
       displayMap.addLayer(rect);
-    },
-    addEnclosed: function() {
-      var id = request.split("&")[0],
-        name = decodeURIComponent(request.split("&")[1]);
-
-      var div = d3.select("#encompassed");
-      div.style("display","block")
-        .selectAll(".name").text(name);
-      div.select(".link").attr("href","/wof/"+id+".geojson");
     }
   };
   return MetroApp;
