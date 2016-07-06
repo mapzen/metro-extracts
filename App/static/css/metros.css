@@ -73,13 +73,8 @@ body.data-pages .inline-submit .btn:hover {
   font-weight: normal;
   display: block;
 }
-#did-you-mean {
-  display: none;
-}
-#did-you-mean .name {
+#search-error .name {
   font-weight: bold;
-  color: #6ea0a4;
-  cursor: pointer;
 }
 #make-request {
   display: none;
@@ -111,6 +106,12 @@ body.data-pages .inline-submit .btn:hover {
   background: rgba(212,100,92, .3);
 }
 #request-wrapper.request-greater-5 .btn {
+  display: none;
+}
+#request-wrapper.error #search-error {
+  display: block;
+}
+#request-wrapper.error #make-request {
   display: none;
 }
 .autocomplete {
