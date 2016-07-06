@@ -109,14 +109,14 @@ def get_odes_extract(db, id, api_keys):
     
     return extract
 
-def request_extract(extract, url_for, api_key):
+def request_odes_extract(extract, url_for, api_key):
     '''
     '''
     env = Environment(loader=PackageLoader(__name__, 'templates'))
     args = dict(
-        name = extract.wof.name or 'wherever',
+        name = extract.wof.name or 'an unnamed place',
         created = extract.created,
-        link = url_for('ODES.get_extract', extract_id='foo')
+        link = url_for('ODES.get_extract', extract_id=extract.id)
         )
 
     email = dict(
@@ -174,8 +174,7 @@ def get_envelope(envelope_id):
         extract = data.get_extract(db, envelope_id=envelope_id)
 
     api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
-
-    odes = request_extract(extract, url_for, api_keys[0])
+    odes = request_odes_extract(extract, url_for, api_keys[0])
     
     with data.connect(current_app.config['DB_DSN']) as db:
         extract.user_id = session['id']['id']

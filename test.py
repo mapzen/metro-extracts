@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 from httmock import HTTMock, response
 from flask import Flask
 from mock import Mock
-import requests
+import requests, mock
 
 os.environ['DATABASE_URL'] = os.environ.get('DATABASE_URL', 'postgres:///metro_extracts_testing')
 
@@ -308,7 +308,12 @@ class TestApp (unittest.TestCase):
             self.assertEqual(resp4.status_code, 200)
             self.assertIsNotNone(soup4.find(text=compile(r'\b999\b')))
     
-    def test_request_extract(self):
+    def test_request_odes_extract(self):
+    
+        extract_id = str(uuid4())
+        wof_name = str(uuid4())
+        created = str(uuid4())
+        extract_path = '/path/to/extracts/' + extract_id
 
         def response_content(url, request):
             '''
@@ -320,12 +325,12 @@ class TestApp (unittest.TestCase):
                 if url.query == 'api_key=odes-xxxxxxx':
                     body = dict(parse_qsl(request.body))
                     self.assertIn('finished', body['email_subject'])
-                    self.assertIn('Nowhere', body['email_body_text'])
-                    self.assertIn('1066', body['email_body_text'])
-                    self.assertIn('http://example.com/nnnnn', body['email_body_text'])
-                    self.assertIn('Nowhere', body['email_body_html'])
-                    self.assertIn('1066', body['email_body_html'])
-                    self.assertIn('http://example.com/nnnnn', body['email_body_html'])
+                    self.assertIn(wof_name, body['email_body_text'])
+                    self.assertIn(created, body['email_body_text'])
+                    self.assertIn(extract_path, body['email_body_text'])
+                    self.assertIn(wof_name, body['email_body_html'])
+                    self.assertIn(created, body['email_body_html'])
+                    self.assertIn(extract_path, body['email_body_html'])
                     
                     data = u'''{\r  "id": 999,\r  "status": "created",\r  "created_at": "2016-06-02T03:29:25.233Z",\r  "processed_at": "2016-06-02T04:20:11.000Z",\r  "bbox": {\r    "e": -122.24825,\r    "n": 37.81230,\r    "s": 37.79724,\r    "w": -122.26447\r  }\r}'''
                     return response(200, data.encode('utf8'), headers=response_headers)
@@ -333,14 +338,17 @@ class TestApp (unittest.TestCase):
             raise Exception(request.method, url, request.headers, request.body)
             
         url_for = Mock()
-        url_for.return_value = 'http://example.com/nnnnn'
+        url_for.return_value = '/path/to/extracts/' + extract_id
         
         with HTTMock(response_content):
             bbox = (-122.26447, 37.79724, -122.24825, 37.81230)
             envelope = data.Envelope(None, bbox)
-            wof = data.WoF(None, 'Nowhere')
-            extract = data.Extract(None, envelope, None, None, '1066', wof)
-            o = odes.request_extract(extract, url_for, 'odes-xxxxxxx')
+            wof = data.WoF(None, wof_name)
+            extract = data.Extract(extract_id, envelope, None, None, created, wof)
+            o = odes.request_odes_extract(extract, url_for, 'odes-xxxxxxx')
+        
+        self.assertEqual(o.id, 999)
+        self.assertEqual(url_for.mock_calls[0], mock.call('ODES.get_extract', extract_id=extract_id))
 
 class TestAppPrefix (TestApp):
     _url_prefix = '/{}'.format(uuid4())
