@@ -10,8 +10,9 @@
   </div>
   <div class='col-xs-12 col-sm-6'>
     <h1 class="headroom text-center">metro extracts</h1>
-    <p>Now it’s even easier to get local data so you can start building cool stuff. Each week, we automatically extract the latest <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area shapefiles in a variety of formats for you to use.</p>
-    <p>
+    <p>Each week, Metro Extracts automatically extracts the latest <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area files in a variety of formats for you to use. Download an existing extracts to get started right away, or request a new extract of anywhere in the world!</p>
+    <p>The <span class="legend-red">red</span> boxes represent existing extracts, while the <span class="legend-blue">blue</span> ones are new requests.</p>
+    <p class="text-center">
       <a href="https://mapzen.com/documentation/metro-extracts/">Documentation</a> |
       <a href="https://mapzen.com/documentation/metro-extracts/walkthrough/">Tutorial</a> |
       <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">File Format Guide</a>
@@ -38,7 +39,8 @@
       <div id="make-request">
         <p class="default-request-text request-messaging">Hmm, we don't have an extract for <span class="name"></span> yet. Would you like to request one?</p>
         <p class="encompassed-text request-messaging">If you'd like to request an extract specifically for <span class="name"></span>, click the button below. Please note, this can take a few hours to process.</p>
-        <p class="request-greater-1 request-messaging">We don't have a request for <span class="name"></span> yet, you can request one by clicking the button below. Please note, you have requested a large area and this request will take more than a few hours to process.</p>
+        <p class="request-greater-1 request-messaging">We don't have a request for <span class="name"></span> yet, but you can request one by clicking the button below. Please note, you have requested a large area and this request will take more than a few hours to process.</p>
+        <p class="request-greater-1 encompassed-text default-request-text request-messaging">Feel free to drag the corners of the box on the map to adjust the size of your request.</p>
         <p class="request-greater-5 request-messaging">Sorry, but your request for <span class="name"></span> is too large to prcoess. Please make your request a smaller area.</p>
         <form action="{{ url_for('ODES.post_envelope') }}" method="post">
           <input name="bbox_n" type="hidden" />
@@ -70,7 +72,7 @@
 
   d3.selectAll(".country-name")
     .on("click",function(d){
-      metrosPage.doSearch(d3.select(this).text());
+      metrosPage.doSearch(d3.select(this).text(), true);
     });
 
   d3.select("#search_submit").on("click",function(){

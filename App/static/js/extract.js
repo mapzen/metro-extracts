@@ -25,7 +25,7 @@ var Extract = function (){
           dragging: false,
           tap: false
         };
-      displayMap = L.map('map', options).fitBounds(L.latLngBounds(southwest, northeast));
+      displayMap = L.map('map', options).fitBounds(L.latLngBounds(southwest, northeast)).zoomOut(1);
 
       if (this.hasWebGL() === true) {
         var layer = Tangram.leafletLayer({
