@@ -72,6 +72,7 @@ body.data-pages .inline-submit .btn:hover {
   color: #000;
   font-weight: normal;
   display: block;
+  text-transform: capitalize;
 }
 #search-error .name {
   font-weight: bold;
@@ -122,6 +123,10 @@ body.data-pages .inline-submit .btn:hover {
   padding: 1px 0 1px 15px;
   color: #808080;
   cursor: pointer;
+}
+.suggestion .layer {
+  float: right;
+  text-align: right;
 }
 .suggestion.selected {
   color: #000;

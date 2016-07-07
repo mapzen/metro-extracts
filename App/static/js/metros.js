@@ -65,7 +65,7 @@ var Metros = function() {
       }
 
       d3.json(geoJSONUrl, function(data){
-        L.geoJson(data, { onEachFeature: onEachFeature }).addTo(displayMap);
+        L.geoJson(data, { onEachFeature: onEachFeature, className : "red" }).addTo(displayMap);
       });
     },
     filterList : function(str) {
@@ -97,7 +97,7 @@ var Metros = function() {
       countries.select(".country-name")
         .text(function(d){ return d.country; })
         .on("click",function(d){
-          m.doSearch(d.country);
+          m.doSearch(d.country, true);
         });
       var cities = countries.selectAll(".city").data(function(d){ return d.metros; });
       cities.enter().append("a").attr("class","city");
@@ -120,9 +120,10 @@ var Metros = function() {
       suggestion.enter().append("div").attr("class","suggestion");
       suggestion.exit().remove();
       var m = this;
-      suggestion.text(function(d){ return d.properties.label; })
+      suggestion.html(function(d){ return d.properties.label + "<span class='layer'>(" + d.properties.layer + ")</span>"; })
         .on("click",function(d){
           placeID = d.properties.source + ":" + d.properties.layer + ":" + d.properties.id;
+          document.getElementById("search_input").value = d.properties.label;
           m.onSubmit(d.properties.label);
         });
     },
@@ -176,7 +177,7 @@ var Metros = function() {
         this.filterList(val);
       }
     },
-    doSearch : function(query) {
+    doSearch : function(query, countrySearch) {
       d3.selectAll(".suggestion").remove();
       var m = this;
 
@@ -196,16 +197,25 @@ var Metros = function() {
           } else if (d3.selectAll(".city")[0].length == 0){
             document.getElementById("search_input").value = json.features[0].properties.label;
             m.requestExtract(json.features[0]);
+          } else if (countrySearch){
+            m.zoomMap(json.features[0].bbox);
+            document.getElementById("search_input").value = query;
+            m.filterList(query);
+            window.scroll(0,0);
           } else {
             m.clearRequest();
           }
         });
       }
     },
+    zoomMap : function(bbox) {
+      displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]);
+    },
     requestExtract : function(metro, noWOF) {
       var bbox = metro.bbox ? metro.bbox : metro.geometry.coordinates.concat(metro.geometry.coordinates),
         zoomOut = (bbox[0] == bbox[2]) ? 8 : 1;
-      displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]).zoomOut(zoomOut);
+      this.zoomMap(bbox);
+      displayMap.zoomOut(zoomOut);
 
       var geoID = metro.properties.id;
       d3.select("input[name='wof_id']").attr("value",geoID);
@@ -214,6 +224,7 @@ var Metros = function() {
       requestBoundingBox = this.calculateNewBox(bbox);
 
       this.drawRequestBox();
+      d3.select("#map").attr("class","request-mode");
 
       if (metro.type == "Feature" && !noWOF)
         d3.json("wof/"+geoID+".geojson",function(data){
@@ -267,6 +278,7 @@ var Metros = function() {
     },
     clearRequest : function() {
       this.clearMap();
+      d3.select("#map").attr("class","");
       d3.select("#request-wrapper").attr("class","");
       d3.select("#make-request").style("display","none");
     },

@@ -8,8 +8,9 @@ var Metro = function (){
       metro = data;
       sceneURL = URL;
       this.initDisplayMap();
+      return this;
     },
-    hasWebGL: function() {
+    hasWebGL : function() {
       try {
         var canvas = document.createElement('canvas')
         return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')))
@@ -17,7 +18,7 @@ var Metro = function (){
         return false
       }
     },
-    initDisplayMap: function() {
+    initDisplayMap : function() {
       var southwest = L.latLng(metro.bbox.bottom, metro.bbox.right),
         northeast = L.latLng(metro.bbox.top, metro.bbox.left),
         options = {
@@ -42,6 +43,12 @@ var Metro = function (){
 
       var rect = new L.Rectangle(new L.LatLngBounds([southwest, northeast]));
       displayMap.addLayer(rect);
+    },
+    showOutline : function(wof_id) {
+      d3.json("/wof/"+wof_id+".geojson",function(data){
+        outline = L.geoJson(data.geometry, { className : "outline" }).addTo(displayMap);
+        displayMap.addLayer(outline);
+      });
     }
   };
   return MetroApp;

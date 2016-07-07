@@ -12,16 +12,24 @@ h3 {
   font-size: 36px;
   margin: 1.2em 0 .6em;
 }
+p.error {
+  color: #d4645c;
+}
 .btn-group {
   margin-bottom: 0px;
 }
 .dl-group {
   margin-top: 10px;
 }
+.dl-group .label,
 .dl-group label {
   display: block;
   font-weight: bold;
   margin-bottom: 5px;
+  color: #000;
+}
+.dl-group .label:hover {
+  text-decoration: underline;
 }
 #downloads p {
   margin-top: 15px;

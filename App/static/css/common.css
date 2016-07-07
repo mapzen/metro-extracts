@@ -1,6 +1,17 @@
 .col-sm-6 {
   margin-bottom: 100px;
 }
+.legend-red {
+  background: rgba(212,100,92,.3);
+  padding: 0 5px;
+}
+.legend-blue {
+  background: rgba(110,160,164,.3);
+  padding: 0 5px;
+}
+#map {
+  overflow: hidden;
+}
 #map path, .map path {
   fill: #d4645c;
   stroke: #d4645c;
@@ -8,16 +19,23 @@
   stroke-opacity: .3;
   fill-opacity: .3;
 }
+#map.request-mode path.red {
+  fill: transparent;
+  stroke-opacity: .9;
+  stroke-width: 3;
+}
 #map path.blue, .map path.blue {
   fill: #6ea0a4;
   stroke: #6ea0a4;
   fill-opacity: .4;
+  cursor: default;
 }
 #map path.outline {
   stroke: #000;
   fill: #6ea0a4;
   fill-opacity: .3;
   stroke-opacity: .5;
+  cursor: default;
 }
 .leaflet-container a {
   color: #6ea0a4;
