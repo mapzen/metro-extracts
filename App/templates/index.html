@@ -12,7 +12,7 @@
     <h1 class="headroom text-center">metro extracts</h1>
     <p>Each week, Metro Extracts automatically extracts the latest <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area files in a variety of formats for you to use. Download an existing extracts to get started right away, or request a new extract of anywhere in the world!</p>
     <p>The <span class="legend-red">red</span> boxes represent existing extracts, while the <span class="legend-blue">blue</span> ones are new requests.</p>
-    <p class="text-center">
+    <p style="margin-top: 20px;">
       <a href="https://mapzen.com/documentation/metro-extracts/">Documentation</a> |
       <a href="https://mapzen.com/documentation/metro-extracts/walkthrough/">Tutorial</a> |
       <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">File Format Guide</a>
@@ -70,6 +70,9 @@
     "{{ url_for('static', filename='scene.yaml') }}"
   );
 
+  if (document.getElementById("search_input").value.length)
+    metrosPage.onSubmit(document.getElementById("search_input").value);
+
   d3.selectAll(".country-name")
     .on("click",function(d){
       metrosPage.doSearch(d3.select(this).text(), true);
@@ -82,7 +85,7 @@
   });
 
   d3.select("#search_input").on("keyup",function(){
-    metrosPage.processKeyup(event);
+    metrosPage.processKeyup(d3.event);
   });
   
 {% endblock %}

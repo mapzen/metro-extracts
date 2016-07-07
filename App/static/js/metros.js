@@ -203,6 +203,7 @@ var Metros = function() {
             m.filterList(query);
             window.scroll(0,0);
           } else {
+            m.zoomMap(json.features[0].bbox);
             m.clearRequest();
           }
         });
@@ -224,7 +225,7 @@ var Metros = function() {
       requestBoundingBox = this.calculateNewBox(bbox);
 
       this.drawRequestBox();
-      d3.select("#map").attr("class","request-mode");
+      d3.select("#map").classed("request-mode",true);
 
       if (metro.type == "Feature" && !noWOF)
         d3.json("wof/"+geoID+".geojson",function(data){
@@ -278,7 +279,7 @@ var Metros = function() {
     },
     clearRequest : function() {
       this.clearMap();
-      d3.select("#map").attr("class","");
+      d3.select("#map").classed("request-mode",false);
       d3.select("#request-wrapper").attr("class","");
       d3.select("#make-request").style("display","none");
     },

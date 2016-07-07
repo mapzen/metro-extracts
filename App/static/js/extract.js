@@ -21,7 +21,8 @@ var Extract = function (){
         northeast = L.latLng(bbox.n, bbox.e),
         options = {
           scrollWheelZoom: false,
-          zoomControl:false,
+          zoomControl: false,
+          doubleClickZoom: false,
           dragging: false,
           tap: false
         };
