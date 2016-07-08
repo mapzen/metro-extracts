@@ -1,4 +1,4 @@
-from .oauth import check_authentication
+from .oauth import check_authentication, session_info
 from . import util, data
 
 from os import environ
@@ -149,7 +149,8 @@ def request_odes_extract(extract, request, url_for, api_key):
 def get_odes():
     '''
     '''
-    return render_template('odes/index.html', util=util)
+    id, nick, _, _ = session_info(session)
+    return render_template('odes/index.html', util=util, user_id=id, user_nickname=nick)
 
 @blueprint.route('/odes/envelopes/', methods=['POST'])
 @util.errors_logged
@@ -179,11 +180,12 @@ def get_envelope(envelope_id):
         # this envelope has already been posted to ODES.
         return redirect(url_for('ODES.get_extract', extract_id=extract.id), 301)
     
-    api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
+    user_id, _, keys_url, access_token = session_info(session)
+    api_keys = get_odes_keys(keys_url, access_token)
     odes = request_odes_extract(extract, request, url_for, api_keys[0])
     
     with data.connect(current_app.config['DB_DSN']) as db:
-        extract.user_id = session['id']['id']
+        extract.user_id = user_id
         extract.odes.id = odes.id
         data.set_extract(db, extract)
     
@@ -195,13 +197,14 @@ def get_envelope(envelope_id):
 def get_extracts():
     '''
     '''
-    keys_url, access_token = session['id']['keys_url'], session['token']['access_token']
+    id, nickname, keys_url, access_token = session_info(session)
     api_keys = get_odes_keys(keys_url, access_token)
 
     with data.connect(current_app.config['DB_DSN']) as db:
         extracts = get_odes_extracts(db, api_keys)
     
-    return render_template('extracts.html', extracts=extracts, util=util)
+    return render_template('extracts.html', extracts=extracts, util=util,
+                           user_id=id, user_nickname=nickname)
 
 @blueprint.route('/odes/extracts/<extract_id>', methods=['GET'])
 @util.errors_logged
@@ -209,7 +212,8 @@ def get_extracts():
 def get_extract(extract_id):
     '''
     '''
-    api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
+    id, nickname, keys_url, access_token = session_info(session)
+    api_keys = get_odes_keys(keys_url, access_token)
 
     with data.connect(current_app.config['DB_DSN']) as db:
         extract = get_odes_extract(db, extract_id, api_keys)
@@ -217,4 +221,5 @@ def get_extract(extract_id):
     if extract is None:
         raise ValueError('No extract {}'.format(extract_id))
 
-    return render_template('extract.html', extract=extract, util=util)
+    return render_template('extract.html', extract=extract, util=util,
+                           user_id=id, user_nickname=nickname)

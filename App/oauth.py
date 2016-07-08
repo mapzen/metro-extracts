@@ -92,6 +92,15 @@ def absolute_url(request, location):
     actual_url = urlunparse((scheme, request.host, request.path, None, None, None))
     return urljoin(actual_url, location)
 
+def session_info(session):
+    ''' Return user ID, user nickname, user keys URL, and OAuth access token.
+    '''
+    if 'id' not in session or 'token' not in session:
+        return None, None, None, None
+    
+    return (session['id']['id'], session['id']['nickname'],
+            session['id']['keys_url'], session['token']['access_token'])
+
 @blueprint.route('/oauth/logout', methods=['POST'])
 def post_logout():
     '''
