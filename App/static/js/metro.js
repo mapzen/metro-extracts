@@ -23,7 +23,8 @@ var Metro = function (){
         northeast = L.latLng(metro.bbox.top, metro.bbox.left),
         options = {
           scrollWheelZoom: false,
-          zoomControl:false,
+          zoomControl: false,
+          doubleClickZoom: false,
           dragging: false,
           tap: false
         };

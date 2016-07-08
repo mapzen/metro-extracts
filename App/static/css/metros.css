@@ -127,6 +127,7 @@ body.data-pages .inline-submit .btn:hover {
 .suggestion .layer {
   float: right;
   text-align: right;
+  padding-right: 10px;
 }
 .suggestion.selected {
   color: #000;

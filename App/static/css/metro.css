@@ -15,20 +15,16 @@ h3 {
 p.error {
   color: #d4645c;
 }
-.btn-group {
-  margin-bottom: 0px;
-}
-.dl-group {
+#downloads .label,
+#downloads label {
   margin-top: 10px;
-}
-.dl-group .label,
-.dl-group label {
-  display: block;
+  display: inline-block;
+  clear: both;
   font-weight: bold;
   margin-bottom: 5px;
   color: #000;
 }
-.dl-group .label:hover {
+#downloads .label:hover {
   text-decoration: underline;
 }
 #downloads p {
