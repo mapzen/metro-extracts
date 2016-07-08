@@ -67,7 +67,7 @@
 {% endblock %}
 
 {% block script %}
-  var mapHeight = window.innerWidth < 768 ? 300 : window.innerHeight - 114;
+  var mapHeight = window.innerWidth < 768 ? 300 : Math.max(window.innerHeight - 114, 500);
   d3.select("#map").style("height", mapHeight + 'px');
 
   var metro = {{metro|tojson|safe}},
