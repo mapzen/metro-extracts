@@ -6,6 +6,7 @@ from shutil import rmtree
 from os.path import join, dirname
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
 from re import compile
+import json
 
 from App import web, util, data, odes
 from bs4 import BeautifulSoup
@@ -114,6 +115,25 @@ class TestApp (unittest.TestCase):
 
         self.assertEqual(resp2.status_code, 200)
         self.assertIn('San Francisco', head2)
+    
+    def test_cities_geojson(self):
+        resp = self.client.get(self.prefixed('/cities.geojson'))
+        data = json.loads(resp.data.decode('utf8'))
+        
+        self.assertEqual(data['type'], 'FeatureCollection')
+        for feature in data['features']:
+            self.assertEqual(feature['type'], 'Feature')
+        
+    def test_cities_extractor_json(self):
+        resp = self.client.get(self.prefixed('/cities-extractor.json'))
+        data = json.loads(resp.data.decode('utf8'))
+        
+        for city in data:
+            self.assertIn('id', city)
+            self.assertIn('top', city['bbox'])
+            self.assertIn('left', city['bbox'])
+            self.assertIn('bottom', city['bbox'])
+            self.assertIn('right', city['bbox'])
         
     def test_oauth_index(self):
         resp = self.client.get(self.prefixed('/oauth/hello'))
