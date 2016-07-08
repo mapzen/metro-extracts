@@ -175,6 +175,10 @@ def get_envelope(envelope_id):
     with data.connect(current_app.config['DB_DSN']) as db:
         extract = data.get_extract(db, envelope_id=envelope_id)
 
+    if extract.odes.id is not None:
+        # this envelope has already been posted to ODES.
+        return redirect(url_for('ODES.get_extract', extract_id=extract.id), 301)
+    
     api_keys = get_odes_keys(session['id']['keys_url'], session['token']['access_token'])
     odes = request_odes_extract(extract, request, url_for, api_keys[0])
     
