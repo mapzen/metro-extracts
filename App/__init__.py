@@ -63,6 +63,31 @@ def get_cities_geojson():
 
     return jsonify(dict(features=features))
 
+@blueprint.route('/cities-extractor.json')
+@util.errors_logged
+def get_cities_extractor_json():
+    ordered_cities = sorted(cities, key=itemgetter('region'))
+    regions_dict = dict()
+    
+    for (region, sub_cities) in groupby(ordered_cities, itemgetter('region')):
+        ids, bboxes = zip(*[(sc['id'], sc['bbox'])
+                            for sc in sorted(sub_cities, key=itemgetter('id'))])
+
+        cities_dict = dict([(id, dict(bbox=bbox)) for (id, bbox) in zip(ids, bboxes)])
+        
+        tops, lefts, bottoms, rights \
+            = zip(*[map(float, (b['top'], b['left'], b['bottom'], b['right']))
+                    for b in bboxes])
+        
+        region_bbox = dict(top=str(max(tops + bottoms)),
+                           left=str(min(lefts + rights)),
+                           bottom=str(min(tops + bottoms)),
+                           right=str(max(lefts + rights)))
+        
+        regions_dict[region] = dict(bbox=region_bbox, cities=cities_dict)
+
+    return jsonify(regions=regions_dict)
+
 @blueprint.route('/metro/<metro_id>/')
 @blueprint.route('/metro/<metro_id>/<wof_id>/<wof_name>/')
 @util.errors_logged
