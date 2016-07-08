@@ -47,6 +47,15 @@ body.data-pages .inline-submit .btn:hover {
   text-transform:uppercase;
   width: 100%;
 }
+.data-filter-label.red {
+  color: #d4645c;
+}
+#request-wrapper[class*="filtered"] .data-filter-label.red {
+  display: none;
+}
+#extracts .country:first-child {
+  margin-top: 5px;
+}
 .country {
   border-top: 1px solid rgb(224,224,224);
   margin-top: 20px;
@@ -88,41 +97,54 @@ body.data-pages .inline-submit .btn:hover {
 #request-wrapper .request-messaging {
   display: none;
 }
-#request-wrapper.default .default-request-text {
+#request-wrapper.filtered-default .default-request-text {
   display: block;
 }
-#request-wrapper.encompassed .encompassed-text {
+#request-wrapper.filtered-encompassed .encompassed-text {
   display: block;
 }
-#request-wrapper.encompassed #make-request {
+#request-wrapper.filtered-encompassed #make-request {
   margin-top: 50px;
 }
-#request-wrapper.request-greater-1 .request-greater-1 {
+#request-wrapper.filtered-request-greater-1 .request-greater-1 {
   display: block;
 }
-#request-wrapper.request-greater-5 .request-greater-5 {
+#request-wrapper.filtered-request-greater-5 .request-greater-5 {
   display: block;
 }
-#request-wrapper.request-greater-5 #make-request {
+#request-wrapper.filtered-request-greater-5 #make-request {
   background: rgba(212,100,92, .3);
 }
-#request-wrapper.request-greater-5 .btn {
+#request-wrapper.filtered-request-greater-5 .btn {
   display: none;
 }
-#request-wrapper.error #search-error {
+#request-wrapper.filtered-error #search-error {
   display: block;
 }
-#request-wrapper.error #make-request {
+#request-wrapper.filtered-error #make-request {
   display: none;
 }
 .autocomplete {
   border: 1px solid #ddd;
+}
+.autocomplete .suggestion:first-child {
+  font-size:12px;
+  font-weight:bold;
+  text-transform:uppercase;
+  color: #6ea0a4;
+  clear: both;
+  height: 25px;
+  vertical-align: bottom;
+  line-height: 2em;
+  background: white;
+  cursor: default;
 }
 .suggestion {
   border-bottom: 1px solid #ddd;
   padding: 1px 0 1px 15px;
   color: #808080;
   cursor: pointer;
+  font-size: 14px;
 }
 .suggestion .layer {
   float: right;

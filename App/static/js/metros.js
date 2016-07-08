@@ -12,7 +12,7 @@ var Metros = function() {
     displayMap,
     extractLayers = [],
     xhr,
-    keyIndex = -1,
+    keyIndex = 0,
     placeID = null;
 
   var rect, 
@@ -89,6 +89,8 @@ var Metros = function() {
       this.drawList(newData);
     },
     drawList : function(data, request_id, display_name, noWOF) {
+      d3.select("#request-wrapper").classed("filtered",!data.length);
+
       var countries = d3.select("#extracts").selectAll(".country").data(data);
       var enterCountries = countries.enter().append("div").attr("class","country");
       countries.exit().remove();
@@ -115,17 +117,25 @@ var Metros = function() {
       });
     },
     showSuggestions : function(data) {
+      data.features.unshift({
+        label : true,
+        text : "To request a new extract:"
+      });
+
       var suggestion = d3.select(".autocomplete")
         .selectAll(".suggestion").data(data.features);
       suggestion.enter().append("div").attr("class","suggestion");
       suggestion.exit().remove();
       var m = this;
-      suggestion.html(function(d){ return d.properties.label + "<span class='layer'>(" + d.properties.layer + ")</span>"; })
-        .on("click",function(d){
-          placeID = d.properties.source + ":" + d.properties.layer + ":" + d.properties.id;
-          document.getElementById("search_input").value = d.properties.label;
-          m.onSubmit(d.properties.label);
-        });
+      suggestion.html(function(d){
+        if (d.label) return d.text;
+        else return d.properties.label + "<span class='layer'>(" + d.properties.layer + ")</span>"; 
+      }).on("click",function(d){
+        if (d.label) return;
+        placeID = d.properties.source + ":" + d.properties.layer + ":" + d.properties.id;
+        document.getElementById("search_input").value = d.properties.label;
+        m.onSubmit(d.properties.label);
+      });
     },
     selectSuggestion : function() {
       var currentList = d3.selectAll(".suggestion");
@@ -137,7 +147,7 @@ var Metros = function() {
       }).classed("selected",function(d,i){ return i == keyIndex; });
     },
     onSubmit : function(val) {
-      keyIndex = -1;
+      keyIndex = 0;
       this.filterList(val);
       d3.selectAll(".suggestion").remove();
       this.doSearch(val);
@@ -145,7 +155,7 @@ var Metros = function() {
     },
     searchError : function(query) {
       var m = this;
-      d3.select("#request-wrapper").attr("class","error");
+      d3.select("#request-wrapper").attr("class","filtered-error");
       d3.select("#search-error").select(".name").text(query);
     },
     processKeyup : function(event) {
@@ -164,14 +174,14 @@ var Metros = function() {
         keyIndex = Math.min(keyIndex+1, d3.selectAll(".suggestion")[0].length-1);
         this.selectSuggestion();   
       } else if (event.keyCode == 38) { //arrow up
-        keyIndex = Math.max(keyIndex-1, 0);
+        keyIndex = Math.max(keyIndex-1, 1);
         this.selectSuggestion();
       } else if (event.keyCode == 13) { //enter
         this.onSubmit(val);
       } else if (event.keyCode != 8 && (event.keyCode < 48 || event.keyCode > 90)) {
         return; //restrict autocomplete to 0-9,a-z character input, excluding delete
       } else {
-        keyIndex = -1;
+        keyIndex = 0;
         placeID = null;
         this.doSuggestion(val);
         this.filterList(val);
@@ -256,18 +266,18 @@ var Metros = function() {
         .selectAll(".name").text(metro.properties.name);
 
       if (encompassed[0].metros.length){
-        requestDiv.attr("class","encompassed");
+        requestDiv.attr("class","filtered-encompassed");
         this.drawList(encompassed, geoID, metro.properties.name, noWOF);
         return;
       }
 
       var biggestDist = Math.max(requestBoundingBox[1][1] - requestBoundingBox[0][1], requestBoundingBox[1][0] - requestBoundingBox[0][0]);
       if (biggestDist > 5)
-        requestDiv.attr("class","request-greater-5");
+        requestDiv.attr("class","filtered-request-greater-5");
       else if (biggestDist > 1)
-        requestDiv.attr("class","request-greater-1");
+        requestDiv.attr("class","filtered-request-greater-1");
       else
-        requestDiv.attr("class","default");
+        requestDiv.attr("class","filtered-default");
     },
     clearMap : function() {
       if (rect) displayMap.removeLayer(rect);
