@@ -283,6 +283,7 @@ class TestApp (unittest.TestCase):
             raise Exception(request.method, url, request.headers, request.body)
         
         with HTTMock(response_content1):
+            # POST a new envelope request
             data1 = dict(bbox_n=37.81230, bbox_w=-122.26447, bbox_s=37.79724, bbox_e=-122.24825)
             resp1 = self.client.post(self.prefixed('/odes/envelopes/'), data=data1)
             redirect1 = urlparse(resp1.headers.get('Location'))
@@ -290,23 +291,52 @@ class TestApp (unittest.TestCase):
             self.assertEqual(resp1.status_code, 303)
             self.assertTrue(redirect1.path.startswith(self.prefixed('/odes/envelopes/')))
             
+            # Follow the redirect to the new envelope
             resp2 = self.client.get(redirect1.path)
             redirect2 = urlparse(resp2.headers.get('Location'))
             
             self.assertEqual(resp2.status_code, 301)
             self.assertTrue(redirect2.path.startswith(self.prefixed('/odes/extracts/')))
             
+            # Follow the redirect to the new extract
             resp3 = self.client.get(redirect2.path)
             soup3 = BeautifulSoup(resp3.data, 'html.parser')
             
             self.assertEqual(resp3.status_code, 200)
             self.assertIsNotNone(soup3.find(text=compile(r'\b37.8123')))
             
+            # Verify that the extract is in the big list
             resp4 = self.client.get(self.prefixed('/odes/extracts/'))
             soup4 = BeautifulSoup(resp4.data, 'html.parser')
             
             self.assertEqual(resp4.status_code, 200)
             self.assertIsNotNone(soup4.find(text=compile(r'\b999\b')))
+        
+        def response_content2(url, request):
+            '''
+            '''
+            MHP = request.method, url.hostname, url.path
+            response_headers = {'Content-Type': 'application/json; charset=utf-8'}
+
+            if MHP == ('GET', 'mapzen.com', '/developers/oauth_api/current_developer'):
+                if request.headers['Authorization'] == 'Bearer working-access-token':
+                    data = u'''{\r  "id": 631,\r  "email": "email@company.com",\r  "nickname": "user_github_handle",\r  "admin": false,\r  "keys": "https://mapzen.com/developers/oauth_api/current_developer/keys"\r}'''
+                    return response(200, data.encode('utf8'), headers=response_headers)
+
+            if MHP == ('GET', 'mapzen.com', '/developers/oauth_api/current_developer/keys'):
+                if request.headers['Authorization'] == 'Bearer working-access-token':
+                    data = u'''[\r  {\r    "service": "odes",\r    "key": "odes-xxxxxxx",\r    "created_at": "2015-12-15T15:24:57.236Z",\r    "nickname": "Untitled",\r    "status": "created"\r  },\r  {\r    "service": "odes",\r    "key": "odes-yyyyyyy",\r    "created_at": "2015-12-15T15:24:59.320Z",\r    "nickname": "Untitled",\r    "status": "disabled"\r  }\r]'''
+                    return response(200, data.encode('utf8'), headers=response_headers)
+
+            raise Exception(request.method, url, request.headers)
+        
+        with HTTMock(response_content2):
+            # Look at the envelope again, ensuring that it does not attempt to re-create an extract
+            resp5 = self.client.get(redirect1.path)
+            redirect5 = urlparse(resp5.headers.get('Location'))
+            
+            self.assertEqual(resp5.status_code, 301)
+            self.assertEqual(redirect5.path, redirect2.path)
     
     def test_request_odes_extract(self):
     
