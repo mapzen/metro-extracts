@@ -61,7 +61,13 @@ def get_cities_geojson():
         feature['properties']['href'] = url_for('Metro-Extracts.get_metro', metro_id=city['id'])
         features.append(feature)
 
-    return jsonify(dict(features=features))
+    return jsonify(dict(type='FeatureCollection', features=features))
+
+@blueprint.route('/cities-extractor.json')
+@util.errors_logged
+def get_cities_extractor_json():
+    return Response(json.dumps(cities, indent=2),
+                    headers={'Content-Type': 'application/json'})
 
 @blueprint.route('/metro/<metro_id>/')
 @blueprint.route('/metro/<metro_id>/<wof_id>/<wof_name>/')
