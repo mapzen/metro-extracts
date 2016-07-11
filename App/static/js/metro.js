@@ -45,8 +45,8 @@ var Metro = function (){
       var rect = new L.Rectangle(new L.LatLngBounds([southwest, northeast]));
       displayMap.addLayer(rect);
     },
-    showOutline : function(wof_id) {
-      d3.json("/wof/"+wof_id+".geojson",function(data){
+    showOutline : function(geojson_url) {
+      d3.json(geojson_url, function(data){
         outline = L.geoJson(data.geometry, { className : "outline" }).addTo(displayMap);
         displayMap.addLayer(outline);
       });

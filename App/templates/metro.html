@@ -75,7 +75,8 @@
 
   var metroPage = Metro().init(metro, sceneURL);
 
-  if ({{wof_id}} && "{{wof_name}}")
-    metroPage.showOutline({{wof_id}});
+  {% if wof_id and wof_name %}
+    metroPage.showOutline("{{ url_for('Metro-Extracts.wof_geojson', id=wof_id) }}");
+  {% endif %}
 
 {% endblock %}

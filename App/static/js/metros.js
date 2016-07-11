@@ -13,7 +13,8 @@ var Metros = function() {
     extractLayers = [],
     xhr,
     keyIndex = 0,
-    placeID = null;
+    placeID = null,
+    wofPrefix = null;
 
   var rect, 
     dots = [],
@@ -21,10 +22,11 @@ var Metros = function() {
     requestBoundingBox;
 
   var MetrosApp = {
-    init : function(nestedData, jsonURL, scene) {
+    init : function(nestedData, jsonURL, scene, wofPrefixURL) {
       nestedCities = nestedData;
       geoJSONUrl = jsonURL;
       sceneURL = scene;
+      wofPrefix = wofPrefixURL;
       this.initDisplayMap();
       return this;
     },
@@ -238,7 +240,7 @@ var Metros = function() {
       d3.select("#map").classed("request-mode",true);
 
       if (metro.type == "Feature" && !noWOF)
-        d3.json("wof/"+geoID+".geojson",function(data){
+        d3.json(wofPrefix.replace('GEOID', geoID), function(data){
           outline = L.geoJson(data.geometry, { className : "outline" }).addTo(displayMap);
           displayMap.addLayer(outline);
         });

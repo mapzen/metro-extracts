@@ -68,7 +68,8 @@
   var metrosPage = Metros().init(
     {{metros_tree|tojson|safe}}, 
     "{{ url_for('Metro-Extracts.get_cities_geojson') }}", 
-    "{{ url_for('static', filename='scene.yaml') }}"
+    "{{ url_for('static', filename='scene.yaml') }}",
+    "{{ url_for('Metro-Extracts.wof_geojson', id='GEOID') }}"
   );
 
   if (document.getElementById("search_input").value.length)
