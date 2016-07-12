@@ -1,0 +1,9 @@
+DATABASE_URL=postgres://user:pass@db:5432/database
+FLASK_SECRET_KEY=secret
+MAPZEN_APP_ID=oauth-client-id
+MAPZEN_APP_SECRET=oauth-client-secret
+
+POSTGRES_PASSWORD=pass
+POSTGRES_USER=user
+POSTGRES_DB=database
+
