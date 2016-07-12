@@ -160,15 +160,19 @@ var Metros = function() {
       d3.select("#request-wrapper").attr("class","filtered-error");
       d3.select("#search-error").select(".name").text(query);
     },
+    clearSearchBox : function() {
+      document.getElementById("search_input").value = "";
+      this.drawList(nestedCities);
+      d3.selectAll(".suggestion").remove();
+      placeID = null;
+      this.clearRequest();
+    },
     processKeyup : function(event) {
       var inputDiv = document.getElementById("search_input");
       var val = inputDiv.value;
 
       if (!val.length) {
-        this.drawList(nestedCities);
-        d3.selectAll(".suggestion").remove();
-        placeID = null;
-        this.clearRequest();
+        this.clearSearchBox();
         return;
       }
 
