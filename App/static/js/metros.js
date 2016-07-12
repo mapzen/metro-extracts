@@ -272,7 +272,10 @@ var Metros = function() {
         this.drawList(encompassed, geoID, metro.properties.name, noWOF);
         return;
       }
-
+      this.checkSize();
+    },
+    checkSize : function() {
+      var requestDiv = d3.select("#request-wrapper");
       var lngDiff = Math.abs(requestBoundingBox[1][1] - requestBoundingBox[0][1]),
         latDiff = Math.abs(requestBoundingBox[1][0] - requestBoundingBox[0][0]),
         biggestDist = Math.max(latDiff, lngDiff);
@@ -404,6 +407,7 @@ var Metros = function() {
         displayMap.addLayer(l);
         l.on("dragend", function(){
           m.drawDots();
+          m.checkSize();
         });
       });
     },
