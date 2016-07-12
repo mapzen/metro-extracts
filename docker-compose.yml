@@ -2,7 +2,7 @@ db:
   image: postgres
   env_file: env/default
   ports:
-    - "5432:5432"
+    - "5432"
 app:
   build: ./
   env_file: env/default
