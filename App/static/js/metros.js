@@ -273,7 +273,9 @@ var Metros = function() {
         return;
       }
 
-      var biggestDist = Math.max(requestBoundingBox[1][1] - requestBoundingBox[0][1], requestBoundingBox[1][0] - requestBoundingBox[0][0]);
+      var lngDiff = Math.abs(requestBoundingBox[1][1] - requestBoundingBox[0][1]),
+        latDiff = Math.abs(requestBoundingBox[1][0] - requestBoundingBox[0][0]),
+        biggestDist = Math.max(latDiff, lngDiff);
       if (biggestDist > 5)
         requestDiv.attr("class","filtered-request-greater-5");
       else if (biggestDist > 1)
