@@ -1,6 +1,17 @@
 .col-sm-6 {
   margin-bottom: 100px;
 }
+.logout-form span {
+  color: #898989;
+}
+.logout-form .btn-transparent {
+  padding: 2px 10px;
+  float: right;
+  font-size: 12px;
+  margin-left: 20px;
+  color: #898989;
+  border-color: #898989;
+}
 .legend-red {
   background: rgba(212,100,92,.3);
   padding: 0 5px;

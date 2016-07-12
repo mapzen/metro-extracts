@@ -1,5 +1,6 @@
 {% if user_id %}
-  <form style="float: right; margin: 16px 0" action="{{ url_for('OAuth.post_logout') }}" method="post">
-    Hello {{ user_nickname }}. <button>log out</button>
+  <form style="float: right; margin: 16px 0" action="{{ url_for('OAuth.post_logout') }}" method="post" class="logout-form">
+    <span>hello {{ user_nickname }}.</span>
+    <button class="btn btn-transparent">log out</button>
   </form>
 {% endif %}
