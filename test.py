@@ -398,7 +398,7 @@ class TestApp (unittest.TestCase):
             extract = data.Extract(extract_id, envelope, None, None, created, wof)
             o = odes.request_odes_extract(extract, request, url_for, 'odes-xxxxxxx')
         
-        self.assertEqual(o.id, 999)
+        self.assertEqual(o.id, str(999))
         self.assertEqual(url_for.mock_calls[0], mock.call('ODES.get_extract', extract_id=extract_id))
         self.assertEqual(url_for.mock_calls[1], mock.call('ODES.get_extracts'))
 
@@ -426,7 +426,7 @@ class TestData (unittest.TestCase):
     
     def test_get_extract_by_id(self):
         db = Mock()
-        db.fetchone.return_value = ('123', '456', [1,2,3,4], 7, 8, 'Oakland', 85921881, None)
+        db.fetchone.return_value = ('123', '456', [1,2,3,4], '7', 8, 'Oakland', 85921881, None)
 
         extract = data.get_extract(db, extract_id='123')
         
@@ -438,7 +438,7 @@ class TestData (unittest.TestCase):
         ''')
         
         self.assertEqual(extract.id, '123')
-        self.assertEqual(extract.odes.id, 7)
+        self.assertEqual(extract.odes.id, '7')
         self.assertEqual(extract.user_id, 8)
         self.assertEqual(extract.envelope.id, '456')
         self.assertEqual(extract.envelope.bbox, [1,2,3,4])
@@ -447,7 +447,7 @@ class TestData (unittest.TestCase):
 
     def test_get_extract_by_envelope(self):
         db = Mock()
-        db.fetchone.return_value = ('123', '456', [1,2,3,4], 7, 8, 'Oakland', 85921881, None)
+        db.fetchone.return_value = ('123', '456', [1,2,3,4], '7', 8, 'Oakland', 85921881, None)
 
         extract = data.get_extract(db, envelope_id='456')
         
@@ -459,7 +459,7 @@ class TestData (unittest.TestCase):
         ''')
         
         self.assertEqual(extract.id, '123')
-        self.assertEqual(extract.odes.id, 7)
+        self.assertEqual(extract.odes.id, '7')
         self.assertEqual(extract.user_id, 8)
         self.assertEqual(extract.envelope.id, '456')
         self.assertEqual(extract.envelope.bbox, [1,2,3,4])
@@ -468,13 +468,13 @@ class TestData (unittest.TestCase):
 
     def test_get_extract_by_odes(self):
         db = Mock()
-        db.fetchone.return_value = ('123', '456', [1,2,3,4], 7, 8, 'Oakland', 85921881, None)
+        db.fetchone.return_value = ('123', '456', [1,2,3,4], '7', 8, 'Oakland', 85921881, None)
         
-        odes = data.ODES(7)
+        odes = data.ODES('7')
         extract = data.get_extract(db, odes=odes)
         
         self.assertEqual(db.mock_calls[0][0], 'execute')
-        self.assertEqual(db.mock_calls[0][1][1], (7, ))
+        self.assertEqual(db.mock_calls[0][1][1], ('7', ))
         self.assertEqual(db.mock_calls[0][1][0], '''
         SELECT id, envelope_id, envelope_bbox, odes_id, user_id, wof_name, wof_id, created
         FROM extracts WHERE odes_id = %s
@@ -487,17 +487,20 @@ class TestData (unittest.TestCase):
         self.assertEqual(extract.envelope.bbox, [1,2,3,4])
         self.assertEqual(extract.wof.id, 85921881)
         self.assertEqual(extract.wof.name, 'Oakland')
+        
+        with self.assertRaises(AssertionError) as bad_id:
+            odes2 = data.ODES(7)
 
     def test_set_extract(self):
         db = Mock()
         envelope = data.Envelope('xyz', [-122.26447, 37.79724, -122.24825, 37.81230])
         wof = data.WoF(85921881, 'Oakland')
-        odes = data.ODES(4)
+        odes = data.ODES('4')
         extract = data.Extract('123', envelope, odes, 5, None, wof)
         data.set_extract(db, extract)
         
         self.assertEqual(db.mock_calls[0][0], 'execute')
-        self.assertEqual(db.mock_calls[0][1][1], ('xyz', [-122.26447, 37.79724, -122.24825, 37.8123], 4, 5, 'Oakland', 85921881, '123'))
+        self.assertEqual(db.mock_calls[0][1][1], ('xyz', [-122.26447, 37.79724, -122.24825, 37.8123], '4', 5, 'Oakland', 85921881, '123'))
         self.assertEqual(db.mock_calls[0][1][0], '''
         UPDATE extracts
         SET envelope_id = %s, envelope_bbox = %s, odes_id = %s,

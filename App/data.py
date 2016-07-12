@@ -14,6 +14,8 @@ class WoF:
 
 class ODES:
     def __init__(self, id, status=None, created_at=None, processed_at=None, links=None, bbox=None):
+        assert type(id) is not int
+    
         self.id = id
         self.status = status
         self.created_at = created_at
