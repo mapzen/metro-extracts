@@ -135,7 +135,7 @@ def request_odes_extract(extract, request, url_for, api_key):
     oj = resp.json()
     
     if 'error' in oj:
-        raise Exception("Uh oh: {}".format(oj['error']))
+        raise util.KnownUnknown("Error: {}".format(oj['error']))
     elif resp.status_code != 200:
         raise Exception("Uh oh")
     
