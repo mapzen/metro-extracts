@@ -10,6 +10,8 @@ import os, tempfile
 from flask import Response
 import requests
 
+class KnownUnknown (Exception): pass
+
 def errors_logged(route_function):
     '''
     '''
@@ -17,10 +19,11 @@ def errors_logged(route_function):
     def wrapper(*args, **kwargs):
         try:
             result = route_function(*args, **kwargs)
+        except KnownUnknown as e:
+            return Response(str(e), headers={'Content-Type': 'text/plain'}, status=400)
         except Exception as e:
             print_exc(file=stderr)
             raise
-            return Response('Nope.', headers={'Content-Type': 'text/plain'}, status=500)
         else:
             return result
     
