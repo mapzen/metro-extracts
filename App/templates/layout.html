@@ -15,6 +15,12 @@
   {{ util.get_mapzen_navbar()|safe }}
 
   {% block content %}{% endblock %}
+  <div class="col-xs-12 page-footer text-center">
+    <h3>About</h3>
+    <p>Mapzen Metro Extracts are produced via a <a href="https://github.com/mapzen/chef-metroextractor">chef cookbook</a> derived from the work of <a href="http://metro.teczno.com">Michal Migurski</a>.</p>
+    <p>For more granular OpenStreetMap data, we offer a free, hosted <a href="https://mapzen.com/documentation/vector-tiles/">Vector Tile service</a>. <b>Sign up for your free <a href="https://mapzen.com/developers/">API key here</a>.</b></p>
+  </div>
+  
   <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js'></script>
   <script src='https://mapzen.com/tangram/0.5/tangram.min.js'></script>

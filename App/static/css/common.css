@@ -1,3 +1,10 @@
+.page-footer {
+  margin: 50px 0 150px;
+}
+.page-footer h3 {
+  font-size: 36px;
+  margin: 1.2em 0 .6em;
+}
 .logout-form span {
   color: #898989;
 }
