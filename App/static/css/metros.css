@@ -20,19 +20,8 @@ body.data-pages .inline-submit .btn:hover {
 .drag-icon {
   width: 10px;
   height: 10px;
-  cursor: nesw-resize;
-  border-color: #aaa;
-}
-.drag-icon:nth-child(even) {
-  border-top: 3px solid;
-  border-right: 3px solid;
-}
-.drag-icon:nth-child(odd) {
-  border-bottom: 3px solid;
-  border-left: 3px solid;
-}
-.drag-icon:hover {
-  border-color: #666;
+  cursor: move;
+  background: #6ea0a4;
 }
 
 #search-box {
@@ -84,7 +73,7 @@ body.data-pages .inline-submit .btn:hover {
 }
 .country {
   border-top: 1px solid rgb(224,224,224);
-  margin-top: 20px;
+  margin-top: 20fpx;
 }
 .country-name {
   background: rgb(224,224,224);
@@ -116,6 +105,7 @@ body.data-pages .inline-submit .btn:hover {
   display: none;
   background: rgba(110,160,164,.3);
   padding: 20px;
+  margin-top: 30px;
 }
 #make-request .btn:hover {
   background: rgba(110,160,164,.4);
@@ -128,9 +118,6 @@ body.data-pages .inline-submit .btn:hover {
 }
 #request-wrapper.filtered-encompassed .encompassed-text {
   display: block;
-}
-#request-wrapper.filtered-encompassed #make-request {
-  margin-top: 50px;
 }
 #request-wrapper.filtered-request-greater-1 .request-greater-1 {
   display: block;

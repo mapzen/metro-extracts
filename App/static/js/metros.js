@@ -276,8 +276,13 @@ var Metros = function() {
         this.drawList(encompassed, geoID, metro.properties.name, noWOF);
         return;
       }
-
-      var biggestDist = Math.max(requestBoundingBox[1][1] - requestBoundingBox[0][1], requestBoundingBox[1][0] - requestBoundingBox[0][0]);
+      this.checkSize();
+    },
+    checkSize : function() {
+      var requestDiv = d3.select("#request-wrapper");
+      var lngDiff = Math.abs(requestBoundingBox[1][1] - requestBoundingBox[0][1]),
+        latDiff = Math.abs(requestBoundingBox[1][0] - requestBoundingBox[0][0]),
+        biggestDist = Math.max(latDiff, lngDiff);
       if (biggestDist > 5)
         requestDiv.attr("class","filtered-request-greater-5");
       else if (biggestDist > 1)
@@ -324,26 +329,91 @@ var Metros = function() {
       rect = new L.Rectangle(new L.LatLngBounds(requestBoundingBox), { className : "blue" });
       displayMap.addLayer(rect);
       
-      var myIcon = L.divIcon({className: 'drag-icon'});
+      this.drawDots();
 
-      var cSW = new L.marker(requestBoundingBox[0], { icon : myIcon, draggable: true });
-      dots.push(cSW);
-      var cNE = new L.marker(requestBoundingBox[1], { icon : myIcon, draggable: true });
-      dots.push(cNE);
+      this.fillRequestForm();
+    },
+    drawDots : function() {
+      dots.forEach(function(l){
+        displayMap.removeLayer(l);
+      });
+      dots = [];
 
-      cSW.on("drag",function(e){
+      var m = this;
+
+      var myIcon = L.divIcon({className: 'drag-icon'}),
+        dotOptions = { icon : myIcon, draggable: true };
+
+      // [northEast, southWest] 
+      dots = [
+        new L.marker(requestBoundingBox[0], dotOptions),
+        new L.marker(requestBoundingBox[1], dotOptions),
+        new L.marker([requestBoundingBox[0][0], requestBoundingBox[1][1]], dotOptions),
+        new L.marker([requestBoundingBox[1][0], requestBoundingBox[0][1]], dotOptions)
+      ];
+
+      dots[0].on("drag",function(e){
         requestBoundingBox[0] = [e.target.getLatLng().lat, e.target.getLatLng().lng];
+
+        // NE dot affects NW and SE on drag
+        displayMap.removeLayer(dots[2]);
+        displayMap.removeLayer(dots[3]);
+        dots[2] = new L.marker([requestBoundingBox[0][0], requestBoundingBox[1][1]], dotOptions);
+        dots[3] = new L.marker([requestBoundingBox[1][0], requestBoundingBox[0][1]], dotOptions);
+        displayMap.addLayer(dots[2]);
+        displayMap.addLayer(dots[3]);
+
         m.redrawBox();
       });
-      cNE.on("drag",function(e){
+      dots[1].on("drag",function(e){
         requestBoundingBox[1] = [e.target.getLatLng().lat, e.target.getLatLng().lng];
+
+        // SW dot affects NW and SE on drag
+        displayMap.removeLayer(dots[2]);
+        displayMap.removeLayer(dots[3]);
+        dots[2] = new L.marker([requestBoundingBox[0][0], requestBoundingBox[1][1]], dotOptions);
+        dots[3] = new L.marker([requestBoundingBox[1][0], requestBoundingBox[0][1]], dotOptions);
+        displayMap.addLayer(dots[2]);
+        displayMap.addLayer(dots[3]);
+
+        m.redrawBox();
+      });
+      dots[2].on("drag",function(e){
+        requestBoundingBox[0][0] = e.target.getLatLng().lat;
+        requestBoundingBox[1][1] = e.target.getLatLng().lng;
+
+        // SE dot affects NE and SW on drag
+        displayMap.removeLayer(dots[0]);
+        displayMap.removeLayer(dots[1]);
+        dots[0] = new L.marker(requestBoundingBox[0], dotOptions);
+        dots[1] = new L.marker(requestBoundingBox[1], dotOptions);
+        displayMap.addLayer(dots[0]);
+        displayMap.addLayer(dots[1]);
+
+        m.redrawBox();
+      });
+      dots[3].on("drag",function(e){
+        requestBoundingBox[1][0] = e.target.getLatLng().lat;
+        requestBoundingBox[0][1] = e.target.getLatLng().lng;
+
+        // NW dot affects NE and SW on drag
+        displayMap.removeLayer(dots[0]);
+        displayMap.removeLayer(dots[1]);
+        dots[0] = new L.marker(requestBoundingBox[0], dotOptions);
+        dots[1] = new L.marker(requestBoundingBox[1], dotOptions);
+        displayMap.addLayer(dots[0]);
+        displayMap.addLayer(dots[1]);
+
         m.redrawBox();
       });
 
       dots.forEach(function(l){
         displayMap.addLayer(l);
+        l.on("dragend", function(){
+          m.drawDots();
+          m.checkSize();
+        });
       });
-      this.fillRequestForm();
     },
     redrawBox : function() {
       displayMap.removeLayer(rect);
@@ -352,10 +422,11 @@ var Metros = function() {
       this.fillRequestForm();
     },
     fillRequestForm : function() {
-      d3.select("input[name='bbox_n']").attr("value",requestBoundingBox[1][0]);
-      d3.select("input[name='bbox_w']").attr("value",requestBoundingBox[0][1]);
-      d3.select("input[name='bbox_s']").attr("value",requestBoundingBox[0][0]);
-      d3.select("input[name='bbox_e']").attr("value",requestBoundingBox[1][1]);
+      console.log(requestBoundingBox);
+      d3.select("input[name='bbox_n']").attr("value",Math.max(requestBoundingBox[1][0], requestBoundingBox[0][0]));
+      d3.select("input[name='bbox_w']").attr("value",Math.min(requestBoundingBox[1][1], requestBoundingBox[0][1]));
+      d3.select("input[name='bbox_s']").attr("value",Math.min(requestBoundingBox[1][0], requestBoundingBox[0][0]));
+      d3.select("input[name='bbox_e']").attr("value",Math.max(requestBoundingBox[1][1], requestBoundingBox[0][1]));
     }
   }
   return MetrosApp;
