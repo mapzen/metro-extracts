@@ -52,7 +52,7 @@ var Metros = function() {
       if (this.hasWebGL() === true) {
         var layer = Tangram.leafletLayer({
           scene: sceneURL,
-          attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | &copy; OSM contributors | <a href="https://mapzen.com/">Mapzen</a>'
+          attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | <a href="http://www.openstreetmap.org/copyright">&copy; OSM contributors</a> | <a href="https://mapzen.com/">Mapzen</a>'
         });
       } else {
         var layer = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
@@ -122,7 +122,7 @@ var Metros = function() {
       if (data.features.length)
         data.features.unshift({
           label : true,
-          text : "To request a new extract:"
+          text : "To create a new extract:"
         });
 
       var suggestion = d3.select(".autocomplete")

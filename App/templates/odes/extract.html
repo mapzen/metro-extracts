@@ -12,7 +12,7 @@
         <a href="{{ url_for('Metro-Extracts.index') }}">Metro Extracts</a>
       </li>
       <li>
-        <a href="{{ url_for('ODES.get_extracts') }}">Requested Extracts</a>
+        <a href="{{ url_for('ODES.get_extracts') }}">Your Extracts</a>
       </li>
       <li class="active">{{extract.wof.name or extract.id or extract.odes.id}}</li>
     </ol>
@@ -21,6 +21,7 @@
     <div id="map"></div>
   </div>
   <div class="col-sm-6 col-xs-12">
+    <h2>Your Extract:</h2>
     <h2>{{extract.wof.name or extract.id or extract.odes.id}}</h2>
     <div class="btn-group" style="margin: 0 auto;">
       <a href="https://mapzen.com/documentation/metro-extracts/">Documentation</a> | 
