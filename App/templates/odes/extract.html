@@ -31,8 +31,6 @@
     {% if extract.odes.status == "pending" or extract.odes.status == "processing" %}
       <p class="error">Sit tight! Your extract will take a little while to process, depending on the size of the area that you requested. This usually takes 30-60 minutes.</p>
       <p class="error">Your download links will appear on this page once it has finished processing. We will also email you a link to this page, so feel free to close this page and come back to it later! The email will go to whichever email address is registered with your Github account.</p>
-    {% elif extract.odes.status == "errored" %}
-      <p class="error">Oh no, your extract request seems to have errored out. Please let us know at <a href="mailto:hello@mapzen.com">hello@mapzen.com</a>.</p>
     {% elif extract.odes.links
         and 'osm2pgsql shapefiles zip' in extract.odes.links
         and 'osm2pgsql geojson zip' in extract.odes.links
