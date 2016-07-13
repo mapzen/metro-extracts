@@ -7,7 +7,7 @@ from urllib.parse import urlunparse
 from time import time
 import os, tempfile
 
-from flask import Response
+from flask import Response, render_template
 import requests
 
 class KnownUnknown (Exception): pass
@@ -20,7 +20,8 @@ def errors_logged(route_function):
         try:
             result = route_function(*args, **kwargs)
         except KnownUnknown as e:
-            return Response(str(e), headers={'Content-Type': 'text/plain'}, status=400)
+            html = render_template('known-unknown.html', error=str(e), util=globals())
+            return Response(html, status=400)
         except Exception as e:
             print_exc(file=stderr)
             raise

@@ -401,7 +401,7 @@ class TestApp (unittest.TestCase):
             redirect2 = urlparse(resp2.headers.get('Location'))
             
             self.assertEqual(resp2.status_code, 400)
-            self.assertIn(b"can't have more than 5 extracts currently processing", resp2.data)
+            self.assertIn(b"can&#39;t have more than 5 extracts currently processing", resp2.data)
     
     def test_request_odes_extract(self):
     
