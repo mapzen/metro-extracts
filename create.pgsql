@@ -10,7 +10,7 @@ CREATE TABLE extracts (
     envelope_bbox   FLOAT[],
     
     -- ODES service identifier for extract.
-    odes_id         INTEGER NULL,
+    odes_id         TEXT NULL,
 
     -- Who and when.
     user_id         INTEGER NULL,

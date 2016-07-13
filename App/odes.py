@@ -56,7 +56,7 @@ def get_odes_extracts(db, api_keys):
         resp = requests.get(extracts_url)
     
         if resp.status_code in range(200, 299):
-            odeses.extend([data.ODES(oj['id'], status=oj['status'], bbox=oj['bbox'],
+            odeses.extend([data.ODES(str(oj['id']), status=oj['status'], bbox=oj['bbox'],
                                      links=oj.get('download_links', {}),
                                      processed_at=oj['processed_at'],
                                      created_at=oj['created_at'])
@@ -87,7 +87,7 @@ def get_odes_extract(db, id, api_keys):
             if resp.status_code in range(200, 299):
                 # Stop at first matching ODES extract
                 oj = resp.json()
-                odes = data.ODES(oj['id'], status=oj['status'], bbox=oj['bbox'],
+                odes = data.ODES(str(oj['id']), status=oj['status'], bbox=oj['bbox'],
                                  links=oj.get('download_links', {}),
                                  processed_at=oj['processed_at'],
                                  created_at=oj['created_at'])
@@ -139,7 +139,7 @@ def request_odes_extract(extract, request, url_for, api_key):
     elif resp.status_code != 200:
         raise Exception("Uh oh")
     
-    return data.ODES(oj['id'], status=oj['status'], bbox=oj['bbox'],
+    return data.ODES(str(oj['id']), status=oj['status'], bbox=oj['bbox'],
                      links=oj.get('download_links', {}),
                      processed_at=oj['processed_at'],
                      created_at=oj['created_at'])
