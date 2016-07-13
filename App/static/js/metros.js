@@ -119,14 +119,18 @@ var Metros = function() {
       });
     },
     showSuggestions : function(data) {
-      data.features.unshift({
-        label : true,
-        text : "To request a new extract:"
-      });
+      if (data.features.length)
+        data.features.unshift({
+          label : true,
+          text : "To request a new extract:"
+        });
 
       var suggestion = d3.select(".autocomplete")
         .selectAll(".suggestion").data(data.features);
-      suggestion.enter().append("div").attr("class","suggestion");
+      suggestion.enter().append("div")
+        .attr("class",function(d,i) {
+          return "suggestion " + (i == 0 ? "" : "hit");
+        });
       suggestion.exit().remove();
       var m = this;
       suggestion.html(function(d){
@@ -134,10 +138,13 @@ var Metros = function() {
         else return d.properties.label + "<span class='layer'>(" + d.properties.layer + ")</span>"; 
       }).on("click",function(d){
         if (d.label) return;
-        placeID = d.properties.source + ":" + d.properties.layer + ":" + d.properties.id;
-        document.getElementById("search_input").value = d.properties.label;
-        m.onSubmit(d.properties.label);
+        m.searchOnSuggestion(d);
       });
+    },
+    searchOnSuggestion : function(d) {
+      placeID = d.properties.source + ":" + d.properties.layer + ":" + d.properties.id;
+      document.getElementById("search_input").value = d.properties.label;
+      this.onSubmit(d.properties.label);
     },
     selectSuggestion : function() {
       var currentList = d3.selectAll(".suggestion");
@@ -170,6 +177,7 @@ var Metros = function() {
     processKeyup : function(event) {
       var inputDiv = document.getElementById("search_input");
       var val = inputDiv.value;
+      var m = this;
 
       if (!val.length) {
         this.clearSearchBox();
@@ -179,13 +187,20 @@ var Metros = function() {
       if (event.keyCode == 40) { //arrow down
         keyIndex = Math.min(keyIndex+1, d3.selectAll(".suggestion")[0].length-1);
         this.selectSuggestion();   
+
       } else if (event.keyCode == 38) { //arrow up
         keyIndex = Math.max(keyIndex-1, 1);
         this.selectSuggestion();
+
       } else if (event.keyCode == 13) { //enter
-        this.onSubmit(val);
+        if (d3.selectAll(".suggestion")[0].length)
+          d3.select(".hit").each(function(d){ m.searchOnSuggestion(d); });
+        else
+          this.onSubmit(val);
+
       } else if (event.keyCode != 8 && (event.keyCode < 48 || event.keyCode > 90)) {
         return; //restrict autocomplete to 0-9,a-z character input, excluding delete
+
       } else {
         keyIndex = 0;
         placeID = null;
@@ -203,24 +218,21 @@ var Metros = function() {
         });
       } else {
         d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
-          if (!json.features.length) {
+          if (countrySearch){
+            m.zoomMap(json.features[0].bbox);
+            document.getElementById("search_input").value = query;
+            m.filterList(query);
+            window.scroll(0,0);
+          } else if (json.features.length) {
+            document.getElementById("search_input").value = json.features[0].properties.label;
+            m.requestExtract(json.features[0]);
+          } else {
             d3.json("https://search.mapzen.com/v1/search?text="+query+"&api_key=search-owZDPeC", function(e, j) {
               if (j.features.length)
                 m.requestExtract(j.features[0], true);
               else
                 m.searchError(query);
             });
-          } else if (d3.selectAll(".city")[0].length == 0){
-            document.getElementById("search_input").value = json.features[0].properties.label;
-            m.requestExtract(json.features[0]);
-          } else if (countrySearch){
-            m.zoomMap(json.features[0].bbox);
-            document.getElementById("search_input").value = query;
-            m.filterList(query);
-            window.scroll(0,0);
-          } else {
-            m.zoomMap(json.features[0].bbox);
-            m.clearRequest();
           }
         });
       }
@@ -300,6 +312,7 @@ var Metros = function() {
     },
     clearRequest : function() {
       this.clearMap();
+      displayMap.fitBounds(L.latLngBounds(L.latLng(0, -125), L.latLng(0, 125)));
       d3.select("#map").classed("request-mode",false);
       d3.select("#request-wrapper").attr("class","");
       d3.select("#make-request").style("display","none");

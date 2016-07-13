@@ -128,7 +128,7 @@ body.data-pages .inline-submit .btn:hover {
 #request-wrapper.filtered-request-greater-5 #make-request {
   background: rgba(212,100,92, .3);
 }
-#request-wrapper.filtered-request-greater-5 .btn {
+#request-wrapper.filtered-request-greater-5 #make-request .btn {
   display: none;
 }
 #request-wrapper.filtered-error #search-error {
