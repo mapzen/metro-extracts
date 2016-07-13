@@ -1,3 +1,6 @@
+.page-footer {
+  margin-bottom: 100px;
+}
 body.data-pages #map {
   width: 100%;
   border: 1px solid #ddd;
