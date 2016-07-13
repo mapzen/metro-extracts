@@ -122,7 +122,7 @@ var Metros = function() {
       if (data.features.length)
         data.features.unshift({
           label : true,
-          text : "To request a new extract:"
+          text : "To make a new extract:"
         });
 
       var suggestion = d3.select(".autocomplete")
