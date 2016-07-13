@@ -25,7 +25,7 @@ body.data-pages .inline-submit .btn:hover {
 }
 
 #search-box {
-  margin: 20px 0 40px;
+  margin: 20px 0;
 }
 #search-box .hasclear {
   padding: 0;
@@ -73,7 +73,7 @@ body.data-pages .inline-submit .btn:hover {
 }
 .country {
   border-top: 1px solid rgb(224,224,224);
-  margin-top: 20fpx;
+  margin-top: 10px;
 }
 .country-name {
   background: rgb(224,224,224);
