@@ -65,3 +65,8 @@
 .link:hover {
   background: #eee;
 }
+@media (max-width: 768px) {
+  .col-sm-6 {
+    margin-bottom: 10px;
+  }
+}
