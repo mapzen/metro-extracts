@@ -1,4 +1,3 @@
-from flask import Blueprint, jsonify, Response, render_template, url_for, request
 from itertools import groupby
 from operator import itemgetter
 from os.path import join, dirname
@@ -8,7 +7,12 @@ import requests
 import uritemplate
 import psycopg2
 
+from flask import (
+    Blueprint, jsonify, Response, render_template, url_for, request, session
+    )
+
 from . import util
+from .oauth import session_info
 
 blueprint = Blueprint('Metro-Extracts', __name__)
 
@@ -30,6 +34,7 @@ def apply_blueprint(app, url_prefix):
 @blueprint.route('/')
 @util.errors_logged
 def index():
+    id, nick, _, _ = session_info(session)
     ordered_cities = sorted(cities, key=itemgetter('country'))
     metros_tree = list()
     
@@ -42,7 +47,8 @@ def index():
         
         metros_tree.append({'country': country, 'metros': sub_metros})
     
-    return render_template('index.html', metros_tree=metros_tree, util=util)
+    return render_template('index.html', metros_tree=metros_tree, util=util,
+                           user_id=id, user_nickname=nick)
 
 @blueprint.route('/cities.geojson')
 @util.errors_logged

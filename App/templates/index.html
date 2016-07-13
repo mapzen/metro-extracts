@@ -9,13 +9,16 @@
     <div id='map'></div>
   </div>
   <div class='col-xs-12 col-sm-6'>
-    <h1 class="headroom text-center">metro extracts</h1>
+    <h1 style="clear: both" class="headroom text-center">metro extracts</h1>
     <p>Each week, Metro Extracts automatically extracts the latest <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area files in a variety of formats for you to use.</p>
     <p>The <span class="legend-red">red</span> boxes represent existing extracts, which you can download right now. You can also request a new extract (shown as a <span class="legend-blue">blue</span> box) which will take 30-60 minutes to create.</p>
     <p style="margin-top: 20px;">
       <a href="https://mapzen.com/documentation/metro-extracts/">Documentation</a> |
       <a href="https://mapzen.com/documentation/metro-extracts/walkthrough/">Tutorial</a> |
       <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">File Format Guide</a>
+      {% if user_id %}
+      | <a href="{{ url_for('ODES.get_extracts') }}">Your Extracts</a>
+      {% endif %}
     </p>
     <div id="request-wrapper">
       <div class='row inline-submit' id='search-box'>
