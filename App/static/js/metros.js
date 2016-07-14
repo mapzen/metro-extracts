@@ -436,7 +436,6 @@ var Metros = function() {
       this.fillRequestForm();
     },
     fillRequestForm : function() {
-      console.log(requestBoundingBox);
       d3.select("input[name='bbox_n']").attr("value",Math.max(requestBoundingBox[1][0], requestBoundingBox[0][0]));
       d3.select("input[name='bbox_w']").attr("value",Math.min(requestBoundingBox[1][1], requestBoundingBox[0][1]));
       d3.select("input[name='bbox_s']").attr("value",Math.min(requestBoundingBox[1][0], requestBoundingBox[0][0]));
