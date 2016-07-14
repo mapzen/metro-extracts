@@ -141,7 +141,7 @@ class TestApp (unittest.TestCase):
         button = soup.find('button').text
 
         self.assertEqual(resp.status_code, 401)
-        self.assertIn('Log In With Mapzen', button)
+        self.assertIn('CONTINUE', button)
     
     def _do_login(self, codes):
         '''
@@ -419,7 +419,7 @@ class TestApp (unittest.TestCase):
             if MHP == ('POST', 'odes.mapzen.com', '/extracts'):
                 if url.query == 'api_key=odes-xxxxxxx':
                     body = dict(parse_qsl(request.body))
-                    self.assertIn('finished', body['email_subject'])
+                    self.assertIn('ready', body['email_subject'])
                     self.assertIn(wof_name, body['email_body_text'])
                     self.assertIn(created, body['email_body_text'])
                     self.assertIn(extract_path, body['email_body_text'])

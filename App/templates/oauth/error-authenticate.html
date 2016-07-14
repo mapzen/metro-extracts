@@ -1,11 +1,11 @@
 {% extends "layout.html" %}
 
 {% block content %}
-  <div class="container" style="margin-top: 100px">
+  <div class="container text-center" style="margin-top: 100px">
     <h2 class="">Almost There!</h2>
     
     <p>
-        Create a free Mapzen Developers account to access Mapzen services and finish your extract. You’ll be asked to log in with a free Github account, then return to this page to download your files.
+        You will now be directed to sign up or sign in with a free Mapzen Developer account so we can create your custom extract.
     </p>
   </div>
 
@@ -15,7 +15,7 @@
         <input type="hidden" name="client_id" value="{{client_id}}">
         <input type="hidden" name="redirect_uri" value="{{redirect_uri}}">
         <input type="hidden" name="response_type" value="code">
-        <button class="btn btn-mapzen-alt">Log In With Mapzen</button>
+        <button class="btn btn-mapzen-alt">CONTINUE</button>
     </form>
   </div>
 {% endblock %}

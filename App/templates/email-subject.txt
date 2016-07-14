@@ -1,1 +1,1 @@
-Your Metro Extract has finished!
+Your custom extract of {{ name }} is ready for download!

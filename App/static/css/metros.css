@@ -1,6 +1,13 @@
 h1 {
   margin-bottom: 10px;
 }
+h1 a {
+  font-weight: inherit;
+  color: inherit;
+}
+h1 a:hover {
+  color: inherit;
+}
 body.data-pages #search_input{
   height:41px;
 }
@@ -75,6 +82,15 @@ body.data-pages .inline-submit .btn:hover {
   border-top: 1px solid rgb(224,224,224);
   margin-top: 10px;
 }
+.country.no-line {
+  border-top: none;
+}
+.country.no-line .country-name {
+  display: none;
+}
+.country.no-line .city {
+  margin-left: 0;
+}
 .country-name {
   background: rgb(224,224,224);
   font-weight: bold;
@@ -139,6 +155,12 @@ body.data-pages .inline-submit .btn:hover {
 }
 #request-wrapper.filtered-error #make-request {
   display: none;
+}
+#make-request .note {
+  margin-top: 20px;
+  font-size: 14px;
+  font-style: italic;
+  margin-bottom: 0;
 }
 .autocomplete {
   border: 1px solid #ddd;

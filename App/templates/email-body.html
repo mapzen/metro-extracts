@@ -25,16 +25,6 @@ body {
   width: 100% !important;
   text-align: center;
 }
-
-h1 {
-  color: #d4645c;
-  font-family: "Playfair Display", serif;
-  font-size: 60px;
-  text-align: center;
-  font-weight: 300;
-  line-height: 1.2em;
-  margin: 0px 0 30px;
-}
 a {
   color: #6ea0a4;
   text-decoration: none;
@@ -60,14 +50,14 @@ p {
         <table style="width: 100%;">
           <tr>
             <td>
-              <h1>metro extracts</h1>
-              <p>Hooray, the metro extract that you requested at {{ created }} has finished.</p>
+              <h1 style="color: #d4645c; font-family: 'Playfair Display', serif; font-size: 60px; text-align: center; font-weight: 300; line-height: 1.2em; margin: 0px 0 30px;">metro extracts</h1>
+              <p>Hooray, the metro extract that you requested at {{ created }} is ready for download.</p>
               <p>
                 <a href="{{ link }}" class="btn" style="background-color: #6ea0a4; color: #fff; text-transform: uppercase; font-weight: 400; display: inline-block; padding: 10px 16px; font-weight: bold; text-decoration: none; margin: 10px 0 50px;">View {{ name }}</a>
               </p>
               <p>If you have any questions, please get in touch with us at <a href="mailto:hello@mapzen.com" style="color:#6ea0a4;">hello@mapzen.com</a>
               <p>
-                <a href="{{ extracts_link }}" style="color:#6ea0a4;">Previous Requests</a> |
+                <a href="{{ extracts_link }}" style="color:#6ea0a4;">Your Custom Extracts</a> |
                 <a href="https://mapzen.com/documentation/metro-extracts/" style="color:#6ea0a4;">Documentation</a> |
                 <a href="https://mapzen.com/documentation/metro-extracts/walkthrough/" style="color:#6ea0a4;">Tutorial</a> |
                 <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format" style="color:#6ea0a4;">File Format Guide</a>
