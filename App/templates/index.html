@@ -10,11 +10,11 @@
   </div>
   <div class='col-xs-12 col-sm-6'>
     <h1 style="clear: both" class="headroom text-center">metro extracts</h1>
-    <p>Each week, Metro Extracts automatically extracts the latest <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area files in a variety of formats for you to use.</p>
-    <p>The <span class="legend-red">red</span> boxes on the map show existing extracts, which you can download right now.</p>
+    <p>Each week, Metro Extracts automatically creates snapshots of <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area files in a variety of formats for you to use. Download an extract from the list of popular extracts below to get started right away, or request a new extract of anywhere in the world!</p>
+    <p>The <span class="legend-red">red</span> boxes on the map represent popular extracts.</p>
     <p style="margin-top: 20px;">
       {% if user_id %}
-      <a href="{{ url_for('ODES.get_extracts') }}">Your Extracts</a> |
+      <a href="{{ url_for('ODES.get_extracts') }}">Your Custom Extracts</a> |
       {% endif %}
       <a href="https://mapzen.com/documentation/metro-extracts/">Documentation</a> |
       <a href="https://mapzen.com/documentation/metro-extracts/walkthrough/">Tutorial</a> |
@@ -32,8 +32,8 @@
       </div>
 
       <p id="search-error" class="request-messaging">Sorry, we don't have any results for <span class="name"></span>. Try a different search?</p>
-      <p class="encompassed-text request-messaging">Your extract is included inside of a larger area: </p>
-      <label class="data-filter-label red">Existing Extracts:</label>
+      <p class="encompassed-text request-messaging">Looks like the place you are looking for is part of a popular extract: </p>
+      <label class="data-filter-label red">Popular Extracts:</label>
       <div id="extracts">
         {% for country_metros in metros_tree %}
           <div class="country">
@@ -45,11 +45,11 @@
         {% endfor %}
       </div>
       <div id="make-request">
-        <p class="default-request-text request-messaging">We don't have an extract for <span class="name"></span> yet. Would you like to request it?</p>
-        <p class="encompassed-text request-messaging">If you'd like to get an extract specifically for <span class="name"></span>, click the button below. This can take a few hours to finish.</p>
+        <p class="default-request-text request-messaging">We don't have an extract for <span class="name"></span> ready to download. But you can make your own!</p>
+        <p class="encompassed-text request-messaging">You can make your own extract for <span class="name"></span> too!</p>
         <p class="request-greater-1 request-messaging">We don't have data for <span class="name"></span> yet, but you can request it by clicking the button below. This is a large area, so this data can take a few hours to finish.</p>
-        <p class="request-greater-1 encompassed-text default-request-text request-messaging">Feel free to drag the corners of the box on the map to adjust the size of your area.</p>
-        <p class="request-greater-5 request-messaging">Sorry, but your request for <span class="name"></span> is too large for us. Please try a smaller area.</p>
+        <p class="request-greater-1 encompassed-text default-request-text request-messaging">Drag the corners of the blue box on the map to define your custom extract.</p>
+        <p class="request-greater-5 request-messaging">Sorry, the area you have defined is too large. Drag the corners of the blue box on the map to make it smaller.</p>
         <form action="{{ url_for('ODES.post_envelope') }}" method="post">
           <input name="bbox_n" type="hidden" />
           <input name="bbox_w" type="hidden" />
@@ -59,6 +59,8 @@
           <input name="wof_name" type="hidden" />
           <button class="btn btn-transparent">Create <span class="name"></span> Request</button>
         </form>
+        <p class="default-request-text encompassed-text request-messaging note">(Note: Custom extracts take about 30-60 minutes to generate and you will be guided to sign in or sign up for a free Mapzen Developer account)</p>
+        <p class="request-greater-1 request-messaging note">(Note: You have defined a large area as a custom extract. This might take a few hours to finish. You will be guided to sign in or sign up for a free Mapzen Developer account to complete this request)</p>
       </div>
     </div>
   </div>

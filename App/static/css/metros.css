@@ -140,6 +140,12 @@ body.data-pages .inline-submit .btn:hover {
 #request-wrapper.filtered-error #make-request {
   display: none;
 }
+#make-request .note {
+  margin-top: 20px;
+  font-size: 14px;
+  font-style: italic;
+  margin-bottom: 0;
+}
 .autocomplete {
   border: 1px solid #ddd;
 }

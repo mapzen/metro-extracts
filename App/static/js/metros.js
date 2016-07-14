@@ -122,7 +122,7 @@ var Metros = function() {
       if (data.features.length)
         data.features.unshift({
           label : true,
-          text : "To create a new extract:"
+          text : "To make a custom extract:"
         });
 
       var suggestion = d3.select(".autocomplete")
@@ -193,7 +193,7 @@ var Metros = function() {
         this.selectSuggestion();
 
       } else if (event.keyCode == 13) { //enter
-        if (d3.selectAll(".suggestion")[0].length)
+        if (d3.selectAll(".suggestion")[0].length && keyIndex == 0)
           d3.select(".hit").each(function(d){ m.searchOnSuggestion(d); });
         else
           this.onSubmit(val);

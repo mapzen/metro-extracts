@@ -15,16 +15,14 @@ h3 {
 p.error {
   color: #d4645c;
 }
-#downloads .label,
-#downloads label {
-  margin-top: 10px;
+#downloads .label {
+  margin: 5px 0;
   display: inline-block;
   clear: both;
   font-weight: bold;
-  margin-bottom: 5px;
   color: #000;
 }
-#downloads .label:hover {
+#downloads .label a {
   text-decoration: underline;
 }
 #downloads p {

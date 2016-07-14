@@ -35,11 +35,10 @@
         <a class="link" href="{{ url_for('Metro-Extracts.wof_geojson', id=extract.wof.id)}}">{{extract.wof.name}}  GEOJSON</a>
       </div>
     {% endif %}
-
-    <h3>Downloads</h3>
+    
     {% if extract.odes.status == "pending" or extract.odes.status == "processing" %}
-      <p class="error">Sit tight! Your data will take a little while to finish, depending on the size of the area that you requested. This usually takes 30-60 minutes.</p>
-      <p class="error">Links to your data will appear on this page once we have finished. We will also email you a link to this page, so feel free to close this page and come back to it later! The email will go to the email address is registered with your Github account.</p>
+      <p class="error">Sit tight! We will send you an email to the address associated with your GitHub account when your custom extract is ready for download.</p>
+      <p class="error">Custom extracts take about 30-60 minutes to generate, depending on the size. The download links for your extract will appear on this page once it is ready.</p>
     {% elif extract.odes.links
         and 'osm2pgsql shapefiles zip' in extract.odes.links
         and 'osm2pgsql geojson zip' in extract.odes.links
@@ -49,26 +48,27 @@
         and 'osm bz2' in extract.odes.links
         and 'water coastline zip' in extract.odes.links
         and 'land coastline zip' in extract.odes.links %}
+      <h3>Downloads</h3>
       <div id="downloads">
-        <a href="https://mapzen.com/documentation/metro-extracts/overview/#osm2pgsql-and-imposm" class="label">Points, Lines, and Polygons (OSM2PGSQL)</a>
+        <div class="label">Datasets split by geometry type: lines, points, or polygons <a href="https://mapzen.com/documentation/metro-extracts/overview/#osm2pgsql-and-imposm" class="label">(OSM2PGSQL)</a></div>
         <div class="dl-group">
           <a class="link" href="{{ extract.odes.links['osm2pgsql shapefiles zip'] }}">SHAPEFILE</a>
           <a class="link" href="{{ extract.odes.links['osm2pgsql geojson zip'] }}">GEOJSON</a>
         </div>
-        <a href="https://mapzen.com/documentation/metro-extracts/overview/#osm2pgsql-and-imposm" class="label">Layers (buildings, roads, etc) (IMPOSM)</a>
+        <div class="label">Datasets grouped into individual layers by OpenStreetMap tags <a href="https://mapzen.com/documentation/metro-extracts/overview/#osm2pgsql-and-imposm" class="label">(IMPOSM)</a></div>
         <div class="dl-group">
           <a class="link" href="{{ extract.odes.links['imposm shapefiles zip'] }}">SHAPEFILE</a>
           <a class="link" href="{{ extract.odes.links['imposm geojson zip'] }}">GEOJSON</a>
         </div>
-        <a href="https://mapzen.com/documentation/metro-extracts/overview/#osm-pbf-and-osm-xml" class="label">OpenStreetMap-specific Formats</a>
+        <div class="label">Raw OpenStreetMap datasets <a href="https://mapzen.com/documentation/metro-extracts/overview/#osm-pbf-and-osm-xml" class="label">(PBF and XML)</a></div>
         <div class="dl-group">
           <a class="link" href="{{ extract.odes.links['osm pbf'] }}">OSM PBF</a>
           <a class="link" href="{{ extract.odes.links['osm bz2'] }}">OSM XML</a>
         </div>
-        <label>Coastlines</label>
+        <div class="label">Coastlines</div>
         <div class="dl-group">
-          <a class="link" href="{{ extract.odes.links['water coastline zip'] }}">WATER COASTLINE SHAPEFILE</a>
-          <a class="link" href="{{ extract.odes.links['land coastline zip'] }}">LAND COASTLINE SHAPEFILE</a>
+          <a class="link" href="{{ extract.odes.links['water coastline zip'] }}">WATER SHAPEFILE</a>
+          <a class="link" href="{{ extract.odes.links['land coastline zip'] }}">LAND SHAPEFILE</a>
         </div>
         <p>If you're unsure of which file to pick, check out our <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">format guide</a>.</p>
       </div>
