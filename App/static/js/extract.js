@@ -7,6 +7,7 @@ var Extract = function (){
       bbox = initBBox;
       sceneURL = scene;
       this.initDisplayMap();
+      return this;
     },
     hasWebGL: function() {
       try {
@@ -43,6 +44,12 @@ var Extract = function (){
       var rect = new L.Rectangle(new L.LatLngBounds([southwest, northeast]), { className : "blue" });
       displayMap.addLayer(rect);
     },
+    showOutline : function(geojson_url) {
+      d3.json(geojson_url, function(data){
+        outline = L.geoJson(data.geometry, { className : "outline" }).addTo(displayMap);
+        displayMap.addLayer(outline);
+      });
+    }
   };
   return ExtractApp;
 }

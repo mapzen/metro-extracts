@@ -28,6 +28,14 @@
       <a href="https://mapzen.com/documentation/metro-extracts/walkthrough/">Tutorial</a> | 
       <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">File Format Guide</a>
     </div>
+
+    {% if extract.wof.name and extract.wof.id %}
+      <div id="encompassed" style="margin-top: 40px;">
+        <p>To clip this extract to the <span class="legend-blue">{{extract.wof.name}} boundary</span>, use this outline:</p>
+        <a class="link" href="{{ url_for('Metro-Extracts.wof_geojson', id=extract.wof.id)}}">{{extract.wof.name}}  GEOJSON</a>
+      </div>
+    {% endif %}
+
     <h3>Downloads</h3>
     {% if extract.odes.status == "pending" or extract.odes.status == "processing" %}
       <p class="error">Sit tight! Your data will take a little while to finish, depending on the size of the area that you requested. This usually takes 30-60 minutes.</p>
@@ -82,4 +90,8 @@
     {{ extract.odes.bbox|safe }}, 
     "{{ url_for('static', filename='scene.yaml') }}"
   );
+
+  {% if extract.wof.name and extract.wof.id %}
+    extractPage.showOutline("{{ url_for('Metro-Extracts.wof_geojson', id=extract.wof.id) }}");
+  {% endif %}
 {% endblock %}
