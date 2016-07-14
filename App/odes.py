@@ -144,14 +144,6 @@ def request_odes_extract(extract, request, url_for, api_key):
                      processed_at=oj['processed_at'],
                      created_at=oj['created_at'])
 
-@blueprint.route('/odes/')
-@util.errors_logged
-def get_odes():
-    '''
-    '''
-    id, nick, _, _ = session_info(session)
-    return render_template('odes/index.html', util=util, user_id=id, user_nickname=nick)
-
 @blueprint.route('/odes/envelopes/', methods=['POST'])
 @util.errors_logged
 def post_envelope():
