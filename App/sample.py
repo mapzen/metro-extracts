@@ -3,7 +3,7 @@ from urllib.parse import urljoin
 
 from . import util
 from dateutil.tz import tzutc
-from flask import Blueprint, render_template, url_for, request
+from flask import Blueprint, render_template, url_for, request, Response
 
 blueprint = Blueprint('Sample', __name__, template_folder='templates')
 
@@ -20,8 +20,9 @@ def sample_unknown_unknown():
     return render_template('unknown-unknown.html', util=util)
 
 @blueprint.route('/sample/email-body')
+@blueprint.route('/sample/email-body.<ext>')
 @util.errors_logged
-def sample_email_body():
+def sample_email_body(ext='html'):
     ''' 
     '''
     args = dict(
@@ -30,5 +31,8 @@ def sample_email_body():
         extracts_link = urljoin(util.get_base_url(request), url_for('ODES.get_extracts')),
         created = datetime.now(tz=tzutc())
         )
+    
+    type = {'html': 'text/html', 'txt': 'text/plain'}.get(ext)
 
-    return render_template('email-body.html', util=util, **args)
+    return Response(render_template('email-body.'+ext, util=util, **args),
+                    headers={'Content-type': '{}; charset=utf8'.format(type)})
