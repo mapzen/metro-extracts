@@ -45,13 +45,12 @@ var Metros = function() {
           scrollWheelZoom: false,
           // Disables dragging on touch-detected devices
           dragging: (window.self !== window.top && L.Browser.touch) ? false : true,
-          tap: (window.self !== window.top && L.Browser.touch) ? false : true,
+          tap: (window.self !== window.top && L.Browser.touch) ? false : true
         };
-      displayMap = L.map('map', options).fitBounds(L.latLngBounds(southwest, northeast));
+      displayMap = L.Mapzen.map('map', options).fitBounds(L.latLngBounds(southwest, northeast));
 
       if (this.hasWebGL() === true) {
         var layer = Tangram.leafletLayer({
-          scene: sceneURL,
           attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | <a href="http://www.openstreetmap.org/copyright">&copy; OSM contributors</a> | <a href="https://mapzen.com/">Mapzen</a>'
         });
       } else {
