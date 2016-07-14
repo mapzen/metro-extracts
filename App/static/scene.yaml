@@ -214,7 +214,6 @@ settings:
 
 textures:
     pois:
-        url: images/poi_icons_18@2x.png
         filtering: mipmap
         sprites:
             # define sprites: [x origin, y origin, width, height]
@@ -361,10 +360,6 @@ textures:
             wine-bar: [184, 210, 38, 38]
             winery: [456, 168, 38, 38]
             zoo: [966, 84, 38, 38]
-
-    building-grid:
-        url: images/building-grid.gif
-        filtering: mipmap
 
 sources:
     osm:
@@ -876,10 +871,6 @@ styles:
         base: polygons
         mix: [hsv, scale-buildings]
         texcoords: true
-        material:
-            diffuse:
-                texture: building-grid
-                mapping: uv
         shaders:
             defines:
                 WALL_TINT: vec3(1., 3., .993) # modifies roof color HSV
