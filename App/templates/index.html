@@ -11,14 +11,14 @@
   <div class='col-xs-12 col-sm-6'>
     <h1 style="clear: both" class="headroom text-center">metro extracts</h1>
     <p>Each week, Metro Extracts automatically extracts the latest <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area files in a variety of formats for you to use.</p>
-    <p>The <span class="legend-red">red</span> boxes represent existing extracts, which you can download right now. You can also request a new extract (shown as a <span class="legend-blue">blue</span> box) which will take 30-60 minutes to create.</p>
+    <p>The <span class="legend-red">red</span> boxes on the map show existing extracts, which you can download right now.</p>
     <p style="margin-top: 20px;">
+      {% if user_id %}
+      <a href="{{ url_for('ODES.get_extracts') }}">Your Extracts</a> |
+      {% endif %}
       <a href="https://mapzen.com/documentation/metro-extracts/">Documentation</a> |
       <a href="https://mapzen.com/documentation/metro-extracts/walkthrough/">Tutorial</a> |
       <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">File Format Guide</a>
-      {% if user_id %}
-      | <a href="{{ url_for('ODES.get_extracts') }}">Your Extracts</a>
-      {% endif %}
     </p>
     <div id="request-wrapper">
       <div class='row inline-submit' id='search-box'>
@@ -45,11 +45,11 @@
         {% endfor %}
       </div>
       <div id="make-request">
-        <p class="default-request-text request-messaging">Hmm, we don't have an extract for <span class="name"></span> yet. Would you like to request one?</p>
-        <p class="encompassed-text request-messaging">If you'd like to request an extract specifically for <span class="name"></span>, click the button below. Please note, this can take a few hours to process.</p>
-        <p class="request-greater-1 request-messaging">We don't have a request for <span class="name"></span> yet, but you can request one by clicking the button below. Please note, you have requested a large area and this request will take more than a few hours to process.</p>
-        <p class="request-greater-1 encompassed-text default-request-text request-messaging">Feel free to drag the corners of the box on the map to adjust the size of your request.</p>
-        <p class="request-greater-5 request-messaging">Sorry, but your request for <span class="name"></span> is too large to process. Please make your request a smaller area.</p>
+        <p class="default-request-text request-messaging">We don't have an extract for <span class="name"></span> yet. Would you like to request it?</p>
+        <p class="encompassed-text request-messaging">If you'd like to get an extract specifically for <span class="name"></span>, click the button below. This can take a few hours to finish.</p>
+        <p class="request-greater-1 request-messaging">We don't have data for <span class="name"></span> yet, but you can request it by clicking the button below. This is a large area, so this data can take a few hours to finish.</p>
+        <p class="request-greater-1 encompassed-text default-request-text request-messaging">Feel free to drag the corners of the box on the map to adjust the size of your area.</p>
+        <p class="request-greater-5 request-messaging">Sorry, but your request for <span class="name"></span> is too large for us. Please try a smaller area.</p>
         <form action="{{ url_for('ODES.post_envelope') }}" method="post">
           <input name="bbox_n" type="hidden" />
           <input name="bbox_w" type="hidden" />
