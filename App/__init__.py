@@ -99,3 +99,10 @@ def wof_geojson(id):
                if key in ('Content-Type', 'Content-Length')}
     
     return Response(wof_resp.content, headers=headers)
+
+@blueprint.route('/sample/unknown-unknown')
+@util.errors_logged
+def sample_unknown_unknown():
+    ''' 
+    '''
+    return render_template('unknown-unknown.html', util=util)

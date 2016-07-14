@@ -24,7 +24,8 @@ def errors_logged(route_function):
             return Response(html, status=400)
         except Exception as e:
             print_exc(file=stderr)
-            raise
+            html = render_template('unknown-unknown.html', util=globals())
+            return Response(html, status=500)
         else:
             return result
     

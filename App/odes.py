@@ -137,7 +137,7 @@ def request_odes_extract(extract, request, url_for, api_key):
     if 'error' in oj:
         raise util.KnownUnknown("Error: {}".format(oj['error']))
     elif resp.status_code != 200:
-        raise Exception("Uh oh")
+        raise Exception("Bad ODES status code: {}".format(resp.status_code))
     
     return data.ODES(str(oj['id']), status=oj['status'], bbox=oj['bbox'],
                      links=oj.get('download_links', {}),
