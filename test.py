@@ -253,10 +253,6 @@ class TestApp (unittest.TestCase):
         self._do_login(codes)
         self._do_logout(codes)
 
-    def test_odes_index(self):
-        resp = self.client.get(self.prefixed('/odes/'))
-        self.assertEqual(resp.status_code, 200)
-    
     def test_odes_request(self):
         codes = ['let-me-in']
         
