@@ -54,7 +54,7 @@ body.data-pages .inline-submit .btn:hover {
   cursor: pointer;
   display: none;
 }
-#request-wrapper[class*="-filtered"] #search-box .fa-times {
+#request-wrapper[class*="filtered-"] #search-box .fa-times {
   display: inline-block;
 }
 #search-box .fa-times:hover {
