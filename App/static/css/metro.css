@@ -20,10 +20,6 @@ p.error {
   display: inline-block;
   clear: both;
   font-weight: bold;
-  color: #000;
-}
-#downloads .label a {
-  text-decoration: underline;
 }
 #downloads p {
   margin-top: 15px;

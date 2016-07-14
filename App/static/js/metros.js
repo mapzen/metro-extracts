@@ -170,6 +170,7 @@ var Metros = function() {
     },
     clearSearchBox : function() {
       document.getElementById("search_input").value = "";
+      d3.select(".fa-times").style("display","none");
       this.drawList(nestedCities);
       d3.selectAll(".suggestion").remove();
       placeID = null;
@@ -184,6 +185,8 @@ var Metros = function() {
         this.clearSearchBox();
         return;
       }
+
+      d3.select(".fa-times").style("display","inline-block");
 
       if (event.keyCode == 40) { //arrow down
         keyIndex = Math.min(keyIndex+1, d3.selectAll(".suggestion")[0].length-1);
