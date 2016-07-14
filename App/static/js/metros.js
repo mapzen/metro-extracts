@@ -98,11 +98,12 @@ var Metros = function() {
       countries.exit().remove();
       enterCountries.append("div").attr("class","country-name")
       var m = this;
-      countries.select(".country-name")
-        .text(function(d){ return d.country; })
-        .on("click",function(d){
-          m.doSearch(d.country, true);
-        });
+      countries.classed("no-line", function(d){ return !d.country; })
+        .select(".country-name")
+          .text(function(d){ return d.country; })
+          .on("click",function(d){
+            m.doSearch(d.country, true);
+          });
       var cities = countries.selectAll(".city").data(function(d){ return d.metros; });
       cities.enter().append("a").attr("class","city");
       cities.text(function(d){ return d.name; })
@@ -264,7 +265,7 @@ var Metros = function() {
       var p1 = L.latLng(bbox[1],bbox[0]),
         p2 = L.latLng(bbox[3],bbox[2]);
       var encompassed = [{
-        country : "Encompassing Metros",
+        country : null,
         metros : []
       }];
       extractLayers.forEach(function(l){
