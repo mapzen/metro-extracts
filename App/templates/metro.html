@@ -77,7 +77,7 @@
   {% endif %}
 
   d3.selectAll(".link").on("click", function () {
-    var name = "{{ metro.name }}",
+    var name = "{{ metro.name }}, {{ metro.country }}",
       format = d3.select(this).attr("data-format");
     ga('send', 'event', 'metroextracts', name, format);
   });
