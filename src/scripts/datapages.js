@@ -95,7 +95,7 @@ $('body').on('click', 'a.metro-format', function () {
   var $this = $(this)
   var name = $this.data('name')
   var format = $this.data('format')
-  ga('send', 'event', name, 'click', format)
+  ga('send', 'event', 'metroextracts', name, format)
 })
 
 // Highlights a place on the map when the name is clicked
