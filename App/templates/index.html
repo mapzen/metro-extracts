@@ -73,6 +73,7 @@
 {% endblock %}
 
 {% block script %}
+  // set the window as either full-height, or 300px for mobile
   var mapHeight = window.innerWidth < 768 ? 300 : Math.max(window.innerHeight - 56, 500);
   d3.select("#map").style("height", mapHeight + 'px');
   
@@ -83,6 +84,7 @@
     "{{ url_for('Metro-Extracts.wof_geojson', id='GEOID') }}"
   );
 
+  // to recreate state on a back button
   if (document.getElementById("search_input").value.length)
     metrosPage.onSubmit(document.getElementById("search_input").value);
 
@@ -102,7 +104,7 @@
   });
 
   d3.select(".fa-times").on("click", function(){
-    metrosPage.clearSearchBox()
+    metrosPage.clearSearchBox();
   });
   
 {% endblock %}
