@@ -45,20 +45,17 @@ var Metros = function() {
           scrollWheelZoom: false,
           // Disables dragging on touch-detected devices
           dragging: (window.self !== window.top && L.Browser.touch) ? false : true,
-          tap: (window.self !== window.top && L.Browser.touch) ? false : true
+          tap: (window.self !== window.top && L.Browser.touch) ? false : true,
+          scene: sceneURL,
+          attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | <a href="http://www.openstreetmap.org/copyright">&copy; OSM contributors</a> | <a href="https://mapzen.com/">Mapzen</a>'
         };
       displayMap = L.Mapzen.map('map', options).fitBounds(L.latLngBounds(southwest, northeast));
 
-      if (this.hasWebGL() === true) {
-        var layer = Tangram.leafletLayer({
-          attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | <a href="http://www.openstreetmap.org/copyright">&copy; OSM contributors</a> | <a href="https://mapzen.com/">Mapzen</a>'
-        });
-      } else {
-        var layer = L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
+      if(!this.hasWebGL()) {
+        L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
           attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.',
-        });
+        }).addTo(map);
       }
-      layer.addTo(displayMap);
 
       var onEachFeature = function (feature, layer) {
         extractLayers.push(layer);
