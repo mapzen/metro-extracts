@@ -95,7 +95,7 @@
   {% endif %}
 
   d3.selectAll(".link").on("click", function () {
-    var name = {{extract.wof.name or extract.id or extract.odes.id}},
+    var name = "{{extract.wof.name or extract.id or extract.odes.id}}",
       format = d3.select(this).attr("data-format");
     ga('send', 'event', 'metroextracts', name, format);
   });
