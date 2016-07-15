@@ -61,6 +61,7 @@ var Metros = function() {
       }
       layer.addTo(displayMap);
 
+      // add popular extracts to map and bind a link to their page on click
       var onEachFeature = function (feature, layer) {
         extractLayers.push(layer);
         layer.bindPopup("<a href='"+feature.properties.href+"'>"+feature.properties.display_name+"</a>");
@@ -71,12 +72,15 @@ var Metros = function() {
       });
     },
     filterList : function(str) {
+      // populates the list of countries and cities on the right
       var newData = [];
       str = str.toLowerCase();
       nestedCities.forEach(function(d){
+        // if str matches a country, include that whole country
         if (d.country.toLowerCase().indexOf(str) != -1) {
           newData.push(d);
         } else {
+        // else, look at individual cities
           var c = {
             country : d.country,
             metros : []
@@ -91,14 +95,16 @@ var Metros = function() {
       this.drawList(newData);
     },
     drawList : function(data, request_id, display_name, noWOF) {
+      // if no cities match the query, hide "popular extracts" via css
       d3.select("#request-wrapper").classed("filtered",!data.length);
 
+      // d3 function to add list dom elements to the page
       var countries = d3.select("#extracts").selectAll(".country").data(data);
       var enterCountries = countries.enter().append("div").attr("class","country");
       countries.exit().remove();
       enterCountries.append("div").attr("class","country-name")
       var m = this;
-      countries.classed("no-line", function(d){ return !d.country; })
+      countries.classed("no-line", function(d){ return !d.country; }) //class for encompassed state
         .select(".country-name")
           .text(function(d){ return d.country; })
           .on("click",function(d){
@@ -107,12 +113,15 @@ var Metros = function() {
       var cities = countries.selectAll(".city").data(function(d){ return d.metros; });
       cities.enter().append("a").attr("class","city");
       cities.text(function(d){ return d.name; })
-        .attr("href",function(d){ 
+        .attr("href",function(d){
+          // if we got to this list via encomapssed metro, save a reference to the
+          // wof_id for the metro page to show the outline
           if (noWOF) return d.href;
           else return d.href + (request_id ? escape(request_id)+"/"+escape(display_name) : ""); });
       cities.exit().remove();
     },
     doSuggestion : function(query) {
+      // autocomplete dropdown list request
       if (xhr) xhr.abort();
       var m = this;
       xhr = d3.json("https://search.mapzen.com/v1/autocomplete?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
@@ -120,6 +129,7 @@ var Metros = function() {
       });
     },
     showSuggestions : function(data) {
+      // add the title at the top of autocomplete
       if (data.features.length)
         data.features.unshift({
           label : true,
@@ -130,11 +140,14 @@ var Metros = function() {
         .selectAll(".suggestion").data(data.features);
       suggestion.enter().append("div")
         .attr("class",function(d,i) {
-          return "suggestion " + (i == 0 ? "" : "hit");
+          // save a dom reference to the first autocomplete suggestion
+          // in case people hit enter mid-typing so it defaults to first autocomplete
+          return "suggestion " + (i == 1 ? "hit" : "");
         });
       suggestion.exit().remove();
       var m = this;
       suggestion.html(function(d){
+        // appends .layer to account for different WOF areas that have the same label (ex. Tokyo)
         if (d.label) return d.text;
         else return d.properties.label + "<span class='layer'>(" + d.properties.layer + ")</span>"; 
       }).on("click",function(d){
@@ -148,6 +161,7 @@ var Metros = function() {
       this.onSubmit(d.properties.label);
     },
     selectSuggestion : function() {
+      // for handling keyboard input on the autocomplete list
       var currentList = d3.selectAll(".suggestion");
       currentList.each(function(d, i){ 
         if (i == keyIndex) {
@@ -157,6 +171,7 @@ var Metros = function() {
       }).classed("selected",function(d,i){ return i == keyIndex; });
     },
     onSubmit : function(val) {
+      // submit of search box
       keyIndex = 0;
       this.filterList(val);
       d3.selectAll(".suggestion").remove();
@@ -164,11 +179,12 @@ var Metros = function() {
       placeID = null;
     },
     searchError : function(query) {
-      var m = this;
+      // no search results anywhere, ex. sdfsdafasdf
       d3.select("#request-wrapper").attr("class","filtered-error");
       d3.select("#search-error").select(".name").text(query);
     },
     clearSearchBox : function() {
+      // triggered by "x" click or an empty search box
       document.getElementById("search_input").value = "";
       d3.select(".fa-times").style("display","none");
       this.drawList(nestedCities);
@@ -177,6 +193,7 @@ var Metros = function() {
       this.clearRequest();
     },
     processKeyup : function(event) {
+      // master function for responding to the search box
       var inputDiv = document.getElementById("search_input");
       var val = inputDiv.value;
       var m = this;
@@ -197,15 +214,18 @@ var Metros = function() {
         this.selectSuggestion();
 
       } else if (event.keyCode == 13) { //enter
+        // if there are autocomplete suggestions and up/down keys were unused
         if (d3.selectAll(".suggestion")[0].length && keyIndex == 0)
           d3.select(".hit").each(function(d){ m.searchOnSuggestion(d); });
         else
           this.onSubmit(val);
 
       } else if (event.keyCode != 8 && (event.keyCode < 48 || event.keyCode > 90)) {
-        return; //restrict autocomplete to 0-9,a-z character input, excluding delete
+        // restrict autocomplete to 0-9,a-z character input, excluding delete
+        return;
 
       } else {
+        // general case of typing to filter list and get autocomplete suggestions
         keyIndex = 0;
         placeID = null;
         this.doSuggestion(val);
@@ -216,6 +236,7 @@ var Metros = function() {
       d3.selectAll(".suggestion").remove();
       var m = this;
 
+      // case if the search was selected from autocomplete
       if (placeID) {
         d3.json("https://search.mapzen.com/v1/place?api_key=search-owZDPeC&ids="+placeID, function(error, json){
           m.requestExtract(json.features[0]);
@@ -223,14 +244,17 @@ var Metros = function() {
       } else {
         d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
           if (countrySearch){
+            // if a country name was clicked from the list
             m.zoomMap(json.features[0].bbox);
             document.getElementById("search_input").value = query;
             m.filterList(query);
             window.scroll(0,0);
           } else if (json.features.length) {
+            // if WOF returns a result
             document.getElementById("search_input").value = json.features[0].properties.label;
             m.requestExtract(json.features[0]);
           } else {
+            // if WOF returns no results, hit the regular search API
             d3.json("https://search.mapzen.com/v1/search?text="+query+"&api_key=search-owZDPeC", function(e, j) {
               if (j.features.length)
                 m.requestExtract(j.features[0], true);
@@ -245,32 +269,51 @@ var Metros = function() {
       displayMap.fitBounds([[bbox[1],bbox[0]],[bbox[3], bbox[2]]]);
     },
     requestExtract : function(metro, noWOF) {
+      // big function for creating a custom metro
       var bbox = metro.bbox ? metro.bbox : metro.geometry.coordinates.concat(metro.geometry.coordinates),
         zoomOut = (bbox[0] == bbox[2]) ? 8 : 1;
       this.zoomMap(bbox);
+      // zoomout to account for Point geometry, and zooming far enough out to see the box
       displayMap.zoomOut(zoomOut);
 
       var geoID = metro.properties.id;
       d3.select("input[name='wof_id']").attr("value",geoID);
       d3.select("input[name='wof_name']").attr("value",metro.properties.label);
 
+      // blue box on map
       requestBoundingBox = this.calculateNewBox(bbox);
 
       this.drawRequestBox();
+      // change red fill boxes to red outlines
       d3.select("#map").classed("request-mode",true);
 
+      // if we have WOF outline data, show this
       if (metro.type == "Feature" && !noWOF)
         d3.json(wofPrefix.replace('GEOID', geoID), function(data){
           outline = L.geoJson(data.geometry, { className : "outline" }).addTo(displayMap);
           displayMap.addLayer(outline);
         });
 
+      var requestDiv = d3.select("#request-wrapper");
+
+      // personalize request button
+      requestDiv.select("#make-request")
+        .style("display","block")
+        .selectAll(".name").text(metro.properties.name);
+
+      // add appropriate css classes if the extract is too large
+      var size = this.checkSize();
+      // if it's larger than 5deg, don't bother looking for encompassing
+      if (size > 5) return;
+
+      // check to see if popular extracts encompass the request
       var p1 = L.latLng(bbox[1],bbox[0]),
         p2 = L.latLng(bbox[3],bbox[2]);
       var encompassed = [{
         country : null,
         metros : []
       }];
+      // go through boxes on map to check .contains()
       extractLayers.forEach(function(l){
         if (l.getBounds().contains(p1) && l.getBounds().contains(p2)) 
           encompassed[0].metros.push({
@@ -281,20 +324,14 @@ var Metros = function() {
           })
       });
 
-      var requestDiv = d3.select("#request-wrapper");
-
-      requestDiv.select("#make-request")
-        .style("display","block")
-        .selectAll(".name").text(metro.properties.name);
-
       if (encompassed[0].metros.length){
         requestDiv.attr("class","filtered-encompassed");
         this.drawList(encompassed, geoID, metro.properties.name, noWOF);
         return;
       }
-      this.checkSize();
     },
     checkSize : function() {
+      // check the size of the request. we add a warning on >1deg, and fail on >5deg
       var requestDiv = d3.select("#request-wrapper");
       var lngDiff = Math.abs(requestBoundingBox[1][1] - requestBoundingBox[0][1]),
         latDiff = Math.abs(requestBoundingBox[1][0] - requestBoundingBox[0][0]),
@@ -307,6 +344,7 @@ var Metros = function() {
         requestDiv.attr("class","filtered-default");
     },
     clearMap : function() {
+      // leaflet redraw function
       if (rect) displayMap.removeLayer(rect);
       if (outline) displayMap.removeLayer(outline);
       dots.forEach(function(l){
@@ -315,6 +353,7 @@ var Metros = function() {
       dots = [];
     },
     clearRequest : function() {
+      // remove custom extract request state
       this.clearMap();
       displayMap.fitBounds(L.latLngBounds(L.latLng(0, -125), L.latLng(0, 125)));
       d3.select("#map").classed("request-mode",false);
@@ -322,6 +361,8 @@ var Metros = function() {
       d3.select("#make-request").style("display","none");
     },
     calculateOffset : function(theta, d, lat1, lng1) {
+      // we are setting request box slightly outside of the wof bbox
+      // this funciton calculates the new latlng points via trig
       var lat1 = lat1.toRad(), 
         lng1 = lng1.toRad(),
         R = 6371;
@@ -334,6 +375,8 @@ var Metros = function() {
       return [lat2.toDeg(), lng2.toDeg()];
     },
     calculateNewBox : function(bbox) {
+      // calculates a relative distance offset, vs. an absolute (ex. 25km)
+      // so that neighborhoods and countries have a proportional offset
       var d = Math.sqrt(Math.pow(bbox[3]-bbox[1],2) + Math.pow(bbox[2]-bbox[0], 2))*25,
         distance = (d == 0) ? 25 : d,
         northEast = this.calculateOffset(-Math.PI*3/4, distance, bbox[1], bbox[0]),
@@ -341,6 +384,8 @@ var Metros = function() {
       return [northEast, southWest];
     },
     drawRequestBox : function() {
+      // general function for drawing the request box, dots, and filling the form with
+      // appropriate bbox info
       this.clearMap();
       var m = this;
       rect = new L.Rectangle(new L.LatLngBounds(requestBoundingBox), { className : "blue" });
@@ -351,6 +396,8 @@ var Metros = function() {
       this.fillRequestForm();
     },
     drawDots : function() {
+      // drawing and redrawing the dots for drag events
+
       dots.forEach(function(l){
         displayMap.removeLayer(l);
       });
@@ -369,6 +416,9 @@ var Metros = function() {
         new L.marker([requestBoundingBox[1][0], requestBoundingBox[0][1]], dotOptions)
       ];
 
+      // if there's a better way to do this, please someone fix
+      // keeping a reference to each dot affected on drag, becuase redrawing all
+      // four at once is not possible
       dots[0].on("drag",function(e){
         requestBoundingBox[0] = [e.target.getLatLng().lat, e.target.getLatLng().lng];
 
@@ -433,6 +483,7 @@ var Metros = function() {
       });
     },
     redrawBox : function() {
+      // helper function for only redrawing the box
       displayMap.removeLayer(rect);
       rect = new L.Rectangle(new L.LatLngBounds(requestBoundingBox), { className : "blue" });
       displayMap.addLayer(rect);
