@@ -9,7 +9,7 @@ from datetime import datetime
 from re import compile
 import json
 
-from App import web, util, data, odes
+from App import web, util, data, odes, oauth
 from bs4 import BeautifulSoup
 from httmock import HTTMock, response
 from flask import Flask
@@ -244,7 +244,8 @@ class TestApp (unittest.TestCase):
             resp5 = self.client.get(starting_path)
             soup5 = BeautifulSoup(resp5.data, 'html.parser')
 
-            self.assertEqual(resp5.status_code, 401)
+            self.assertTrue(resp5.headers['Location'].startswith(oauth.mapzen_authorize_url))
+            self.assertEqual(resp5.status_code, 302)
     
     def test_login(self):
         '''

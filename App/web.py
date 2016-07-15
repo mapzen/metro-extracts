@@ -12,6 +12,9 @@ def make_app(url_prefix):
     apply_oauth_blueprint(app, url_prefix)
     apply_odes_blueprint(app, url_prefix)
     apply_sample_blueprint(app, url_prefix)
+    
+    app.config['SESSION_COOKIE_PATH'] = url_prefix
+    app.config['SESSION_COOKIE_NAME'] = 'metro-extracts-session'
 
     return app
 
