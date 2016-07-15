@@ -5,6 +5,7 @@ from uuid import uuid4
 from shutil import rmtree
 from os.path import join, dirname
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
+from datetime import datetime
 from re import compile
 import json
 
@@ -403,7 +404,7 @@ class TestApp (unittest.TestCase):
     
         extract_id = str(uuid4())
         wof_name = str(uuid4())
-        created = str(uuid4())
+        created = datetime.now()
         extract_path = '/path/to/extracts/' + extract_id
 
         def response_content(url, request):
@@ -417,10 +418,10 @@ class TestApp (unittest.TestCase):
                     body = dict(parse_qsl(request.body))
                     self.assertIn('ready', body['email_subject'])
                     self.assertIn(wof_name, body['email_body_text'])
-                    self.assertIn(created, body['email_body_text'])
+                    self.assertIn(created.strftime('%b %d, %Y'), body['email_body_text'])
                     self.assertIn(extract_path, body['email_body_text'])
                     self.assertIn(wof_name, body['email_body_html'])
-                    self.assertIn(created, body['email_body_html'])
+                    self.assertIn(created.strftime('%b %d, %Y'), body['email_body_html'])
                     self.assertIn(extract_path, body['email_body_html'])
                     
                     data = u'''{\r  "id": 999,\r  "status": "created",\r  "created_at": "2016-06-02T03:29:25.233Z",\r  "processed_at": "2016-06-02T04:20:11.000Z",\r  "bbox": {\r    "e": -122.24825,\r    "n": 37.81230,\r    "s": 37.79724,\r    "w": -122.26447\r  }\r}'''

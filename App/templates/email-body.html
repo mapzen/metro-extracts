@@ -51,7 +51,7 @@ p {
           <tr>
             <td>
               <h1 style="color: #d4645c; font-family: 'Playfair Display', serif; font-size: 60px; text-align: center; font-weight: 300; line-height: 1.2em; margin: 0px 0 30px;">metro extracts</h1>
-              <p>Hooray, the metro extract that you requested at {{ created }} is ready for download.</p>
+              <p>Hooray, the custom extract that you requested {{ created.strftime('at %I:%M%p (%Z) on %b %d, %Y') }} is ready for download.</p>
               <p>
                 <a href="{{ link }}" class="btn" style="background-color: #6ea0a4; color: #fff; text-transform: uppercase; font-weight: 400; display: inline-block; padding: 10px 16px; font-weight: bold; text-decoration: none; margin: 10px 0 50px;">View {{ name }}</a>
               </p>
