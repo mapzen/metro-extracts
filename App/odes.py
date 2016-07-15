@@ -215,3 +215,20 @@ def get_extract(extract_id):
 
     return render_template('extract.html', extract=extract, util=util,
                            user_id=id, user_nickname=nickname)
+
+@blueprint.route('/odes/recent-extracts/', methods=['GET'])
+@util.errors_logged
+@check_authentication
+def get_recent_extracts():
+    '''
+    '''
+    id, nickname, keys_url, access_token = session_info(session)
+
+    if session['id'].get('admin') is not True:
+        return "No civilians."
+    
+    with data.connect(current_app.config['DB_DSN']) as db:
+        extracts = data.get_recent_extracts(db)
+
+    return render_template('recent-extracts.html', extracts=extracts, util=util,
+                           user_id=id, user_nickname=nickname)
