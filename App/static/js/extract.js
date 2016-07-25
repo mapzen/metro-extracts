@@ -21,11 +21,8 @@ var Extract = function (){
       var southwest = L.latLng(bbox.s, bbox.w),
         northeast = L.latLng(bbox.n, bbox.e),
         options = {
-          scrollWheelZoom: false,
-          zoomControl: false,
-          doubleClickZoom: false,
-          dragging: false,
-          tap: false,
+          dragging: (window.self !== window.top && L.Browser.touch) ? false : true,
+          tap: (window.self !== window.top && L.Browser.touch) ? false : true,
           scene: sceneURL,
           attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | <a href="http://www.openstreetmap.org/copyright">&copy; OSM contributors</a> | <a href="https://mapzen.com/">Mapzen</a>'
         };

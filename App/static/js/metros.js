@@ -42,8 +42,6 @@ var Metros = function() {
       var southwest = L.latLng(0, -125),
         northeast = L.latLng(0, 125),
         options = {
-          scrollWheelZoom: false,
-          // Disables dragging on touch-detected devices
           dragging: (window.self !== window.top && L.Browser.touch) ? false : true,
           tap: (window.self !== window.top && L.Browser.touch) ? false : true,
           scene: sceneURL,
@@ -70,10 +68,10 @@ var Metros = function() {
     filterList : function(str) {
       // populates the list of countries and cities on the right
       var newData = [];
-      str = str.toLowerCase();
+      str = str.toLowerCase().replace(/\W/g, '');
       nestedCities.forEach(function(d){
         // if str matches a country, include that whole country
-        if (d.country.toLowerCase().indexOf(str) != -1) {
+        if (d.country.toLowerCase().replace(/\W/g, '').indexOf(str) != -1) {
           newData.push(d);
         } else {
         // else, look at individual cities
@@ -82,7 +80,7 @@ var Metros = function() {
             metros : []
           }
           d.metros.forEach(function(e){ 
-            if (e.name.toLowerCase().indexOf(str) != -1)
+            if (e.name.toLowerCase().replace(/\W/g, '').indexOf(str) != -1)
               c.metros.push(e);
           });
           if (c.metros.length) newData.push(c);
@@ -373,8 +371,8 @@ var Metros = function() {
     calculateNewBox : function(bbox) {
       // calculates a relative distance offset, vs. an absolute (ex. 25km)
       // so that neighborhoods and countries have a proportional offset
-      var d = Math.sqrt(Math.pow(bbox[3]-bbox[1],2) + Math.pow(bbox[2]-bbox[0], 2))*25,
-        distance = (d == 0) ? 25 : d,
+      var d = Math.sqrt(Math.pow(bbox[3]-bbox[1],2) + Math.pow(bbox[2]-bbox[0], 2))*10,
+        distance = (d == 0) ? 10 : d,
         northEast = this.calculateOffset(-Math.PI*3/4, distance, bbox[1], bbox[0]),
         southWest = this.calculateOffset(Math.PI/4, distance, bbox[3], bbox[2]);
       return [northEast, southWest];
