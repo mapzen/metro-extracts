@@ -39,8 +39,12 @@ var Extract = function (){
     },
     showOutline : function(geojson_url) {
       d3.json(geojson_url, function(data){
-        outline = L.geoJson(data.geometry, { className : "outline" }).addTo(displayMap);
-        displayMap.addLayer(outline);
+        if (data) {
+          outline = L.geoJson(data.geometry, { className : "outline" }).addTo(displayMap);
+          displayMap.addLayer(outline);
+        } else {
+          d3.select("#encompassed").style("display","none");
+        }
       });
     }
   };
