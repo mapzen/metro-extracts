@@ -17,6 +17,15 @@
         </div>
       </div>
     </div>
+    <div class='inline-submit' id='search-box'>
+      <label class='data-filter-label' for='search_input'>Search for a City or Region</label>
+      <div class="hasclear col-sm-9 col-xs-8">
+        <input type='search' id='search_input' placeholder='example: Los Angeles' type='text'>
+        <i class="fa fa-times" aria-hidden="true"></i>
+      </div>
+      <input id='search_submit' type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
+      <div class="autocomplete"></div>
+    </div>
   </div>
   <div class='col-xs-12 col-sm-6'>
     <div class="alert alert-success text-center" role="alert" style="margin-top: 15px;">
@@ -35,16 +44,6 @@
       <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">File Format Guide</a>
     </p>
     <div id="request-wrapper">
-      <div class='row inline-submit' id='search-box'>
-        <label class='data-filter-label' for='search_input'>Search for a City or Region</label>
-        <div class="hasclear col-sm-9 col-xs-8">
-          <input type='search' id='search_input' placeholder='example: Los Angeles' type='text'>
-          <i class="fa fa-times" aria-hidden="true"></i>
-        </div>
-        <input id='search_submit' type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
-        <div class="autocomplete"></div>
-      </div>
-
       <p id="search-error" class="request-messaging">Sorry, we don't have any results for <span class="name"></span>. Try a different search?</p>
       <p class="encompassed-text request-messaging"><b>Looks like the place you are looking for is part of a popular extract:</b></p>
       <label class="data-filter-label red">Popular Extracts:</label>

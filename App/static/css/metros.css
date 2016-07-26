@@ -73,7 +73,15 @@ body.data-pages .inline-submit .btn:hover {
 }
 
 #search-box {
-  margin: 20px 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(255,255,255,.8);
+  padding: 0 10px 10px;
+}
+#map .leaflet-left {
+  right: 10px;
+  left: auto;
 }
 #search-box .hasclear {
   padding: 0;
