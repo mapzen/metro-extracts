@@ -21,7 +21,7 @@ var Extract = function (){
           scene: sceneURL,
           attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | <a href="http://www.openstreetmap.org/copyright">&copy; OSM contributors</a> | <a href="https://mapzen.com/">Mapzen</a>',
           fallbackTile: L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
-            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'})
+            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>'})
         };
       displayMap = L.Mapzen.map('map', options).fitBounds(L.latLngBounds(southwest, northeast)).zoomOut(1);
 
