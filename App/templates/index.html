@@ -6,7 +6,17 @@
 
 {% block content %}
   <div class='col-xs-12 col-sm-6 map-wrapper'>
-    <div id='map'></div>
+    <div id='map'>
+      <div id="legend">
+        <label>Legend:</label>
+        <div class="legend-row custom">
+          <span class="box"></span> Your Custom Extract
+        </div>
+        <div class="legend-row">
+          <span class="box"></span> Popular Extracts
+        </div>
+      </div>
+    </div>
   </div>
   <div class='col-xs-12 col-sm-6'>
     <div class="alert alert-success text-center" role="alert" style="margin-top: 15px;">
@@ -15,8 +25,8 @@
     </div>
     <h1 style="clear: both" class="headroom text-center"><a href="{{ url_for('Metro-Extracts.index') }}">metro extracts</a></h1>
     <p>Each week, Metro Extracts automatically creates snapshots of <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area files in a variety of formats for you to use. Download an extract from the list of popular extracts below to get started right away, or request a new extract of anywhere in the world!</p>
-    <p>The <span class="legend-red">red</span> boxes on the map represent popular extracts.</p>
-    <p style="margin-top: 20px;">
+    <!-- <p>The <span class="legend-red">red</span> boxes on the map represent popular extracts.</p>
+    <p style="margin-top: 20px;"> -->
       {% if user_id %}
       <a href="{{ url_for('ODES.get_extracts') }}">Your Custom Extracts</a> |
       {% endif %}
