@@ -31,17 +31,18 @@ var Metros = function() {
       return this;
     },
     initDisplayMap : function() {
-      var southwest = L.latLng(0, -125),
-        northeast = L.latLng(0, 125),
-        options = {
+      var options = {
           dragging: (window.self !== window.top && L.Browser.touch) ? false : true,
           tap: (window.self !== window.top && L.Browser.touch) ? false : true,
+          scrollWheelZoom: false,
           scene: sceneURL,
+          center: [20,0],
+          zoom: 2,
           attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | <a href="http://www.openstreetmap.org/copyright">&copy; OSM contributors</a> | <a href="https://mapzen.com/">Mapzen</a>',
           fallbackTile: L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
             attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>'})
         };
-      displayMap = L.Mapzen.map('map', options).fitBounds(L.latLngBounds(southwest, northeast));
+      displayMap = L.Mapzen.map('map', options);
 
       // add popular extracts to map and bind a link to their page on click
       var onEachFeature = function (feature, layer) {
@@ -337,7 +338,7 @@ var Metros = function() {
     clearRequest : function() {
       // remove custom extract request state
       this.clearMap();
-      displayMap.fitBounds(L.latLngBounds(L.latLng(0, -125), L.latLng(0, 125)));
+      displayMap.setView([20,0],2);
       d3.select("#map").classed("request-mode",false);
       d3.select("#request-wrapper").attr("class","");
       d3.select("#make-request").style("display","none");

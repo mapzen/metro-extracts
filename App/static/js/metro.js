@@ -16,6 +16,7 @@ var Metro = function (){
         options = {
           dragging: (window.self !== window.top && L.Browser.touch) ? false : true,
           tap: (window.self !== window.top && L.Browser.touch) ? false : true,
+          scrollWheelZoom: false,
           scene: sceneURL,
           attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | <a href="http://www.openstreetmap.org/copyright">&copy; OSM contributors</a> | <a href="https://mapzen.com/">Mapzen</a>',
           fallbackTile: L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
