@@ -12,7 +12,7 @@ var Metros = function() {
     displayMap,
     extractLayers = [],
     xhr,
-    keyIndex = 0,
+    keyIndex = -1,
     placeID = null,
     wofPrefix = null;
 
@@ -112,11 +112,11 @@ var Metros = function() {
     },
     showSuggestions : function(data) {
       // add the title at the top of autocomplete
-      if (data.features.length)
-        data.features.unshift({
-          label : true,
-          text : "To make a custom extract:"
-        });
+      // if (data.features.length)
+      //   data.features.unshift({
+      //     label : true,
+      //     text : "To make a custom extract:"
+      //   });
 
       var suggestion = d3.select(".autocomplete")
         .selectAll(".suggestion").data(data.features);
@@ -154,7 +154,7 @@ var Metros = function() {
     },
     onSubmit : function(val) {
       // submit of search box
-      keyIndex = 0;
+      keyIndex = -1;
       this.filterList(val);
       d3.selectAll(".suggestion").remove();
       this.doSearch(val);
@@ -192,12 +192,12 @@ var Metros = function() {
         this.selectSuggestion();   
 
       } else if (event.keyCode == 38) { //arrow up
-        keyIndex = Math.max(keyIndex-1, 1);
+        keyIndex = Math.max(keyIndex-1, 0);
         this.selectSuggestion();
 
       } else if (event.keyCode == 13) { //enter
         // if there are autocomplete suggestions and up/down keys were unused
-        if (d3.selectAll(".suggestion")[0].length && keyIndex == 0)
+        if (d3.selectAll(".suggestion")[0].length && keyIndex == -1)
           d3.select(".hit").each(function(d){ m.searchOnSuggestion(d); });
         else
           this.onSubmit(val);
@@ -208,7 +208,7 @@ var Metros = function() {
 
       } else {
         // general case of typing to filter list and get autocomplete suggestions
-        keyIndex = 0;
+        keyIndex = -1;
         placeID = null;
         this.doSuggestion(val);
         this.filterList(val);

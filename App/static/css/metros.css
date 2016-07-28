@@ -214,7 +214,7 @@ body.data-pages .inline-submit .btn:hover {
 .autocomplete {
   border: 1px solid #ddd;
 }
-.autocomplete .suggestion:first-child {
+/*.autocomplete .suggestion:first-child {
   font-size:12px;
   font-weight:bold;
   text-transform:uppercase;
@@ -225,7 +225,7 @@ body.data-pages .inline-submit .btn:hover {
   line-height: 2em;
   background: white;
   cursor: default;
-}
+}*/
 .suggestion {
   border-bottom: 1px solid #ddd;
   padding: 1px 0 1px 15px;
