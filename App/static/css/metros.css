@@ -27,7 +27,7 @@ body.data-pages .inline-submit .btn:hover {
 .map-wrapper {
   position: absolute;
   width: 50%;
-  left: 0;
+  right: 0;
 }
 #map {
   border-right: 1px solid rgb(224,224,224);

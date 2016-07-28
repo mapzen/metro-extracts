@@ -29,18 +29,19 @@ var Metros = function() {
       wofPrefix = wofPrefixURL;
       this.initDisplayMap();
 
-      var body = document.body,
-        html = document.documentElement;
-      var height = Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
-
+      var divHeight = document.getElementById("list-wrapper").offsetHeight,
+        processScroll = true;
       window.onscroll = doThisStuffOnScroll;
 
       function doThisStuffOnScroll() {
+        if (!processScroll) return;
+
+        processScroll = false;
         var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
-        if (scrollTop > height - 1080)
+        if (scrollTop > divHeight - window.innerHeight + 56)
           d3.select("#map").style({
             "position" : "absolute",
-            "top" : height-1080 + "px",
+            "top" : (divHeight - window.innerHeight + 56) + "px",
             "width" : "200%"
           });
         else
@@ -49,6 +50,7 @@ var Metros = function() {
             "width" : "inherit",
             "top" : "56px"
           });
+        setTimeout(function(){ processScroll = true; }, 50);
       }
       
       return this;
