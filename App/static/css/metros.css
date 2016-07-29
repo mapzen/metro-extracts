@@ -247,7 +247,7 @@ body.data-pages .inline-submit .btn:hover {
 .autocomplete {
   border: 1px solid #ddd;
 }
-.autocomplete .suggestion:first-child {
+.autocomplete .label {
   font-size:12px;
   font-weight:bold;
   text-transform:uppercase;
@@ -258,6 +258,9 @@ body.data-pages .inline-submit .btn:hover {
   line-height: 2em;
   background: white;
   cursor: default;
+}
+.autocomplete .label.red {
+  color: #d4645c;
 }
 .suggestion {
   border-bottom: 1px solid #ddd;
