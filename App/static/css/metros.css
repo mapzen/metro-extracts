@@ -30,7 +30,7 @@ body.data-pages .inline-submit .btn:hover {
   right: 0;
 }
 #map {
-  border-right: 1px solid rgb(224,224,224);
+  border-left: 1px solid rgb(224,224,224);
   position: fixed;
   width: inherit;
 }
