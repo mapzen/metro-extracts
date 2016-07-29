@@ -112,6 +112,7 @@ var Metros = function() {
         }
       });
       this.drawList(newData);
+      return newData;
     },
     drawList : function(data, request_id, display_name, noWOF) {
       // if no cities match the query, hide "popular extracts" via css
@@ -140,44 +141,58 @@ var Metros = function() {
       cities.exit().remove();
     },
     doSuggestion : function(query) {
+      var list = this.filterList(query);
       // autocomplete dropdown list request
       if (xhr) xhr.abort();
       var m = this;
       xhr = d3.json("https://search.mapzen.com/v1/autocomplete?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
         if (json.length)
-          m.showSuggestions(json);
+          m.showSuggestions(json, list);
         else 
           d3.json("https://search.mapzen.com/v1/autocomplete?text="+query+"&layers=neighbourhood,locality,borough,localadmin,county,macrocounty,region,macroregion,country&api_key=search-owZDPeC", function(err, results) {
-            m.showSuggestions(results);
+            m.showSuggestions(results, list);
           });
       });
     },
-    showSuggestions : function(data) {
+    showSuggestions : function(data, list) {
       // add the title at the top of autocomplete
       if (data.features.length)
         data.features.unshift({
           label : true,
-          text : "To make a custom extract:"
+          text : "To make a new extract:"
         });
+
+      if (list.length && list.length < 5) {
+        var cities = [];
+        list.map(function(d){ cities = cities.concat(d.metros); });
+        data.features = cities.concat(data.features);
+        data.features.unshift({
+          label : true,
+          text : "To download an extract right now:"
+        });
+      }
 
       var suggestion = d3.select(".autocomplete")
         .selectAll(".suggestion").data(data.features);
-      suggestion.enter().append("div")
-        .attr("class",function(d,i) {
+      suggestion.enter().append("div");
+      suggestion.attr("class",function(d,i) {
           // save a dom reference to the first autocomplete suggestion
           // in case people hit enter mid-typing so it defaults to first autocomplete
-          return "suggestion " + (i == 1 ? "hit" : "");
+          var labelClass = (d.label && d.text == "To make a new extract:") ? "label" : "label red";
+          return "suggestion " + (d.label ? labelClass : "hit");
         });
       suggestion.exit().remove();
       var m = this;
       suggestion.html(function(d){
         // appends .layer to account for different WOF areas that have the same label (ex. Tokyo)
         if (d.label) return d.text;
+        else if (d.name) return d.name;
         else return d.properties.label + "<span class='layer'>(" + d.properties.layer + ")</span>"; 
-      }).on("click",function(d){
-        if (d.label) return;
-        m.searchOnSuggestion(d);
-      });
+      })
+      // .on("click",function(d){
+      //   if (d.label) return;
+      //   m.searchOnSuggestion(d);
+      // });
     },
     searchOnSuggestion : function(d) {
       placeID = d.properties.source + ":" + d.properties.layer + ":" + d.properties.id;
