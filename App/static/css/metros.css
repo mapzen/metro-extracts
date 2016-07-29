@@ -73,7 +73,15 @@ body.data-pages .inline-submit .btn:hover {
 }
 
 #search-box {
-  margin: 20px 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(255,255,255,.8);
+  padding: 0 10px 10px;
+}
+#map .leaflet-left {
+  right: 10px;
+  left: auto;
 }
 #search-box .hasclear {
   padding: 0;
@@ -206,7 +214,7 @@ body.data-pages .inline-submit .btn:hover {
 .autocomplete {
   border: 1px solid #ddd;
 }
-.autocomplete .suggestion:first-child {
+/*.autocomplete .suggestion:first-child {
   font-size:12px;
   font-weight:bold;
   text-transform:uppercase;
@@ -217,7 +225,7 @@ body.data-pages .inline-submit .btn:hover {
   line-height: 2em;
   background: white;
   cursor: default;
-}
+}*/
 .suggestion {
   border-bottom: 1px solid #ddd;
   padding: 1px 0 1px 15px;

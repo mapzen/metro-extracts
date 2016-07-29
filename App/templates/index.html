@@ -5,24 +5,7 @@
 {% endblock %}
 
 {% block content %}
-  <div class='col-xs-12 col-sm-6 map-wrapper'>
-    <div id='map'>
-      <div id="legend">
-        <label>Legend:</label>
-        <div class="legend-row custom">
-          <span class="box"></span> Your Custom Extract
-        </div>
-        <div class="legend-row">
-          <span class="box"></span> Popular Extracts
-        </div>
-      </div>
-    </div>
-  </div>
   <div class='col-xs-12 col-sm-6'>
-    <div class="alert alert-success text-center" role="alert" style="margin-top: 15px;">
-      <p><a href="http://goo.gl/forms/OIEdDWr7RIC04oqo2)">We just updated Metro Extracts — do you like it? Let us know what you think!</a></p>
-      (You can read <a href="https://mapzen.com/blog/metro-extracts-on-demand/">this blog post</a> to learn more about what’s changed.)
-    </div>
     <h1 style="clear: both" class="headroom text-center"><a href="{{ url_for('Metro-Extracts.index') }}">metro extracts</a></h1>
     <p>Each week, Metro Extracts automatically creates snapshots of <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area files in a variety of formats for you to use. Download an extract from the list of popular extracts below to get started right away, or request a new extract of anywhere in the world!</p>
     <!-- <p>The <span class="legend-red">red</span> boxes on the map represent popular extracts.</p>
@@ -35,16 +18,6 @@
       <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">File Format Guide</a>
     </p>
     <div id="request-wrapper">
-      <div class='row inline-submit' id='search-box'>
-        <label class='data-filter-label' for='search_input'>Search for a City or Region</label>
-        <div class="hasclear col-sm-9 col-xs-8">
-          <input type='search' id='search_input' placeholder='example: Los Angeles' type='text'>
-          <i class="fa fa-times" aria-hidden="true"></i>
-        </div>
-        <input id='search_submit' type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
-        <div class="autocomplete"></div>
-      </div>
-
       <p id="search-error" class="request-messaging">Sorry, we don't have any results for <span class="name"></span>. Try a different search?</p>
       <p class="encompassed-text request-messaging"><b>Looks like the place you are looking for is part of a popular extract:</b></p>
       <label class="data-filter-label red">Popular Extracts:</label>
@@ -75,6 +48,28 @@
         <p class="default-request-text encompassed-text request-messaging note">(Note: Custom extracts take about 30-60 minutes to generate and you will be guided to sign in or sign up for a free Mapzen Developer account)</p>
         <p class="request-greater-1 request-messaging note">(Note: You have defined a large area as a custom extract. This might take a few hours to finish. You will be guided to sign in or sign up for a free Mapzen Developer account to complete this request)</p>
       </div>
+    </div>
+  </div>
+  <div class='col-xs-12 col-sm-6 map-wrapper'>
+    <div id='map'>
+      <div id="legend">
+        <label>Legend:</label>
+        <div class="legend-row custom">
+          <span class="box"></span> Your Custom Extract
+        </div>
+        <div class="legend-row">
+          <span class="box"></span> Popular Extracts
+        </div>
+      </div>
+    </div>
+    <div class='inline-submit' id='search-box'>
+      <label class='data-filter-label' for='search_input'>Search for a City or Region</label>
+      <div class="hasclear col-sm-9 col-xs-8">
+        <input type='search' id='search_input' placeholder='example: Los Angeles' type='text'>
+        <i class="fa fa-times" aria-hidden="true"></i>
+      </div>
+      <input id='search_submit' type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
+      <div class="autocomplete"></div>
     </div>
   </div>
 {% endblock %}
