@@ -28,6 +28,31 @@ var Metros = function() {
       sceneURL = scene;
       wofPrefix = wofPrefixURL;
       this.initDisplayMap();
+
+      var divHeight = document.getElementById("list-wrapper").offsetHeight,
+        processScroll = true;
+      window.onscroll = doThisStuffOnScroll;
+
+      function doThisStuffOnScroll() {
+        if (!processScroll) return;
+
+        processScroll = false;
+        var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+        if (scrollTop > divHeight - window.innerHeight + 56)
+          d3.select("#map").style({
+            "position" : "absolute",
+            "top" : (divHeight - window.innerHeight + 56) + "px",
+            "width" : "200%"
+          });
+        else
+          d3.select("#map").style({
+            "position" : "fixed",
+            "width" : "inherit",
+            "top" : "56px"
+          });
+        setTimeout(function(){ processScroll = true; }, 50);
+      }
+      
       return this;
     },
     initDisplayMap : function() {
