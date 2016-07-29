@@ -108,7 +108,12 @@ var Metros = function() {
       if (xhr) xhr.abort();
       var m = this;
       xhr = d3.json("https://search.mapzen.com/v1/autocomplete?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
-        m.showSuggestions(json);
+        if (json.length)
+          m.showSuggestions(json);
+        else 
+          d3.json("https://search.mapzen.com/v1/autocomplete?text="+query+"&api_key=search-owZDPeC", function(err, results) {
+            m.showSuggestions(results);
+          });
       });
     },
     showSuggestions : function(data) {
