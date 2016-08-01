@@ -40,6 +40,37 @@ body.data-pages .inline-submit .btn:hover {
   cursor: move;
   background: #6ea0a4;
 }
+.leaflet-marker-icon.label {
+  margin-left: -1px !important;
+  font-size: 18px;
+  margin-top: -26px !important;
+  width: auto !important;
+  white-space: nowrap;
+  background-color: rgba(212,100,92,.9);
+  height: auto !important;
+  padding: 0 10px;
+  display: none;
+  cursor: pointer;
+}
+.leaflet-marker-icon.label a {
+  color: white;
+  font-weight: normal;
+}
+.leaflet-marker-icon.label a:hover {
+  color: black;
+}
+.z-8 .leaflet-marker-icon.label,
+.z-9 .leaflet-marker-icon.label {
+  font-size: 14px;
+  margin-top: -20px !important;
+  display: inline-block;
+}
+.z-10 .leaflet-marker-icon.label,
+.z-11 .leaflet-marker-icon.label,
+.z-12 .leaflet-marker-icon.label,
+.z-1 .leaflet-marker-icon.label {
+  display: inline-block;
+}
 #legend {
   position: absolute;
   bottom: 0;

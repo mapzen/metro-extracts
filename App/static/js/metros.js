@@ -69,10 +69,21 @@ var Metros = function() {
         };
       displayMap = L.Mapzen.map('map', options);
 
+      displayMap.on('zoomend', function() {
+          d3.select(".leaflet-map-pane").attr("class","leaflet-map-pane z-"+displayMap.getZoom());
+      });
+
       // add popular extracts to map and bind a link to their page on click
       var onEachFeature = function (feature, layer) {
         extractLayers.push(layer);
         layer.bindPopup("<a href='"+feature.properties.href+"'>"+feature.properties.display_name+"</a>");
+
+        var label = L.marker(layer.getBounds().getSouthWest(), {
+          icon: L.divIcon({
+            className: 'label',
+            html: "<a href='"+feature.properties.href+"'>"+feature.properties.display_name+"</a>"
+          })
+        }).addTo(displayMap);
       }
 
       d3.json(geoJSONUrl, function(data){
