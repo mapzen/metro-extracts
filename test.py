@@ -404,6 +404,7 @@ class TestApp (unittest.TestCase):
     def test_request_odes_extract(self):
     
         extract_id = str(uuid4())
+        extract_name = str(uuid4())
         wof_name = str(uuid4())
         created = datetime.now()
         extract_path = '/path/to/extracts/' + extract_id
@@ -438,7 +439,7 @@ class TestApp (unittest.TestCase):
             bbox = (-122.26447, 37.79724, -122.24825, 37.81230)
             envelope = data.Envelope(None, bbox)
             wof = data.WoF(None, wof_name)
-            extract = data.Extract(extract_id, envelope, None, None, created, wof)
+            extract = data.Extract(extract_id, extract_name, envelope, None, None, created, wof)
             o = odes.request_odes_extract(extract, request, url_for, 'odes-xxxxxxx')
         
         self.assertEqual(o.id, str(999))
