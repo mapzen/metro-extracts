@@ -180,8 +180,8 @@ def get_oauth_callback():
     head = {'Authorization': 'Bearer {}'.format(session['token']['access_token'])}
 
     d = get(mapzen_currdev_url, headers=head).json()
-    id = dict(id=d['id'], email=d['email'], nickname=d['nickname'], keys_url=d['keys'])
-    session['id'] = id
+    session['id'] = dict(id=d['id'], admin=d['admin'], email=d['email'],
+                         nickname=d['nickname'], keys_url=d['keys'])
     
     other = redirect(absolute_url(request, state['redirect']), 302)
     other.headers['Cache-Control'] = 'no-store private'

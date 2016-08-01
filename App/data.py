@@ -95,3 +95,24 @@ def set_extract(db, extract):
         ''',
         (extract.envelope.id, extract.envelope.bbox, extract.odes.id,
         extract.user_id, extract.wof.name, extract.wof.id, extract.id))
+
+def get_recent_extracts(db):
+    db.execute('''
+        SELECT id, envelope_id, envelope_bbox, odes_id, user_id, wof_name, wof_id, created
+        FROM extracts WHERE odes_id IS NOT NULL
+        ORDER BY created DESC
+        LIMIT 100
+        ''')
+    
+    extracts = list()
+    
+    for row in db.fetchall():
+        id, env_id, env_bbox, odes_id, user_id, wof_name, wof_id, created = row
+
+        wof = WoF(wof_id, wof_name)
+        envelope = Envelope(env_id, env_bbox)
+        odes = ODES(odes_id)
+        
+        extracts.append(Extract(id, envelope, odes, user_id, created, wof))
+    
+    return extracts
