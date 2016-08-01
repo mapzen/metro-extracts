@@ -4,6 +4,7 @@ CREATE TABLE extracts (
 
     -- Hard-to-guess string for public link us.
     id              VARCHAR(64) PRIMARY KEY,
+    "name"          TEXT NULL,
     
     -- Information for pre-extract request.
     envelope_id     VARCHAR(64) NOT NULL,
