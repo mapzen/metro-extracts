@@ -342,6 +342,7 @@ var Metros = function() {
       // if we have WOF outline data, show this
       if (metro.type == "Feature" && !noWOF)
         d3.json(wofPrefix.replace('GEOID', geoID), function(data){
+          if (!data) return;
           outline = L.geoJson(data.geometry, { className : "outline" }).addTo(displayMap);
           displayMap.addLayer(outline);
         });
