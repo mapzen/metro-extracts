@@ -12,7 +12,7 @@ var Metros = function() {
     displayMap,
     extractLayers = [],
     xhr,
-    keyIndex = 0,
+    keyIndex = -1,
     placeID = null,
     wofPrefix = null;
 
@@ -35,6 +35,7 @@ var Metros = function() {
 
       function doThisStuffOnScroll() {
         if (!processScroll) return;
+        if (d3.select("#content-wrapper").attr("class").indexOf("filtered") != -1) return;
 
         processScroll = false;
         var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
@@ -90,7 +91,7 @@ var Metros = function() {
         L.geoJson(data, { onEachFeature: onEachFeature, className : "red" }).addTo(displayMap);
       });
     },
-    filterList : function(str) {
+    filterList : function(str, displayList) {
       // populates the list of countries and cities on the right
       var newData = [];
       str = str.toLowerCase().replace(/\W/g, '');
@@ -111,11 +112,15 @@ var Metros = function() {
           if (c.metros.length) newData.push(c);
         }
       });
-      this.drawList(newData);
+      if (displayList) this.drawList(newData);
+      return newData;
+    },
+    hideList : function() {
+      d3.select("#content-wrapper").attr("class","filtered-typing");
     },
     drawList : function(data, request_id, display_name, noWOF) {
       // if no cities match the query, hide "popular extracts" via css
-      d3.select("#request-wrapper").classed("filtered",!data.length);
+      d3.select("#content-wrapper").classed("filtered",!data.length);
 
       // d3 function to add list dom elements to the page
       var countries = d3.select("#extracts").selectAll(".country").data(data);
@@ -127,7 +132,7 @@ var Metros = function() {
         .select(".country-name")
           .text(function(d){ return d.country; })
           .on("click",function(d){
-            m.doSearch(d.country, true);
+            m.onSubmit(d.country, true);
           });
       var cities = countries.selectAll(".city").data(function(d){ return d.metros; });
       cities.enter().append("a").attr("class","city");
@@ -140,71 +145,91 @@ var Metros = function() {
       cities.exit().remove();
     },
     doSuggestion : function(query) {
+      var list = this.filterList(query);
       // autocomplete dropdown list request
       if (xhr) xhr.abort();
       var m = this;
       xhr = d3.json("https://search.mapzen.com/v1/autocomplete?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
         if (json.length)
-          m.showSuggestions(json);
+          m.showSuggestions(json, list);
         else 
           d3.json("https://search.mapzen.com/v1/autocomplete?text="+query+"&layers=neighbourhood,locality,borough,localadmin,county,macrocounty,region,macroregion,country&api_key=search-owZDPeC", function(err, results) {
-            m.showSuggestions(results);
+            m.showSuggestions(results, list);
           });
       });
     },
-    showSuggestions : function(data) {
+    showSuggestions : function(data, list) {
       // add the title at the top of autocomplete
       if (data.features.length)
         data.features.unshift({
           label : true,
-          text : "To make a custom extract:"
+          text : "To make a new extract:"
         });
+
+      if (list.length && list.length < 5) {
+        var cities = [];
+        list.map(function(d){ cities = cities.concat(d.metros); });
+        data.features = cities.concat(data.features);
+        data.features.unshift({
+          label : true,
+          text : "To download an extract right now:"
+        });
+      }
 
       var suggestion = d3.select(".autocomplete")
         .selectAll(".suggestion").data(data.features);
-      suggestion.enter().append("div")
-        .attr("class",function(d,i) {
+      suggestion.enter().append("div");
+      suggestion.attr("class",function(d,i) {
           // save a dom reference to the first autocomplete suggestion
           // in case people hit enter mid-typing so it defaults to first autocomplete
-          return "suggestion " + (i == 1 ? "hit" : "");
+          var labelClass = (d.label && d.text == "To make a new extract:") ? "label" : "label red";
+          return "suggestion " + (d.label ? labelClass : "hit");
         });
       suggestion.exit().remove();
       var m = this;
       suggestion.html(function(d){
         // appends .layer to account for different WOF areas that have the same label (ex. Tokyo)
         if (d.label) return d.text;
+        else if (d.name) return "<a href="+d.href+">"+d.name+"</a>";
         else return d.properties.label + "<span class='layer'>(" + d.properties.layer + ")</span>"; 
       }).on("click",function(d){
-        if (d.label) return;
+        if (d.label || d.name) return;
         m.searchOnSuggestion(d);
       });
     },
     searchOnSuggestion : function(d) {
-      placeID = d.properties.source + ":" + d.properties.layer + ":" + d.properties.id;
-      document.getElementById("search_input").value = d.properties.label;
-      this.onSubmit(d.properties.label);
+      if (d.name)
+          window.location.href = d.href;
+      else {
+        placeID = d.properties.source + ":" + d.properties.layer + ":" + d.properties.id;
+        document.getElementById("search_input").value = d.properties.label;
+        this.onSubmit(d.properties.label);
+      }
     },
     selectSuggestion : function() {
       // for handling keyboard input on the autocomplete list
-      var currentList = d3.selectAll(".suggestion");
+      var currentList = d3.selectAll(".hit");
       currentList.each(function(d, i){ 
         if (i == keyIndex) {
-          document.getElementById("search_input").value = d.properties.label;
-          placeID = d.properties.source + ":" + d.properties.layer + ":" + d.properties.id;
+          document.getElementById("search_input").value = d.name ? d.name : d.properties.label;
+          if (d.name)
+            placeID = d.href;
+          else
+            placeID = d.properties.source + ":" + d.properties.layer + ":" + d.properties.id;
         }
       }).classed("selected",function(d,i){ return i == keyIndex; });
     },
     onSubmit : function(val) {
       // submit of search box
-      keyIndex = 0;
-      this.filterList(val);
+      keyIndex = -1;
       d3.selectAll(".suggestion").remove();
       this.doSearch(val);
+      this.hideList();
       placeID = null;
     },
     searchError : function(query) {
       // no search results anywhere, ex. sdfsdafasdf
-      d3.select("#request-wrapper").attr("class","filtered-error");
+      d3.select("#content-wrapper").attr("class","filtered-error");
       d3.select("#search-error").select(".name").text(query);
     },
     clearSearchBox : function() {
@@ -230,16 +255,16 @@ var Metros = function() {
       d3.select(".fa-times").style("display","inline-block");
 
       if (event.keyCode == 40) { //arrow down
-        keyIndex = Math.min(keyIndex+1, d3.selectAll(".suggestion")[0].length-1);
+        keyIndex = Math.min(keyIndex+1, d3.selectAll(".hit")[0].length-1);
         this.selectSuggestion();   
 
       } else if (event.keyCode == 38) { //arrow up
-        keyIndex = Math.max(keyIndex-1, 1);
+        keyIndex = Math.max(keyIndex-1, 0);
         this.selectSuggestion();
 
       } else if (event.keyCode == 13) { //enter
         // if there are autocomplete suggestions and up/down keys were unused
-        if (d3.selectAll(".suggestion")[0].length && keyIndex == 0)
+        if (d3.selectAll(".hit")[0].length && keyIndex == -1)
           d3.select(".hit").each(function(d){ m.searchOnSuggestion(d); });
         else
           this.onSubmit(val);
@@ -250,10 +275,10 @@ var Metros = function() {
 
       } else {
         // general case of typing to filter list and get autocomplete suggestions
-        keyIndex = 0;
+        keyIndex = -1;
         placeID = null;
         this.doSuggestion(val);
-        this.filterList(val);
+        this.hideList();
       }
     },
     doSearch : function(query, countrySearch) {
@@ -262,16 +287,19 @@ var Metros = function() {
 
       // case if the search was selected from autocomplete
       if (placeID) {
-        d3.json("https://search.mapzen.com/v1/place?api_key=search-owZDPeC&ids="+placeID, function(error, json){
-          m.requestExtract(json.features[0]);
-        });
+        if (placeID.charAt(0) == "/")
+          window.location.href = placeID;
+        else
+          d3.json("https://search.mapzen.com/v1/place?api_key=search-owZDPeC&ids="+placeID, function(error, json){
+            m.requestExtract(json.features[0]);
+          });
       } else {
         d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
           if (countrySearch){
             // if a country name was clicked from the list
             m.zoomMap(json.features[0].bbox);
             document.getElementById("search_input").value = query;
-            m.filterList(query);
+            m.filterList(query, true);
             window.scroll(0,0);
           } else if (json.features.length) {
             // if WOF returns a result
@@ -314,14 +342,15 @@ var Metros = function() {
       // if we have WOF outline data, show this
       if (metro.type == "Feature" && !noWOF)
         d3.json(wofPrefix.replace('GEOID', geoID), function(data){
+          if (!data) return;
           outline = L.geoJson(data.geometry, { className : "outline" }).addTo(displayMap);
           displayMap.addLayer(outline);
         });
 
-      var requestDiv = d3.select("#request-wrapper");
+      var wrapperDiv = d3.select("#content-wrapper");
 
       // personalize request button
-      requestDiv.select("#make-request")
+      wrapperDiv.select("#make-request")
         .style("display","block")
         .selectAll(".name").text(metro.properties.name);
 
@@ -349,23 +378,23 @@ var Metros = function() {
       });
 
       if (encompassed[0].metros.length){
-        requestDiv.attr("class","filtered-encompassed");
+        wrapperDiv.attr("class","filtered-encompassed");
         this.drawList(encompassed, geoID, metro.properties.name, noWOF);
         return;
       }
     },
     checkSize : function() {
       // check the size of the request. we add a warning on >1deg, and fail on >5deg
-      var requestDiv = d3.select("#request-wrapper");
+      var wrapperDiv = d3.select("#content-wrapper");
       var lngDiff = Math.abs(requestBoundingBox[1][1] - requestBoundingBox[0][1]),
         latDiff = Math.abs(requestBoundingBox[1][0] - requestBoundingBox[0][0]),
         biggestDist = Math.max(latDiff, lngDiff);
       if (biggestDist > 5)
-        requestDiv.attr("class","filtered-request-greater-5");
+        wrapperDiv.attr("class","filtered-request-greater-5");
       else if (biggestDist > 1)
-        requestDiv.attr("class","filtered-request-greater-1");
+        wrapperDiv.attr("class","filtered-request-greater-1");
       else
-        requestDiv.attr("class","filtered-default");
+        wrapperDiv.attr("class","filtered-default");
     },
     clearMap : function() {
       // leaflet redraw function
@@ -381,7 +410,7 @@ var Metros = function() {
       this.clearMap();
       displayMap.setView([20,0],2);
       d3.select("#map").classed("request-mode",false);
-      d3.select("#request-wrapper").attr("class","");
+      d3.select("#content-wrapper").attr("class","");
       d3.select("#make-request").style("display","none");
     },
     calculateOffset : function(theta, d, lat1, lng1) {
