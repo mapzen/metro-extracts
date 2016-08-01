@@ -81,7 +81,7 @@ var Metros = function() {
         var label = L.marker(layer.getBounds().getSouthWest(), {
           icon: L.divIcon({
             className: 'label',
-            html: feature.properties.display_name
+            html: "<a href='"+feature.properties.href+"'>"+feature.properties.display_name+"</a>"
           })
         }).addTo(displayMap);
       }
