@@ -98,7 +98,7 @@
 
   // to recreate state on a back button
   if (document.getElementById("search_input").value.length)
-    metrosPage.onSubmit(document.getElementById("search_input").value);
+    document.getElementById("search_input").value = "";
 
   d3.selectAll(".country-name")
     .on("click",function(d){

@@ -157,6 +157,9 @@ body.data-pages .inline-submit .btn:hover {
 #request-wrapper[class*="filtered"] .data-filter-label.red {
   display: none;
 }
+.filtered-typing #extracts {
+  display: none;
+}
 #extracts .country:first-child {
   margin-top: 5px;
 }
@@ -261,6 +264,11 @@ body.data-pages .inline-submit .btn:hover {
 }
 .autocomplete .label.red {
   color: #d4645c;
+}
+.autocomplete a {
+  display: block;
+  color: inherit;
+  font-weight: inherit;
 }
 .suggestion {
   border-bottom: 1px solid #ddd;
