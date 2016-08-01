@@ -302,7 +302,7 @@ class TestApp (unittest.TestCase):
         
         with HTTMock(response_content1):
             # POST a new envelope request
-            data1 = dict(bbox_n=37.81230, bbox_w=-122.26447, bbox_s=37.79724, bbox_e=-122.24825)
+            data1 = dict(bbox_n=37.81230, bbox_w=-122.26447, bbox_s=37.79724, bbox_e=-122.24825, display_name='woof woof')
             resp1 = self.client.post(self.prefixed('/odes/envelopes/'), data=data1)
             redirect1 = urlparse(resp1.headers.get('Location'))
             
@@ -322,6 +322,7 @@ class TestApp (unittest.TestCase):
             
             self.assertEqual(resp3.status_code, 200)
             self.assertIsNotNone(soup3.find(text=compile(r'\b37.8123')))
+            self.assertIsNotNone(soup3.find(text=compile(r'\bwoof woof\b')))
             
             # Verify that the extract is in the big list
             resp4 = self.client.get(self.prefixed('/odes/extracts/'))
@@ -329,6 +330,7 @@ class TestApp (unittest.TestCase):
             
             self.assertEqual(resp4.status_code, 200)
             self.assertIsNotNone(soup4.find(text=compile(r'\b999\b')))
+            self.assertIsNotNone(soup4.find(text=compile(r'\bwoof woof\b')))
         
         def response_content2(url, request):
             '''

@@ -67,7 +67,7 @@ def get_odes_extracts(db, api_keys):
         extract = data.get_extract(db, odes=odes)
         
         if extract is None:
-            extract = data.Extract(None, None, odes, None, None, None)
+            extract = data.Extract(None, None, None, odes, None, None, None)
         
         extracts.append(extract)
 
@@ -107,7 +107,7 @@ def get_odes_extract(db, id, api_keys):
     
     if extract is None:
         # Known ODES, but nothing in the DB so make one up.
-        return data.Extract(None, None, odes, None, None, None)
+        return data.Extract(None, None, None, odes, None, None, None)
     
     return extract
 
