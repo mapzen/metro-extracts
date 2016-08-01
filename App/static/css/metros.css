@@ -34,6 +34,11 @@ body.data-pages .inline-submit .btn:hover {
   position: fixed;
   width: inherit;
 }
+#content-wrapper[class*="filtered"] #map {
+  position: absolute !important;
+  top: 0px !important;
+  width: 200% !important;
+}
 .drag-icon {
   width: 10px;
   height: 10px;
@@ -136,7 +141,7 @@ body.data-pages .inline-submit .btn:hover {
   cursor: pointer;
   display: none;
 }
-#request-wrapper[class*="filtered-"] #search-box .fa-times {
+#content-wrapper[class*="filtered-"] #search-box .fa-times {
   display: inline-block;
 }
 #search-box .fa-times:hover {
@@ -154,7 +159,7 @@ body.data-pages .inline-submit .btn:hover {
 .data-filter-label.red {
   color: #d4645c;
 }
-#request-wrapper[class*="filtered"] .data-filter-label.red {
+#content-wrapper[class*="filtered"] .data-filter-label.red {
   display: none;
 }
 .filtered-typing #extracts {
@@ -211,34 +216,34 @@ body.data-pages .inline-submit .btn:hover {
 #make-request .btn:hover {
   background: rgba(110,160,164,.4);
 }
-#request-wrapper .request-messaging {
+#content-wrapper .request-messaging {
   display: none;
 }
-#request-wrapper.filtered-default .default-request-text {
+#content-wrapper.filtered-default .default-request-text {
   display: block;
 }
-#request-wrapper.filtered-encompassed .encompassed-text {
+#content-wrapper.filtered-encompassed .encompassed-text {
   display: block;
 }
-#request-wrapper.filtered-encompassed #make-request {
+#content-wrapper.filtered-encompassed #make-request {
   margin-top: 30px;
 }
-#request-wrapper.filtered-request-greater-1 .request-greater-1 {
+#content-wrapper.filtered-request-greater-1 .request-greater-1 {
   display: block;
 }
-#request-wrapper.filtered-request-greater-5 .request-greater-5 {
+#content-wrapper.filtered-request-greater-5 .request-greater-5 {
   display: block;
 }
-#request-wrapper.filtered-request-greater-5 #make-request {
+#content-wrapper.filtered-request-greater-5 #make-request {
   background: rgba(212,100,92, .3);
 }
-#request-wrapper.filtered-request-greater-5 #make-request .btn {
+#content-wrapper.filtered-request-greater-5 #make-request .btn {
   display: none;
 }
-#request-wrapper.filtered-error #search-error {
+#content-wrapper.filtered-error #search-error {
   display: block;
 }
-#request-wrapper.filtered-error #make-request {
+#content-wrapper.filtered-error #make-request {
   display: none;
 }
 #make-request .note {

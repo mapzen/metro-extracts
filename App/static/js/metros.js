@@ -35,6 +35,7 @@ var Metros = function() {
 
       function doThisStuffOnScroll() {
         if (!processScroll) return;
+        if (d3.select("#content-wrapper").attr("class").indexOf("filtered") != -1) return;
 
         processScroll = false;
         var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
@@ -115,11 +116,11 @@ var Metros = function() {
       return newData;
     },
     hideList : function() {
-      d3.select("#request-wrapper").attr("class","filtered-typing");
+      d3.select("#content-wrapper").attr("class","filtered-typing");
     },
     drawList : function(data, request_id, display_name, noWOF) {
       // if no cities match the query, hide "popular extracts" via css
-      d3.select("#request-wrapper").classed("filtered",!data.length);
+      d3.select("#content-wrapper").classed("filtered",!data.length);
 
       // d3 function to add list dom elements to the page
       var countries = d3.select("#extracts").selectAll(".country").data(data);
@@ -131,7 +132,7 @@ var Metros = function() {
         .select(".country-name")
           .text(function(d){ return d.country; })
           .on("click",function(d){
-            m.doSearch(d.country, true);
+            m.onSubmit(d.country, true);
           });
       var cities = countries.selectAll(".city").data(function(d){ return d.metros; });
       cities.enter().append("a").attr("class","city");
@@ -223,11 +224,12 @@ var Metros = function() {
       keyIndex = -1;
       d3.selectAll(".suggestion").remove();
       this.doSearch(val);
+      this.hideList();
       placeID = null;
     },
     searchError : function(query) {
       // no search results anywhere, ex. sdfsdafasdf
-      d3.select("#request-wrapper").attr("class","filtered-error");
+      d3.select("#content-wrapper").attr("class","filtered-error");
       d3.select("#search-error").select(".name").text(query);
     },
     clearSearchBox : function() {
@@ -344,10 +346,10 @@ var Metros = function() {
           displayMap.addLayer(outline);
         });
 
-      var requestDiv = d3.select("#request-wrapper");
+      var wrapperDiv = d3.select("#content-wrapper");
 
       // personalize request button
-      requestDiv.select("#make-request")
+      wrapperDiv.select("#make-request")
         .style("display","block")
         .selectAll(".name").text(metro.properties.name);
 
@@ -375,23 +377,23 @@ var Metros = function() {
       });
 
       if (encompassed[0].metros.length){
-        requestDiv.attr("class","filtered-encompassed");
+        wrapperDiv.attr("class","filtered-encompassed");
         this.drawList(encompassed, geoID, metro.properties.name, noWOF);
         return;
       }
     },
     checkSize : function() {
       // check the size of the request. we add a warning on >1deg, and fail on >5deg
-      var requestDiv = d3.select("#request-wrapper");
+      var wrapperDiv = d3.select("#content-wrapper");
       var lngDiff = Math.abs(requestBoundingBox[1][1] - requestBoundingBox[0][1]),
         latDiff = Math.abs(requestBoundingBox[1][0] - requestBoundingBox[0][0]),
         biggestDist = Math.max(latDiff, lngDiff);
       if (biggestDist > 5)
-        requestDiv.attr("class","filtered-request-greater-5");
+        wrapperDiv.attr("class","filtered-request-greater-5");
       else if (biggestDist > 1)
-        requestDiv.attr("class","filtered-request-greater-1");
+        wrapperDiv.attr("class","filtered-request-greater-1");
       else
-        requestDiv.attr("class","filtered-default");
+        wrapperDiv.attr("class","filtered-default");
     },
     clearMap : function() {
       // leaflet redraw function
@@ -407,7 +409,7 @@ var Metros = function() {
       this.clearMap();
       displayMap.setView([20,0],2);
       d3.select("#map").classed("request-mode",false);
-      d3.select("#request-wrapper").attr("class","");
+      d3.select("#content-wrapper").attr("class","");
       d3.select("#make-request").style("display","none");
     },
     calculateOffset : function(theta, d, lat1, lng1) {
