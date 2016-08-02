@@ -4,6 +4,7 @@ from . import util, data
 from os import environ
 from urllib.parse import urljoin
 from operator import itemgetter, attrgetter
+from threading import Thread
 from uuid import uuid4
 from time import time
 
@@ -144,6 +145,25 @@ def request_odes_extract(extract, request, url_for, api_key):
                      processed_at=oj['processed_at'],
                      created_at=oj['created_at'])
 
+def populate_link_downloads(odes_links):
+    '''
+    '''
+    downloads = []
+
+    def _download(format, url):
+        downloads.append(util.Download(format, url))
+    
+    threads = [Thread(target=_download, args=(format, url))
+               for (format, url) in odes_links.items()]
+    
+    for thread in threads:
+        thread.start()
+    
+    for thread in threads:
+        thread.join()
+
+    return downloads
+    
 @blueprint.route('/odes/envelopes/', methods=['POST'])
 @util.errors_logged
 def post_envelope():
@@ -212,6 +232,11 @@ def get_extract(extract_id):
     
     if extract is None:
         raise ValueError('No extract {}'.format(extract_id))
+    
+    if extract.odes.links:
+        downloads = {d.format: d for d in populate_link_downloads(extract.odes.links)}
+    else:
+        downloads = None
 
-    return render_template('extract.html', extract=extract, util=util,
-                           user_id=id, user_nickname=nickname)
+    return render_template('extract.html', extract=extract, downloads=downloads,
+                           util=util, user_id=id, user_nickname=nickname)
