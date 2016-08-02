@@ -24,6 +24,12 @@ p.error {
 #downloads p {
   margin-top: 15px;
 }
+#downloads .size {
+  color: #808080;
+  font-weight: normal;
+  font-size: 12px;
+  margin-left: 5px;
+}
 @media (max-width: 768px) {
   body.data-pages #map {
     height: 300px;

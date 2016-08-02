@@ -1,6 +1,7 @@
 from itertools import groupby
 from operator import itemgetter
 from os.path import join, dirname
+from threading import Thread
 import json, os
 
 import requests
@@ -30,6 +31,35 @@ def apply_blueprint(app, url_prefix):
     '''
     '''
     app.register_blueprint(blueprint, url_prefix=url_prefix)
+
+def populate_metro_urls(metro_id):
+    '''
+    '''
+    downloads = []
+    template = 'https://s3.amazonaws.com/metro-extracts.mapzen.com/{id}.{ext}'
+    
+    def _download(format, ext):
+        url = uritemplate.expand(template, dict(id=metro_id, ext=ext))
+        downloads.append(util.Download(format, url))
+    
+    threads = [
+        Thread(target=_download, args=('OSM2PGSQL SHP', 'osm2pgsql-shapefiles.zip')),
+        Thread(target=_download, args=('OSM2PGSQL GEOJSON', 'osm2pgsql-geojson.zip')),
+        Thread(target=_download, args=('IMPOSM SHP', 'imposm-shapefiles.zip')),
+        Thread(target=_download, args=('IMPOSM GEOJSON', 'imposm-geojson.zip')),
+        Thread(target=_download, args=('OSM PBF', 'osm.pbf')),
+        Thread(target=_download, args=('OSM XML', 'osm.bz2')),
+        Thread(target=_download, args=('WATER COASTLINE SHP', 'water.coastline.zip')),
+        Thread(target=_download, args=('LAND COASTLINE SHP', 'land.coastline.zip')),
+        ]
+    
+    for thread in threads:
+        thread.start()
+    
+    for thread in threads:
+        thread.join()
+    
+    return downloads
 
 @blueprint.route('/')
 @util.errors_logged
@@ -82,9 +112,10 @@ def get_metro(metro_id, wof_id=None, wof_name=None):
     with open('cities.json') as file:
         cities = json.load(file)
         metro = {c['id']: c for c in cities}[metro_id]
+        downloads = {d.format: d for d in populate_metro_urls(metro_id)}
     
-    return render_template('metro.html', metro=metro, wof_id=wof_id,
-                           wof_name=wof_name, util=util)
+    return render_template('metro.html', metro=metro, downloads=downloads,
+                           wof_id=wof_id, wof_name=wof_name, util=util)
 
 @blueprint.route('/wof/<id>.geojson')
 @util.errors_logged

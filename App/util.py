@@ -12,6 +12,37 @@ import requests
 
 class KnownUnknown (Exception): pass
 
+class Download:
+
+    def __init__(self, format, url):
+        self.format = format
+        self.url = url
+        
+        resp = requests.head(url, timeout=2)
+        self.size = nice_size(int(resp.headers.get('Content-Length')))
+
+def nice_size(size):
+    KB = 1024.
+    MB = 1024. * KB
+    GB = 1024. * MB
+    TB = 1024. * GB
+
+    if size < KB:
+        size, suffix = size, 'B'
+    elif size < MB:
+        size, suffix = size/KB, 'KB'
+    elif size < GB:
+        size, suffix = size/MB, 'MB'
+    elif size < TB:
+        size, suffix = size/GB, 'GB'
+    else:
+        size, suffix = size/TB, 'TB'
+
+    if size < 10:
+        return '{:.1f}{}'.format(size, suffix)
+    else:
+        return '{:.0f}{}'.format(size, suffix)
+
 def errors_logged(route_function):
     '''
     '''
