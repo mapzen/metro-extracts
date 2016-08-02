@@ -18,9 +18,9 @@ class Download:
         self.format = format
         self.url = url
         self.label = label
-        self.size = nice_size(int(requests.head(url).headers.get('Content-Length')))
         
-        print(url, self.size)
+        resp = requests.head(url, timeout=2)
+        self.size = nice_size(int(resp.headers.get('Content-Length')))
 
 def nice_size(size):
     KB = 1024.

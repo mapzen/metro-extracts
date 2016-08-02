@@ -1,6 +1,7 @@
 from itertools import groupby
 from operator import itemgetter
 from os.path import join, dirname
+from threading import Thread
 import json, os
 
 import requests
@@ -34,18 +35,32 @@ def apply_blueprint(app, url_prefix):
 def populate_metro_urls(metro_id):
     '''
     '''
+    downloads = []
     template = 'https://s3.amazonaws.com/metro-extracts.mapzen.com/{id}.{ext}'
     
-    return [
-        util.Download('OSM2PGSQL SHP', uritemplate.expand(template, dict(id=metro_id, ext='osm2pgsql-shapefiles.zip')), 'SHAPEFILE'),
-        util.Download('OSM2PGSQL GEOJSON', uritemplate.expand(template, dict(id=metro_id, ext='osm2pgsql-geojson.zip')), 'GEOJSON'),
-        util.Download('IMPOSM SHP', uritemplate.expand(template, dict(id=metro_id, ext='imposm-shapefiles.zip')), 'SHAPEFILE'),
-        util.Download('IMPOSM GEOJSON', uritemplate.expand(template, dict(id=metro_id, ext='imposm-geojson.zip')), 'GEOJSON'),
-        util.Download('OSM PBF', uritemplate.expand(template, dict(id=metro_id, ext='osm.pbf')), 'OSM PBF'),
-        util.Download('OSM XML', uritemplate.expand(template, dict(id=metro_id, ext='osm.bz2')), 'OSM XML'),
-        util.Download('WATER COASTLINE SHP', uritemplate.expand(template, dict(id=metro_id, ext='water.coastline.zip')), 'WATER SHAPEFILE'),
-        util.Download('LAND COASTLINE SHP', uritemplate.expand(template, dict(id=metro_id, ext='land.coastline.zip')), 'LAND SHAPEFILE'),
+    def _download(format, ext, label):
+        url = uritemplate.expand(template, dict(id=metro_id, ext=ext))
+        downloads.append(util.Download(format, url, label))
+    
+    threads = [
+        Thread(target=_download, args=('OSM2PGSQL SHP', 'osm2pgsql-shapefiles.zip', 'SHAPEFILE')),
+        Thread(target=_download, args=('OSM2PGSQL SHP', 'osm2pgsql-shapefiles.zip', 'SHAPEFILE')),
+        Thread(target=_download, args=('OSM2PGSQL GEOJSON', 'osm2pgsql-geojson.zip', 'GEOJSON')),
+        Thread(target=_download, args=('IMPOSM SHP', 'imposm-shapefiles.zip', 'SHAPEFILE')),
+        Thread(target=_download, args=('IMPOSM GEOJSON', 'imposm-geojson.zip', 'GEOJSON')),
+        Thread(target=_download, args=('OSM PBF', 'osm.pbf', 'OSM PBF')),
+        Thread(target=_download, args=('OSM XML', 'osm.bz2', 'OSM XML')),
+        Thread(target=_download, args=('WATER COASTLINE SHP', 'water.coastline.zip', 'WATER SHAPEFILE')),
+        Thread(target=_download, args=('LAND COASTLINE SHP', 'land.coastline.zip', 'LAND SHAPEFILE')),
         ]
+    
+    for thread in threads:
+        thread.start()
+    
+    for thread in threads:
+        thread.join()
+    
+    return downloads
 
 @blueprint.route('/')
 @util.errors_logged
