@@ -1,12 +1,12 @@
 ##Choose a file format
 
-When you download from Metro Extracts, you can choose from several spatial data formats that run a spectrum of raw to more processed from left to right. The less-processed formats, such as xml and osm, are intended for developers who are running their own tools on the data. For most map-making workflows, a shapefile or GeoJSON works well because these can be added directly to many software applications.
+When you download from Metro Extracts, you can choose from several spatial data formats that run a spectrum of raw to more processed. Here's a quick explanation on the data types: The less-processed formats, such as xml and pbf, are intended for developers who are running their own tools on the data. For most map-making workflows, a shapefile or GeoJSON works well because these can be added directly to many software applications. If you're working on adding this data to a web map, a GeoJSON is preferred.
 
-![Available files for Lisbon, Portugal](./images/lisbon_download_formats.png)
+![Available spatial data types for Dubai](./images/dubai_download_formats.png)
 
 ### OSM PBF and OSM XML
 
-OSM is a special community. Likewise, OSM data is really special. So special, it gets its own file format that nobody else uses, .osm. These files can be compressed, either as XML .bx2 or .pbf. Just note that .pbf is smaller than XML (more on .pbf [here](http://wiki.openstreetmap.org/wiki/ProtocolBufBinary)).
+[OpenStreetMap](https://www.openstreetmap.org) is a special community. Likewise, OSM data is really special. So special, it gets its own file format that nobody else uses, .osm. These files can be compressed, either as XML .bx2 or .pbf. Just note that .pbf is smaller than XML (more on .pbf [here](http://wiki.openstreetmap.org/wiki/ProtocolBufBinary)).
 
 If you're very particular about what you need to extract or want to run your on tools on the data, these formats are probably for you. If you want to filter for specific tagged OSM data, like `amenity=police`, you could use some of the same command line tools that generate Metro Extracts, such as [Osmosis](http://wiki.openstreetmap.org/wiki/Osmosis), [osm2pgsql](https://github.com/openstreetmap/osm2pgsql), and [ogr2ogr](http://www.gdal.org/ogr2ogr.html) to generate a GeoJSON with an OSM dataset custom to your needs.
 
