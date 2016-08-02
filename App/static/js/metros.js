@@ -35,7 +35,8 @@ var Metros = function() {
 
       function doThisStuffOnScroll() {
         if (!processScroll) return;
-        if (d3.select("#content-wrapper").attr("class").indexOf("filtered") != -1) return;
+        if (d3.select("#content-wrapper").attr("class") && 
+          d3.select("#content-wrapper").attr("class").indexOf("filtered") != -1) return;
 
         processScroll = false;
         var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;

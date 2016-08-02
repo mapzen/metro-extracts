@@ -162,7 +162,7 @@ body.data-pages .inline-submit .btn:hover {
 #content-wrapper[class*="filtered"] .data-filter-label.red {
   display: none;
 }
-.filtered-typing #extracts {
+#content-wrapper[class*="filtered"] #extracts {
   display: none;
 }
 #extracts .country:first-child {
