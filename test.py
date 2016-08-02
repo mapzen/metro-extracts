@@ -421,10 +421,10 @@ class TestApp (unittest.TestCase):
                 if url.query == 'api_key=odes-xxxxxxx':
                     body = dict(parse_qsl(request.body))
                     self.assertIn('ready', body['email_subject'])
-                    self.assertIn(wof_name, body['email_body_text'])
+                    self.assertIn(extract_name, body['email_body_text'])
                     self.assertIn(created.strftime('%b %d, %Y'), body['email_body_text'])
                     self.assertIn(extract_path, body['email_body_text'])
-                    self.assertIn(wof_name, body['email_body_html'])
+                    self.assertIn(extract_name, body['email_body_html'])
                     self.assertIn(created.strftime('%b %d, %Y'), body['email_body_html'])
                     self.assertIn(extract_path, body['email_body_html'])
                     

@@ -31,7 +31,8 @@ var Metros = function() {
 
       var divHeight = document.getElementById("list-wrapper").offsetHeight,
         processScroll = true;
-      window.onscroll = doThisStuffOnScroll;
+      if (window.innerWidth > 768)
+        window.onscroll = doThisStuffOnScroll;
 
       function doThisStuffOnScroll() {
         if (!processScroll) return;
@@ -64,7 +65,7 @@ var Metros = function() {
           scrollWheelZoom: false,
           scene: sceneURL,
           center: [20,0],
-          zoom: 2,
+          zoom: (window.innerWidth > 768) ? 2 : 1,
           attribution: '<a href="https://mapzen.com/tangram">Tangram</a> | <a href="http://www.openstreetmap.org/copyright">&copy; OSM contributors</a> | <a href="https://mapzen.com/">Mapzen</a>',
           fallbackTile: L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
             attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>'})
