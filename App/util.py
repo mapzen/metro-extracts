@@ -12,6 +12,14 @@ import requests
 
 class KnownUnknown (Exception): pass
 
+class Download:
+
+    def __init__(self, format, url, label, size=None):
+        self.format = format
+        self.url = url
+        self.label = label
+        self.size = size
+
 def errors_logged(route_function):
     '''
     '''

@@ -31,6 +31,22 @@ def apply_blueprint(app, url_prefix):
     '''
     app.register_blueprint(blueprint, url_prefix=url_prefix)
 
+def populate_metro_urls(metro_id):
+    '''
+    '''
+    template = 'https://s3.amazonaws.com/metro-extracts.mapzen.com/{id}.{ext}'
+    
+    return [
+        util.Download('OSM2PGSQL SHP', uritemplate.expand(template, dict(id=metro_id, ext='osm2pgsql-shapefiles.zip')), 'SHAPEFILE'),
+        util.Download('OSM2PGSQL GEOJSON', uritemplate.expand(template, dict(id=metro_id, ext='osm2pgsql-geojson.zip')), 'GEOJSON'),
+        util.Download('IMPOSM SHP', uritemplate.expand(template, dict(id=metro_id, ext='imposm-shapefiles.zip')), 'SHAPEFILE'),
+        util.Download('IMPOSM GEOJSON', uritemplate.expand(template, dict(id=metro_id, ext='imposm-geojson.zip')), 'GEOJSON'),
+        util.Download('OSM PBF', uritemplate.expand(template, dict(id=metro_id, ext='osm.pbf')), 'OSM PBF'),
+        util.Download('OSM XML', uritemplate.expand(template, dict(id=metro_id, ext='osm.xml')), 'OSM XML'),
+        util.Download('WATER COASTLINE SHP', uritemplate.expand(template, dict(id=metro_id, ext='water.coastline.zip')), 'WATER SHAPEFILE'),
+        util.Download('LAND COASTLINE SHP', uritemplate.expand(template, dict(id=metro_id, ext='land.coastline.zip')), 'LAND SHAPEFILE'),
+        ]
+
 @blueprint.route('/')
 @util.errors_logged
 def index():
