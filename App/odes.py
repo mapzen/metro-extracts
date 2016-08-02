@@ -116,7 +116,7 @@ def request_odes_extract(extract, request, url_for, api_key):
     '''
     env = Environment(loader=PackageLoader(__name__, 'templates'))
     args = dict(
-        name = extract.wof.name or 'an unnamed place',
+        name = extract.name or extract.wof.name or 'an unnamed place',
         link = urljoin(util.get_base_url(request), url_for('ODES.get_extract', extract_id=extract.id)),
         extracts_link = urljoin(util.get_base_url(request), url_for('ODES.get_extracts')),
         created = extract.created
