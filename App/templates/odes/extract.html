@@ -24,6 +24,9 @@
     <h2>Your Extract:</h2>
     <h2>{{extract.wof.name or extract.id or extract.odes.id}}</h2>
     <div class="btn-group" style="margin: 0 auto;">
+      {% if user_id %}
+        <a href="{{ url_for('ODES.get_extracts') }}">Your Custom Extracts</a> |
+      {% endif %}
       <a href="https://mapzen.com/documentation/metro-extracts/">Documentation</a> | 
       <a href="https://mapzen.com/documentation/metro-extracts/walkthrough/">Tutorial</a> | 
       <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">File Format Guide</a>
