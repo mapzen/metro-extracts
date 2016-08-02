@@ -1,6 +1,6 @@
 # Download OpenStreetMap data with Metro Extracts
 
-Metro Extracts are chunks of [OpenStreetMap](https://www.openstreetmap.org) data clipped to a rectangular region surrounding a particular city or region of interest. Data is available for locations around the world.
+Metro Extracts are chunks of [OpenStreetMap](https://www.openstreetmap.org) (OSM) data clipped to a rectangular region surrounding a particular city or region of interest. Data is available for locations around the world.
 
 To download the OSM data, go to the Metro Extracts download page at https://mapzen.com/data/metro-extracts/ and either choose a popular city extract or request a custom extract using the search bar.
 
