@@ -38,20 +38,19 @@ def populate_metro_urls(metro_id):
     downloads = []
     template = 'https://s3.amazonaws.com/metro-extracts.mapzen.com/{id}.{ext}'
     
-    def _download(format, ext, label):
+    def _download(format, ext):
         url = uritemplate.expand(template, dict(id=metro_id, ext=ext))
-        downloads.append(util.Download(format, url, label))
+        downloads.append(util.Download(format, url))
     
     threads = [
-        Thread(target=_download, args=('OSM2PGSQL SHP', 'osm2pgsql-shapefiles.zip', 'SHAPEFILE')),
-        Thread(target=_download, args=('OSM2PGSQL SHP', 'osm2pgsql-shapefiles.zip', 'SHAPEFILE')),
-        Thread(target=_download, args=('OSM2PGSQL GEOJSON', 'osm2pgsql-geojson.zip', 'GEOJSON')),
-        Thread(target=_download, args=('IMPOSM SHP', 'imposm-shapefiles.zip', 'SHAPEFILE')),
-        Thread(target=_download, args=('IMPOSM GEOJSON', 'imposm-geojson.zip', 'GEOJSON')),
-        Thread(target=_download, args=('OSM PBF', 'osm.pbf', 'OSM PBF')),
-        Thread(target=_download, args=('OSM XML', 'osm.bz2', 'OSM XML')),
-        Thread(target=_download, args=('WATER COASTLINE SHP', 'water.coastline.zip', 'WATER SHAPEFILE')),
-        Thread(target=_download, args=('LAND COASTLINE SHP', 'land.coastline.zip', 'LAND SHAPEFILE')),
+        Thread(target=_download, args=('OSM2PGSQL SHP', 'osm2pgsql-shapefiles.zip')),
+        Thread(target=_download, args=('OSM2PGSQL GEOJSON', 'osm2pgsql-geojson.zip')),
+        Thread(target=_download, args=('IMPOSM SHP', 'imposm-shapefiles.zip')),
+        Thread(target=_download, args=('IMPOSM GEOJSON', 'imposm-geojson.zip')),
+        Thread(target=_download, args=('OSM PBF', 'osm.pbf')),
+        Thread(target=_download, args=('OSM XML', 'osm.bz2')),
+        Thread(target=_download, args=('WATER COASTLINE SHP', 'water.coastline.zip')),
+        Thread(target=_download, args=('LAND COASTLINE SHP', 'land.coastline.zip')),
         ]
     
     for thread in threads:

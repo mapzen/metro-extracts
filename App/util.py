@@ -14,10 +14,9 @@ class KnownUnknown (Exception): pass
 
 class Download:
 
-    def __init__(self, format, url, label):
+    def __init__(self, format, url):
         self.format = format
         self.url = url
-        self.label = label
         
         resp = requests.head(url, timeout=2)
         self.size = nice_size(int(resp.headers.get('Content-Length')))
