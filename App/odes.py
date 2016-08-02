@@ -67,7 +67,7 @@ def get_odes_extracts(db, api_keys):
         extract = data.get_extract(db, odes=odes)
         
         if extract is None:
-            extract = data.Extract(None, None, odes, None, None, None)
+            extract = data.Extract(None, None, None, odes, None, None, None)
         
         extracts.append(extract)
 
@@ -107,7 +107,7 @@ def get_odes_extract(db, id, api_keys):
     
     if extract is None:
         # Known ODES, but nothing in the DB so make one up.
-        return data.Extract(None, None, odes, None, None, None)
+        return data.Extract(None, None, None, odes, None, None, None)
     
     return extract
 
@@ -116,7 +116,7 @@ def request_odes_extract(extract, request, url_for, api_key):
     '''
     env = Environment(loader=PackageLoader(__name__, 'templates'))
     args = dict(
-        name = extract.wof.name or 'an unnamed place',
+        name = extract.name or extract.wof.name or 'an unnamed place',
         link = urljoin(util.get_base_url(request), url_for('ODES.get_extract', extract_id=extract.id)),
         extracts_link = urljoin(util.get_base_url(request), url_for('ODES.get_extracts')),
         created = extract.created
@@ -170,12 +170,13 @@ def post_envelope():
     '''
     '''
     form = request.form
+    name = form.get('display_name')
     bbox = [float(form[k]) for k in ('bbox_w', 'bbox_s', 'bbox_e', 'bbox_n')]
     wof_name, wof_id = form.get('wof_name'), form.get('wof_id') and int(form['wof_id'])
     envelope = data.Envelope(str(uuid4())[-12:], bbox)
     
     with data.connect(current_app.config['DB_DSN']) as db:
-        data.add_extract_envelope(db, envelope, data.WoF(wof_id, wof_name))
+        data.add_extract_envelope(db, name, envelope, data.WoF(wof_id, wof_name))
 
     return redirect(url_for('ODES.get_envelope', envelope_id=envelope.id), 303)
 

@@ -28,7 +28,7 @@
       {% for extract in extracts %}
         <a class="extract" href="{{ url_for('ODES.get_extract', extract_id=(extract.id or extract.odes.id)) }}">
           <!-- <div class="map" id="map-{{extract.odes.id}}"></div> -->
-          <span class="info">{{extract.wof.name or extract.id or extract.odes.id}}</span>
+          <span class="info">{{extract.name or extract.wof.name or extract.id or extract.odes.id}}</span>
           <span class="info">{{extract.odes.status}}</span>
           <span class="info time">{{extract.odes.created_at}}</span>
         </a>

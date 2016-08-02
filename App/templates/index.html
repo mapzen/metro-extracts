@@ -71,7 +71,11 @@
             <input name="bbox_e" type="hidden" />
             <input name="wof_id" type="hidden" />
             <input name="wof_name" type="hidden" />
-            <button class="btn btn-transparent">Get <span class="name"></span> Extract</button>
+            <div style="margin-bottom: 10px;">
+              <label>Your Extract Name:</label>
+              <input name="display_name" type="text" style="width:300px;" />
+            </div>
+            <button class="btn btn-transparent">Get Extract</button>
           </form>
           <p class="default-request-text encompassed-text request-messaging note">(Note: Custom extracts take about 30-60 minutes to generate and you will be guided to sign in or sign up for a free Mapzen Developer account)</p>
           <p class="request-greater-1 request-messaging note">(Note: You have defined a large area as a custom extract. This might take a few hours to finish. You will be guided to sign in or sign up for a free Mapzen Developer account to complete this request)</p>

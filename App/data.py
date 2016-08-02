@@ -24,8 +24,9 @@ class ODES:
         self.bbox = bbox
 
 class Extract:
-    def __init__(self, id, envelope, odes, user_id, created, wof):
+    def __init__(self, id, name, envelope, odes, user_id, created, wof):
         self.id = id
+        self.name = name
         self.envelope = envelope
         self.odes = odes
         self.user_id = user_id
@@ -38,17 +39,17 @@ def connect(dsn):
         with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as db:
             yield db
 
-def add_extract_envelope(db, envelope, wof):
+def add_extract_envelope(db, name, envelope, wof):
     '''
     '''
     extract_id = str(uuid4())[-12:]
     
     db.execute('''
         INSERT INTO extracts
-        (id, envelope_id, envelope_bbox, wof_name, wof_id, created)
-        VALUES (%s, %s, %s, %s, %s, NOW())
+        (id, name, envelope_id, envelope_bbox, wof_name, wof_id, created)
+        VALUES (%s, %s, %s, %s, %s, %s, NOW())
         ''',
-        (extract_id, envelope.id, envelope.bbox, wof.name, wof.id))
+        (extract_id, name, envelope.id, envelope.bbox, wof.name, wof.id))
     
     return extract_id
 
@@ -70,13 +71,13 @@ def get_extract(db, extract_id=None, envelope_id=None, odes=None):
         values.append(odes.id)
     
     db.execute('''
-        SELECT id, envelope_id, envelope_bbox, odes_id, user_id, wof_name, wof_id, created
+        SELECT id, name, envelope_id, envelope_bbox, odes_id, user_id, wof_name, wof_id, created
         FROM extracts WHERE {}
         '''.format(' AND '.join(conditions)),
         tuple(values))
     
     try:
-        id, env_id, env_bbox, odes_id, user_id, wof_name, wof_id, created = db.fetchone()
+        id, name, env_id, env_bbox, odes_id, user_id, wof_name, wof_id, created = db.fetchone()
     except TypeError:
         return None
 
@@ -84,14 +85,14 @@ def get_extract(db, extract_id=None, envelope_id=None, odes=None):
     envelope = Envelope(env_id, env_bbox)
     odes = odes or ODES(odes_id)
 
-    return Extract(id, envelope, odes, user_id, created, wof)
+    return Extract(id, name, envelope, odes, user_id, created, wof)
 
 def set_extract(db, extract):
     db.execute('''
         UPDATE extracts
-        SET envelope_id = %s, envelope_bbox = %s, odes_id = %s,
+        SET name = %s, envelope_id = %s, envelope_bbox = %s, odes_id = %s,
             user_id = %s, wof_name = %s, wof_id = %s
         WHERE id = %s
         ''',
-        (extract.envelope.id, extract.envelope.bbox, extract.odes.id,
+        (extract.name, extract.envelope.id, extract.envelope.bbox, extract.odes.id,
         extract.user_id, extract.wof.name, extract.wof.id, extract.id))

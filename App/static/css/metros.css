@@ -299,7 +299,11 @@ body.data-pages .inline-submit .btn:hover {
   margin-bottom: -1px;
 }
 @media (max-width: 768px) {
-  .column-map {
+  .map-wrapper {
+    position: relative;
+    width: 100%;
+  }
+  #map {
     position: relative;
   }
 }
