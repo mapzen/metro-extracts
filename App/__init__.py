@@ -42,7 +42,7 @@ def populate_metro_urls(metro_id):
         util.Download('IMPOSM SHP', uritemplate.expand(template, dict(id=metro_id, ext='imposm-shapefiles.zip')), 'SHAPEFILE'),
         util.Download('IMPOSM GEOJSON', uritemplate.expand(template, dict(id=metro_id, ext='imposm-geojson.zip')), 'GEOJSON'),
         util.Download('OSM PBF', uritemplate.expand(template, dict(id=metro_id, ext='osm.pbf')), 'OSM PBF'),
-        util.Download('OSM XML', uritemplate.expand(template, dict(id=metro_id, ext='osm.xml')), 'OSM XML'),
+        util.Download('OSM XML', uritemplate.expand(template, dict(id=metro_id, ext='osm.bz2')), 'OSM XML'),
         util.Download('WATER COASTLINE SHP', uritemplate.expand(template, dict(id=metro_id, ext='water.coastline.zip')), 'WATER SHAPEFILE'),
         util.Download('LAND COASTLINE SHP', uritemplate.expand(template, dict(id=metro_id, ext='land.coastline.zip')), 'LAND SHAPEFILE'),
         ]
@@ -98,9 +98,10 @@ def get_metro(metro_id, wof_id=None, wof_name=None):
     with open('cities.json') as file:
         cities = json.load(file)
         metro = {c['id']: c for c in cities}[metro_id]
+        downloads = {d.format: d for d in populate_metro_urls(metro_id)}
     
-    return render_template('metro.html', metro=metro, wof_id=wof_id,
-                           wof_name=wof_name, util=util)
+    return render_template('metro.html', metro=metro, downloads=downloads,
+                           wof_id=wof_id, wof_name=wof_name, util=util)
 
 @blueprint.route('/wof/<id>.geojson')
 @util.errors_logged

@@ -36,23 +36,23 @@
     <div id="downloads">
       <div class="label">Datasets split by geometry type: lines, points, or polygons (<a href="https://mapzen.com/documentation/metro-extracts/overview/#osm2pgsql-and-imposm" class="label">OSM2PGSQL</a>)</div>
       <div class="dl-group">
-        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.id }}.osm2pgsql-shapefiles.zip" data-format="OSM2PGSQL SHP">SHAPEFILE</a>
-        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.id }}.osm2pgsql-geojson.zip" data-format="OSM2PGSQL GEOJSON">GEOJSON</a>
+        <a class="link" href="{{ downloads['OSM2PGSQL SHP'].url }}" data-format="OSM2PGSQL SHP">{{ downloads['OSM2PGSQL SHP'].label }}</a>
+        <a class="link" href="{{ downloads['OSM2PGSQL GEOJSON'].url }}" data-format="OSM2PGSQL GEOJSON">{{ downloads['OSM2PGSQL GEOJSON'].label }}</a>
       </div>
       <div class="label">Datasets grouped into individual layers by OpenStreetMap tags (<a href="https://mapzen.com/documentation/metro-extracts/overview/#osm2pgsql-and-imposm" class="label">IMPOSM</a>)</div>
       <div class="dl-group">
-        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.id }}.imposm-shapefiles.zip" data-format="IMPOSM SHP">SHAPEFILE</a>
-        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.id }}.imposm-geojson.zip" data-format="IMPOSM GEOJSON">GEOJSON</a>
+        <a class="link" href="{{ downloads['IMPOSM SHP'].url }}" data-format="IMPOSM SHP">{{ downloads['IMPOSM SHP'].label }}</a>
+        <a class="link" href="{{ downloads['IMPOSM GEOJSON'].url }}" data-format="IMPOSM GEOJSON">{{ downloads['IMPOSM GEOJSON'].label }}</a>
       </div>
       <div class="label">Raw OpenStreetMap datasets (<a href="https://mapzen.com/documentation/metro-extracts/overview/#osm-pbf-and-osm-xml" class="label">PBF and XML</a>)</div>
       <div class="dl-group">
-        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.id }}.osm.pbf" data-format="OSM PBF">OSM PBF</a>
-        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.id }}.osm.xml" data-format="OSM XML">OSM XML</a>
+        <a class="link" href="{{ downloads['OSM PBF'].url }}" data-format="OSM PBF">{{ downloads['OSM PBF'].label }}</a>
+        <a class="link" href="{{ downloads['OSM XML'].url }}" data-format="OSM XML">{{ downloads['OSM XML'].label }}</a>
       </div>
       <div class="label">Coastlines</div>
       <div class="dl-group">
-        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.id }}.water.coastline.zip" data-format="WATER COASTLINE SHP">WATER SHAPEFILE</a>
-        <a class="link" href="https://s3.amazonaws.com/metro-extracts.mapzen.com/{{ metro.id }}.land.coastline.zip" data-format="LAND COASTLINE SHP">LAND SHAPEFILE</a>
+        <a class="link" href="{{ downloads['WATER COASTLINE SHP'].url }}" data-format="WATER COASTLINE SHP">{{ downloads['WATER COASTLINE SHP'].label }}</a>
+        <a class="link" href="{{ downloads['LAND COASTLINE SHP'].url }}" data-format="LAND COASTLINE SHP">{{ downloads['LAND COASTLINE SHP'].label }}</a>
       </div>
       <p>If you're unsure of which file to pick, check out our <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">format guide</a>.</p>
     </div>
