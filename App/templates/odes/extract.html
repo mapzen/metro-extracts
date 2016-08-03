@@ -12,7 +12,7 @@
         <a href="{{ url_for('Metro-Extracts.index') }}">Metro Extracts</a>
       </li>
       <li>
-        <a href="{{ url_for('ODES.get_extracts') }}">Your Extracts</a>
+        <a href="{{ url_for('ODES.get_extracts') }}">Your Custom Extracts</a>
       </li>
       <li class="active">{{extract.name or extract.wof.name or extract.id or extract.odes.id}}</li>
     </ol>
@@ -21,7 +21,7 @@
     <div id="map"></div>
   </div>
   <div class="col-sm-6 col-xs-12">
-    <h2>Your Extract:</h2>
+    <h3 class="top">Your Extract</h3>
     <h2>{{extract.name or extract.wof.name or extract.id or extract.odes.id}}</h2>
     <div class="btn-group" style="margin: 0 auto;">
       {% if user_id %}
@@ -33,8 +33,13 @@
     </div>
     
     {% if extract.odes.status == "pending" or extract.odes.status == "processing" %}
-      <p class="error" style="margin-top:40px;">Sit tight! We will send you an email to the address associated with your GitHub account when your custom extract is ready for download.</p>
-      <p class="error">Custom extracts take about 30-60 minutes to generate, depending on the size. The download links for your extract will appear on this page once it is ready.</p>
+      <div class="sit-tight">
+        <p>Sit tight! We will send you an email to the address associated with your GitHub account when your custom extract is ready for download.</p>
+        <p>Custom extracts take about 30-60 minutes to generate, depending on the size. The download links for your extract will appear on this page once it is ready.</p>
+        {% if user_id %}
+          <p>You can view all of the extracts you've made <a href="{{ url_for('ODES.get_extracts') }}" style="color:black;">here</a>.</p>
+        {% endif %}
+      </div>
     {% elif downloads
         and 'osm2pgsql shapefiles zip' in downloads
         and 'osm2pgsql geojson zip' in downloads
@@ -44,13 +49,13 @@
         and 'osm bz2' in downloads
         and 'water coastline zip' in downloads
         and 'land coastline zip' in downloads %}
+      <h3>Downloads</h3>
       {% if extract.wof.name and extract.wof.id %}
-        <div id="encompassed" style="margin-top: 40px;">
-          <p>To clip this extract to the <span class="legend-blue">{{extract.wof.name}} boundary</span>, use this outline:</p>
-          <a class="link" href="{{ url_for('Metro-Extracts.wof_geojson', id=extract.wof.id)}}">{{extract.wof.name}}  GEOJSON</a>
+        <div id="encompassed">
+          <p>To clip this extract to the <span class="legend-blue">{{extract.wof.name}}</span> boundary, use this outline:</p>
+          <a class="link" href="{{ url_for('Metro-Extracts.wof_geojson', id=extract.wof.id)}}">BOUNDARY GEOJSON</a>
         </div>
       {% endif %}
-      <h3>Downloads</h3>
       <div id="downloads">
         <div class="label">Datasets split by geometry type: lines, points, or polygons (<a href="https://mapzen.com/documentation/metro-extracts/overview/#osm2pgsql-and-imposm" class="label">OSM2PGSQL</a>)</div>
         <div class="dl-group">
