@@ -138,11 +138,15 @@ class TestApp (unittest.TestCase):
         
     def test_oauth_index(self):
         resp = self.client.get(self.prefixed('/oauth/hello'))
-        soup = BeautifulSoup(resp.data, 'html.parser')
-        button = soup.find('button').text
+        self.assertIn(resp.status_code, (301, 302, 303))
+        
+        action_url = urlparse(resp.headers.get('Location'))
+        query = dict(parse_qsl(action_url.query))
+        redirect_url = urlparse(query['redirect_uri'])
 
-        self.assertEqual(resp.status_code, 401)
-        self.assertIn('CONTINUE', button)
+        self.assertEqual(redirect_url.path, self.prefixed('/oauth/callback'))
+        self.assertEqual(action_url.netloc, 'mapzen.com')
+        self.assertEqual(action_url.path, '/oauth/authorize')
     
     def _do_login(self, codes):
         '''
@@ -157,14 +161,12 @@ class TestApp (unittest.TestCase):
         with HTTMock(response_content1):
             # Request the fake front OAuth page.
             resp1 = self.client.get(starting_path)
-            soup1 = BeautifulSoup(resp1.data, 'html.parser')
-            form1 = soup1.find('form')
-            query1 = dict([(i['name'], i['value']) for i in form1.find_all('input')])
-            action_url = urlparse(form1['action'])
-            redirect_url = urlparse(query1['redirect_uri'])
+            self.assertIn(resp1.status_code, (301, 302, 303))
             
-            self.assertEqual(resp1.status_code, 401)
-            self.assertEqual(form1['method'], 'get')
+            action_url = urlparse(resp1.headers.get('Location'))
+            query1 = dict(parse_qsl(action_url.query))
+            redirect_url = urlparse(query1['redirect_uri'])
+
             self.assertEqual(redirect_url.path, self.prefixed('/oauth/callback'))
             self.assertEqual(action_url.netloc, 'mapzen.com')
             self.assertEqual(action_url.path, '/oauth/authorize')
