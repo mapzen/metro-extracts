@@ -1,20 +1,17 @@
 ##Choose a file format
 
-When you download from Metro Extracts, you can choose from several spatial data formats that run a spectrum of raw to more processed. Here's a quick explanation on the data types: The less-processed formats, such as xml and pbf, are intended for developers who are running their own tools on the data. For most map-making workflows, a shapefile or GeoJSON works well because these can be added directly to many software applications. If you're working on adding this data to a web map, a GeoJSON is preferred.
+Once you select a Metro Extract from https://mapzen.com/data/metro-extracts/, there are several different types of spatial data file formats to choose from. The picture below shows the variety of options available for every Metro Extract. These range from raw, unformatted data that's awesome for data processing to data that's organized to make sense for use in software applications or for web mapping.
 
 ![Available spatial data types for Dubai](./images/dubai_download_formats.png)
 
-### OSM PBF and OSM XML
+Not sure what to pick? Here's a simple diagram that explains the variety of file formats:
+![File format workflow diagram](./images/fileformat.png)
 
-[OpenStreetMap](https://www.openstreetmap.org) is a special community. Likewise, OSM data is really special. So special, it gets its own file format that nobody else uses, .osm. These files can be compressed, either as XML .bx2 or .pbf. Just note that .pbf is smaller than XML (more on .pbf [here](http://wiki.openstreetmap.org/wiki/ProtocolBufBinary)).
+Metro Extracts offers spatial file formats in a spectrum of raw data to more processed. Here’s a quick explanation on the data types: The less-processed formats, such as xml and pbf, are intended for developers who are running their own tools on the data. For most map-making workflows, a shapefile or GeoJSON works well because these can be added directly to many software applications. If you’re working on adding this data to a web map, a GeoJSON is preferred. All extracted shapefiles and GeoJSONs use EPSG:4326 for the projection.
 
-If you're very particular about what you need to extract or want to run your on tools on the data, these formats are probably for you. If you want to filter for specific tagged OSM data, like `amenity=police`, you could use some of the same command line tools that generate Metro Extracts, such as [Osmosis](http://wiki.openstreetmap.org/wiki/Osmosis), [osm2pgsql](https://github.com/openstreetmap/osm2pgsql), and [ogr2ogr](http://www.gdal.org/ogr2ogr.html) to generate a GeoJSON with an OSM dataset custom to your needs.
+### Data split by geometry
 
-### OSM2PGSQL and IMPOSM
-
-The names and contents of the shapefiles and GeoJSON files are based on the process used to extract the OSM data: `osm2pgsql` or `imposm`. When you download a Metro Extract created with [osm2pgsql](http://wiki.openstreetmap.org/wiki/Osm2pgsql), you get three datasets split by geometry type: lines, points, or polygons. The [imposm](http://imposm.org/) extracts, however, are grouped into individual layers based on the tags used in OSM, such as buildings and roads.
-
-Here is an example of a point dataset from osm2pgsql:
+The **OSM2PGSQL** file format separates the OpenStreetMap data from the Metro Extract into three files: **lines, points,** and **polygons**. This makes showing features with a particular geometry simple, but each feature will include all of the various OSM tags. For example, this is the GeoJSON for a point from this data format:
 
 	{
     "type": "Feature",
@@ -87,16 +84,29 @@ Here is an example of a point dataset from osm2pgsql:
     }
     }
 
-That's a lot of information to explain that this is a helipad. Basically, every OSM tag that could be applied to a point, line, or polygon is stored as a feature property within that point, line, or polygon.
+That's a lot of information to explain that this is a helipad. Every OSM tag that could be applied to a point, line, or polygon is stored as a feature property within that point, line, or polygon. This file format is great if you want some refinement of the OSM data, but still want to see all possible tags for every feature.
 
-`imposm` exports are a little more granular and grouped into multiple datasets, most of which are important OSM tags that make sense to separate (administrative polygons, waterways, roads, and so on). Some versions of the same dataset that have been simplified; if the filename has the suffix `gen`, it's been generalized.
 
-All extracted shapefiles and GeoJSONs use EPSG:4326 for the projection.
+### Data split by OpenStreetMap tags
 
-- imposm shapefiles: EPSG:4326
-- osm2pgsql shapefiles: EPSG:4326
-- GeoJSONs (imposm and osm2pgsql): EPSG:4326
+The **IMPOSM** file format is the most refined file format offered in Metro Extracts. This format generates multiple files, separated by OSM tag and sorted into logical types such as:
+- Administrative boundaries
+- Aeroways
+- Amenities
+- Buildings
+- Land usage
+- Places
+- Roads
+- Transport Areas
+- Water Areas
+- Waterways
 
-#### Technical details osm2pgsql and imposm files
+The naming comes straight from OpenStreetMap and might be confusing if you're not used to OSM tags. Here's more information about how tags work: [http://wiki.openstreetmap.org/wiki/Map_Features](http://wiki.openstreetmap.org/wiki/Map_Features).
 
-If you're working with spatial data, you're most likely working with SQL data. `osm2pgsql` and `imposm` are tools for importing .osm data into PostGIS. Mapzen's chef recipe then generates shapefiles using the PostGIS command [pgsql2shp](http://www.bostongis.com/pgsql2shp_shp2pgsql_quickguide.bqg) and GeoJSONs using `ogr2ogr`. `osm2pgsql` and imposm carve up .osm data in different ways that you can configure yourself.
+This file format mostly follows the [IMPOSM specifications](https://imposm.org/docs/imposm/latest/database_schema.html#tables), but differs a little. For instance, roads are simplified (If the filename has the suffix gen, it’s been generalized.).
+
+### Raw OSM Data
+
+The raw, unformatted data in Metro Extracts from OpenStreetMap is stored in two formats: [**PBF**](http://wiki.openstreetmap.org/wiki/PBF_Format) and [**XML**](http://wiki.openstreetmap.org/wiki/OSM_XML). This data is intended for use in a database (SQL for instance) as it includes *everything* from the extract and is not simplified at all. If you want to make custom groupings of the data through your own processing, this is the type for you! There are two options for this raw data format- PBF or XML. There are more specific reasons to use one over another, but PBF is a more compressed version, allowing for faster downloads.
+
+### Coastlines
