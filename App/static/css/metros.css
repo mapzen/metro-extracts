@@ -165,6 +165,9 @@ body.data-pages .inline-submit .btn:hover {
 #content-wrapper[class*="filtered"] #extracts {
   display: none;
 }
+#content-wrapper[class="filtered-encompassed"] #extracts {
+  display: block;
+}
 #extracts .country:first-child {
   margin-top: 5px;
 }
