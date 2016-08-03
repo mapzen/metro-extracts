@@ -165,7 +165,7 @@ var Metros = function() {
       if (data.features.length)
         data.features.unshift({
           label : true,
-          text : "To make a new extract:"
+          text : "To make a custom extract:"
         });
 
       if (list.length && list.length < 5) {
@@ -174,7 +174,7 @@ var Metros = function() {
         data.features = cities.concat(data.features);
         data.features.unshift({
           label : true,
-          text : "To download an extract right now:"
+          text : "Popular Extracts ready for download now:"
         });
       }
 
