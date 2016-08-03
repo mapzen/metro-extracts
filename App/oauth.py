@@ -81,11 +81,7 @@ def make_401_response(is_returning):
     args.update(client_id=current_app.config['MAPZEN_APP_ID'], state=state_id)
     args.update(response_type='code')
     
-    if is_returning:
-        return redirect(mapzen_authorize_url+'?'+urlencode(args), 302)
-
-    return make_response(render_template('error-authenticate.html', util=util,
-                                         href=mapzen_authorize_url, **args), 401)
+    return redirect(mapzen_authorize_url+'?'+urlencode(args), 302)
 
 def absolute_url(request, location):
     '''
