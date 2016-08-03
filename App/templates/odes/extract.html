@@ -74,6 +74,18 @@
         </div>
         <p>If you're unsure of which file to pick, check out our <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">format guide</a>.</p>
       </div>
+      <h3>Again</h3>
+      <form method="post" action="{{ url_for('ODES.post_envelope') }}">
+        Again again.
+        <button class="btn btn-transparent">Again</button>
+        <input name="wof_id" value="{{ extract.wof.id or '' }}" type="hidden">
+        <input name="wof_name" value="{{ extract.wof.name or '' }}" type="hidden">
+        <input name="display_name" value="{{ extract.name or '' }}" type="hidden">
+        <input name="bbox_w" value="{{ extract.odes.bbox.w or '' }}" type="hidden">
+        <input name="bbox_s" value="{{ extract.odes.bbox.s or '' }}" type="hidden">
+        <input name="bbox_e" value="{{ extract.odes.bbox.e or '' }}" type="hidden">
+        <input name="bbox_n" value="{{ extract.odes.bbox.n or '' }}" type="hidden">
+      </p>
     {% else %}
       <p class="error" style="margin-top:40px;">Oh no, your extract request seems to have errored out. Please let us know at <a href="mailto:hello@mapzen.com">hello@mapzen.com</a>.</p>
     {% endif %}
