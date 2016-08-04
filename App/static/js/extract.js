@@ -21,7 +21,7 @@ var Extract = function (){
           fallbackTile: L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
             attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>'})
         };
-      displayMap = L.Mapzen.map('map', options).fitBounds(L.latLngBounds(southwest, northeast)).zoomOut(1);
+      displayMap = L.Mapzen.map('map', options).fitBounds(L.latLngBounds(southwest, northeast));
 
       var rect = new L.Rectangle(new L.LatLngBounds([southwest, northeast]), { className : "blue" });
       displayMap.addLayer(rect);

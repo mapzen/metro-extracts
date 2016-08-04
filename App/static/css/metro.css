@@ -8,9 +8,16 @@ body.data-pages #map {
 h2 {
   margin-top: 0;
 }
+h3.top {
+  margin-top: 0;
+}
 h3 {
-  font-size: 36px;
-  margin: 1.2em 0 .6em;
+  margin: 2em 0 .5em;
+}
+.sit-tight {
+  margin-top: 40px;
+  background: rgba(110,160,164,.3);
+  padding: 20px;
 }
 p.error {
   color: #d4645c;
