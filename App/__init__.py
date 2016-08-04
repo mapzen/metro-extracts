@@ -2,11 +2,12 @@ from itertools import groupby
 from operator import itemgetter
 from os.path import join, dirname
 from threading import Thread
-import json, os
+import json, os, math
 
 import requests
 import uritemplate
 import psycopg2
+import shapely.geometry
 
 from flask import (
     Blueprint, jsonify, Response, render_template, url_for, request, session
@@ -124,9 +125,28 @@ def wof_geojson(id):
     '''
     template = 'http://whosonfirst.mapzen.com/spelunker/id/{id}.geojson'
     url = uritemplate.expand(template, dict(id=id))
-    wof_resp = requests.get(url)
-
-    headers = {key: val for (key, val) in wof_resp.headers.items()
-               if key in ('Content-Type', 'Content-Length')}
     
-    return Response(wof_resp.content, headers=headers)
+    while True:
+        wof_head = requests.head(url)
+        if wof_head.status_code in (301, 302, 303):
+            url = wof_head.headers.get('Location')
+        else:
+            break
+    
+    if wof_head.status_code != 200:
+        return Response('No WoF with ID {}'.format(id), status=404)
+    
+    if request.args.get('raw') == 'yes':
+        return Response(url, status=302, headers={'Location': url})
+    
+    geojson = requests.get(url).json()
+    geom = shapely.geometry.shape(geojson.get('geometry', {}))
+    print('Raw {} chars of WKT with area {:.6f}'.format(len(str(geom)), geom.area))
+
+    x1, y1, x2, y2 = geom.bounds
+    hypot = math.hypot(x1 - x2, y1 - y2)
+    simple = geom.simplify(hypot/100)
+    print('Simplified to {} chars of WKT with tolerance {:.6f}'.format(len(str(simple)), hypot/100))
+    
+    geojson['geometry'] = shapely.geometry.mapping(simple)
+    return jsonify(geojson)
