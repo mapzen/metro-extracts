@@ -129,7 +129,12 @@ def wof_geojson(id):
     
     if wof_resp.status_code != 200:
         return Response('No WoF with ID {}'.format(id), status=404)
-
+    
+    if request.args.get('raw') == 'yes':
+        headers = {key: val for (key, val) in wof_resp.headers.items()
+                   if key in ('Content-Type', 'Content-Length')}
+        return Response(wof_resp.content, headers=headers)
+    
     geojson = wof_resp.json()
     geom = shapely.geometry.shape(geojson.get('geometry', {}))
     print('Raw {} chars of WKT with area {:.6f}'.format(len(str(geom)), geom.area))

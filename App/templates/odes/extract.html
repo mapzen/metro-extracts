@@ -47,7 +47,7 @@
       {% if extract.wof.name and extract.wof.id %}
         <div id="encompassed" style="margin-top: 40px;">
           <p>To clip this extract to the <span class="legend-blue">{{extract.wof.name}} boundary</span>, use this outline:</p>
-          <a class="link" href="{{ url_for('Metro-Extracts.wof_geojson', id=extract.wof.id)}}">{{extract.wof.name}}  GEOJSON</a>
+          <a class="link" href="{{ url_for('Metro-Extracts.wof_geojson', id=extract.wof.id)}}?raw=yes">{{extract.wof.name}}  GEOJSON</a>
         </div>
       {% endif %}
       <h3>Downloads</h3>
