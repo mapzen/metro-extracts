@@ -125,17 +125,21 @@ def wof_geojson(id):
     '''
     template = 'http://whosonfirst.mapzen.com/spelunker/id/{id}.geojson'
     url = uritemplate.expand(template, dict(id=id))
-    wof_resp = requests.get(url)
     
-    if wof_resp.status_code != 200:
+    while True:
+        wof_head = requests.head(url)
+        if wof_head.status_code in (301, 302, 303):
+            url = wof_head.headers.get('Location')
+        else:
+            break
+    
+    if wof_head.status_code != 200:
         return Response('No WoF with ID {}'.format(id), status=404)
     
     if request.args.get('raw') == 'yes':
-        headers = {key: val for (key, val) in wof_resp.headers.items()
-                   if key in ('Content-Type', 'Content-Length')}
-        return Response(wof_resp.content, headers=headers)
+        return Response(url, status=302, headers={'Location': url})
     
-    geojson = wof_resp.json()
+    geojson = requests.get(url).json()
     geom = shapely.geometry.shape(geojson.get('geometry', {}))
     print('Raw {} chars of WKT with area {:.6f}'.format(len(str(geom)), geom.area))
 
