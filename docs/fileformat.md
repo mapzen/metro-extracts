@@ -2,8 +2,6 @@
 
 Once you select a Metro Extract from https://mapzen.com/data/metro-extracts/, there are several different types of spatial data file formats to choose from. The picture below shows the variety of options available for every Metro Extract. These range from raw, unformatted data that's awesome for data processing to data that's organized to make sense for use in software applications or for web mapping.
 
-![Available spatial data types for Dubai](./images/dubai_download_formats.png)
-
 **Not sure what to pick?**
 Here's a simple diagram that explains the variety of file formats:
 ![File format workflow diagram](./images/fileformat.png)

@@ -1,8 +1,8 @@
 # Walkthrough: Extract OpenStreetMap data for display in QGIS
 
-Metro Extracts are chunks of OpenStreetMap data clipped to the rectangular region surrounding a particular city or region of interest.
+Metro Extracts are chunks of OpenStreetMap data clipped to the rectangular region surrounding a particular city or region of interest. There are extracts available for immediate download of the top 200 most popular regions and you can also create [custom extracts](custom-extracts.md) that are available within 30-60 minutes.
 
-In this walkthrough, you will download the extracted OSM data for a region and load the file into QGIS, which is a free, open-source desktop GIS application. You will use QGIS to explore the structure of the extracts and make a map of roads and places in Lisbon, Portugal. You can follow along by downloading the data for Lisbon, or choose a different city.
+This walkthrough will cover how to download an extract of OSM data for a region and load the file into [QGIS](http://www.qgis.org/en/site/), which is a free, open-source desktop GIS application. Covered in this walkthrough is how to download data from Metro Extracts, which file format to pick, how to open the data in QGIS, and how to make a map of Sydney, Australia. You can follow along by downloading the data for Sydney, or choose a different city.
 
 ##Requirements:
 
