@@ -8,6 +8,7 @@ from threading import Thread
 from uuid import uuid4
 from time import time
 
+from dateutil.parser import parse as parse_datetime
 from jinja2 import Environment, PackageLoader
 from flask import (
     Blueprint, url_for, session, render_template, jsonify, redirect, request,
@@ -59,8 +60,8 @@ def get_odes_extracts(db, api_keys):
         if resp.status_code in range(200, 299):
             odeses.extend([data.ODES(str(oj['id']), status=oj['status'], bbox=oj['bbox'],
                                      links=oj.get('download_links', {}),
-                                     processed_at=oj['processed_at'],
-                                     created_at=oj['created_at'])
+                                     processed_at=parse_datetime(oj['processed_at']),
+                                     created_at=parse_datetime(oj['created_at']))
                            for oj in resp.json()])
     
     for odes in sorted(odeses, key=attrgetter('created_at'), reverse=True):
@@ -90,8 +91,8 @@ def get_odes_extract(db, id, api_keys):
                 oj = resp.json()
                 odes = data.ODES(str(oj['id']), status=oj['status'], bbox=oj['bbox'],
                                  links=oj.get('download_links', {}),
-                                 processed_at=oj['processed_at'],
-                                 created_at=oj['created_at'])
+                                 processed_at=parse_datetime(oj['processed_at']),
+                                 created_at=parse_datetime(oj['created_at']))
                 break
     
         if odes is None:
@@ -142,8 +143,8 @@ def request_odes_extract(extract, request, url_for, api_key):
     
     return data.ODES(str(oj['id']), status=oj['status'], bbox=oj['bbox'],
                      links=oj.get('download_links', {}),
-                     processed_at=oj['processed_at'],
-                     created_at=oj['created_at'])
+                     processed_at=parse_datetime(oj['processed_at']),
+                     created_at=parse_datetime(oj['created_at']))
 
 def populate_link_downloads(odes_links):
     '''
