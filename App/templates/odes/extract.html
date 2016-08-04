@@ -76,7 +76,7 @@
       </div>
       <h3>Update Extract</h3>
       <form method="post" action="{{ url_for('ODES.post_envelope') }}">
-        <p>Your extract was generated at {{extract.odes.created_at}}. If you'd like to update it to the most recent OSM data, click the button below. This will take 30-60 minutes to complete, and you will receive another email when it's finished.</p>
+        <p>Your extract was generated at {{ extract.odes.created_at.strftime('%Y %B %d, at %I:%M %p') }}. If you'd like to update it to the most recent OSM data, click the button below. This will take 30-60 minutes to complete, and you will receive another email when it's finished.</p>
         <button class="btn btn-transparent">Update Extract</button>
         <input name="wof_id" value="{{ extract.wof.id or '' }}" type="hidden">
         <input name="wof_name" value="{{ extract.wof.name or '' }}" type="hidden">

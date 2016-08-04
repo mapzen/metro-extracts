@@ -30,7 +30,7 @@
           <!-- <div class="map" id="map-{{extract.odes.id}}"></div> -->
           <span class="info">{{extract.name or extract.wof.name or extract.id or extract.odes.id}}</span>
           <span class="info">{{extract.odes.status}}</span>
-          <span class="info time">{{extract.odes.created_at}}</span>
+          <span class="info time">{{ extract.odes.created_at.strftime('%Y %B %d, at %I:%M %p') }}</span>
         </a>
       {% endfor %}
     </div>
@@ -42,12 +42,6 @@
 {% endblock %}
 
 {% block script %}
-  var inputFormat = d3.time.format.utc('%Y-%m-%dT%H:%M:%S.%LZ');
-  var outputFormat = d3.time.format("%Y %B %d, at %I:%M %p");
-  d3.selectAll(".time").text(function(){
-    var t = d3.select(this).text();
-    return outputFormat(inputFormat.parse(t));
-  });
   {% for extract in extracts %}
     /* Extracts().init(
       {{ extract.odes.bbox|safe }}, 
