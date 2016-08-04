@@ -18,3 +18,5 @@ beautifulsoup4==4.4.1
 httmock==1.2.5
 psycopg2==2.6.1
 mock==2.0.0
+
+Shapely==1.5.16
