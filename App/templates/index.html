@@ -55,9 +55,9 @@
           {% endfor %}
         </div>
         <div id="make-request">
-          <p class="default-request-text request-greater-1 request-messaging">We don't have an extract for <span class="name"></span> ready to download. But you can make your own!</p>
+          <p class="default-request-text request-greater-1 request-messaging">We don't have an extract for <span class="name"></span> ready to download, but you can make your own!</p>
           <p class="encompassed-text request-messaging">You can make your own extract for <span class="name"></span> too!</p>
-          <p class="request-greater-1 encompassed-text default-request-text request-messaging">Drag the corners of the blue box on the map to define your custom extract.</p>
+          <p class="request-greater-1 encompassed-text default-request-text request-messaging">Step 1: Confirm ​the boundaries of your custom extract. Drag the corners of the blue box on the map to adjust.</p>
           <p class="request-greater-5 request-messaging">Sorry, the area you have defined for <span class="name"></span> is too large. Drag the corners of the blue box on the map to make it smaller.</p>
           <form action="{{ url_for('ODES.post_envelope') }}" method="post">
             <input name="bbox_n" type="hidden" />
@@ -67,8 +67,8 @@
             <input name="wof_id" type="hidden" />
             <input name="wof_name" type="hidden" />
             <div style="margin-bottom: 10px;">
-              <label>Your Extract Name:</label>
-              <input name="display_name" type="text" style="width:300px;" />
+              <label>Step 2: Choose a name for your extract:</label>
+              <input name="display_name" type="text" />
             </div>
             <button class="btn btn-transparent">Get Extract</button>
           </form>
