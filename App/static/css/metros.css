@@ -215,9 +215,13 @@ body.data-pages .inline-submit .btn:hover {
   background: rgba(110,160,164,.3);
   padding: 20px;
   margin-top: 30px;
+  font-size: 14px;
+}
+#make-request .btn {
+  background: rgba(110,160,164,.35);
 }
 #make-request .btn:hover {
-  background: rgba(110,160,164,.4);
+  background: rgba(110,160,164,.5);
 }
 #content-wrapper .request-messaging {
   display: none;
@@ -251,9 +255,13 @@ body.data-pages .inline-submit .btn:hover {
 }
 #make-request .note {
   margin-top: 20px;
-  font-size: 14px;
   font-style: italic;
   margin-bottom: 0;
+}
+#make-request input[type="text"] {
+  width: 250px;
+  padding: 3px 5px;
+  height: auto;
 }
 .autocomplete {
   border: 1px solid #ddd;
