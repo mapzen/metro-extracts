@@ -1,11 +1,10 @@
-##Choose a file format
+##Choose a file format in Metro Extracts
 
 Once you select a Metro Extract from https://mapzen.com/data/metro-extracts/, there are several different types of spatial data file formats to choose from. The picture below shows the variety of options available for every Metro Extract. These range from raw, unformatted data that's awesome for data processing to data that's organized to make sense for use in software applications or for web mapping.
 
 ![Available spatial data types for Dubai](./images/dubai_download_formats.png)
 
-
-####Not sure what to pick?
+**Not sure what to pick?**
 Here's a simple diagram that explains the variety of file formats:
 ![File format workflow diagram](./images/fileformat.png)
 
@@ -89,7 +88,7 @@ The **OSM2PGSQL** file format separates the OpenStreetMap data from the Metro Ex
 That's a lot of information to explain that this is a helipad. Every OSM tag that could be applied to a point, line, or polygon is stored as a feature property within that point, line, or polygon. This file format is great if you want some refinement of the OSM data, but still want to see all possible tags for every feature.
 
 
-### Data split by OpenStreetMap tags
+### Data split by OSM tags
 
 The **IMPOSM** file format is the most refined file format offered in Metro Extracts. This format generates multiple files, separated by OSM tag and sorted into logical types such as:
 - Administrative boundaries
