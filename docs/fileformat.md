@@ -88,7 +88,8 @@ That's a lot of information to explain that this is a helipad. Every OSM tag tha
 
 ## Data split by OSM tags
 
-The **IMPOSM** file format is the most refined file format offered in Metro Extracts. This format generates multiple files, separated by OSM tag and sorted into logical types such as:
+The **IMPOSM** file format is the most refined file format offered in Metro Extracts. This format generates multiple files, separated by **OSM tags** and sorted into logical types such as:
+
 - Administrative boundaries
 - Aeroways
 - Amenities
@@ -104,7 +105,7 @@ The naming for these layers comes straight from OpenStreetMap and might be confu
 
 This file format follows the [IMPOSM specifications](https://imposm.org/docs/imposm/latest/database_schema.html#tables), but differs a little. For instance, roads are simplified to include motorways and railways. If the filename has the suffix gen, it’s been generalized.
 
-## Raw OSM Data
+## Raw OSM data
 
 The raw, unformatted data in Metro Extracts from OpenStreetMap is stored in two formats: [**PBF**](http://wiki.openstreetmap.org/wiki/PBF_Format) and [**XML**](http://wiki.openstreetmap.org/wiki/OSM_XML). This data is intended for use in a database (SQL for instance) as it includes *everything* from the extract and is not simplified at all. If you want to make custom groupings of the data through your own processing, this is the type for you! There are two options for this raw data format- PBF or XML. There are more specific reasons to use one over another, but PBF is a more compressed version, allowing for faster downloads.
 

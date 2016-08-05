@@ -73,7 +73,7 @@ In OSM, a feature is identified through a [tag](http://wiki.openstreetmap.org/wi
 1. Under Layers, right-click the sydney_australia_osm_line layer and click Open Attribute Table.
 2. In the table, the columns across the top represent the most common keys. The rows are individual features in the OSM database referenced by their OSM identification number. As you look through the attribute values, notice that most of the them are `NULL`, indicating that the tag has not been populated.
 
-    ![osm2pgsql line attribute table](./image/osm2pgsql_attributes.png)
+    ![osm2pgsql line attribute table](./images/osm2pgsql_attributes.png)
 
 3. Scroll the table to the right to see the highways field and scroll down to see the values in that field.
 
@@ -87,7 +87,7 @@ As you looked through the table, you may have noticed a few features with a valu
 4. Under Values, click All to get a listing of the available values for the highways field.
 5. Double-click `motorway` to add it to the expression. Your expression should read: ``"highway" = 'motorway'``.
 
-    ![Query for motorways](./image/sydney_query.png)
+    ![Query for motorways](./images/sydney_query.png)
 
 6. Click the Test button to verify the syntax of your query. You should receive a message indicating that over 1,000 rows were returned. If not, make sure your text matches the text in the image.
 7. Click OK.
@@ -107,7 +107,7 @@ Because motorways are major roads, they should be displayed with a thicker line.
 3. Find the Motorway symbol in the list of styles and click it.
 4. Click OK to apply the symbol.
 
-    ![Overlapping motorway symbols](./image/symbol_overlap.png)
+    ![Overlapping motorway symbols](./images/symbol_overlap.png)
 
 Because each line feature is being rendered individually, the symbols overlap. Instead, the lines should be drawn as one, continuous feature. You can use a technique called symbol level drawing to merge symbol boundaries.
 
@@ -116,7 +116,7 @@ Because each line feature is being rendered individually, the symbols overlap. I
 7. Check Enable symbol levels.
 8. Click OK on all dialog boxes.
 
-    ![Merged line symbols](./image/sydney_level_lines.png)
+    ![Merged line symbols](./images/sydney_level_lines.png)
 
 Note that there are other cartographic functions on the Styles tab to improve the appearance of the lines layer, including transparency. You can experiment with these on your own.
 
@@ -151,7 +151,7 @@ The features in the places layer are drawn with one symbol, but you can use the 
 
 Beyond QGIS on the desktop, there are many web-based tools you can use to display GeoJSON. Some of the websites you can use without scripting include [geojson.io](http://geojson.io/) and the [GitHub website](https://help.github.com/articles/mapping-geojson-files-on-github/). Not all applications support large numbers of features or direct editing of GeoJSON, so you may need to convert to another format. Consult the documentation for the software you are using to learn more about its capabilities and limitations.
 
-## tutorial summary and new cities for Metro Extracts
+## Tutorial summary and new cities for Metro Extracts
 
 In this tutorial, you downloaded different file formats of Metro Extracts, added the layers to QGIS, and performed queries and set symbols for the features. You should have a better idea of the contents of each download so you can decide which one works best for your project. To learn how to create custom extracts, follow this [tutorial](custom-extracts.md).
 

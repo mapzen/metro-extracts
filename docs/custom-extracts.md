@@ -1,15 +1,15 @@
-## Create a custom Metro Extract
+# Create a custom Metro Extract
 
 Is the location you're looking for not on the extract list? Mapzen hosts the top 200 of the world's most popular metro areas available for immediate download, but also allows for the creation of custom extracts.
 
-![Map of Popular Extracts](./image/extracts_map.png)
+![Map of Popular Extracts](./images/extracts_map.png)
 
-### Custom Extract Walkthrough
+## Custom Extract walkthrough
 
 1. Go to the Metro Extracts download page at https://mapzen.com/data/metro-extracts/
 2. Type in the location you want a custom extract for. You'll see the geographic hierarchy of the feature in the dropdown menu, allowing you to make a more precise extract.
 
-    ![Custom Extract Dropdown Menu](./image/custom_searchbar.png)
+    ![Custom Extract Dropdown Menu](./images/custom_searchbar.png)
 
 3. Once you've selected a place from the dropdown menu, a solid blue bounding box will appear on the map. You can drag this to specify the boundaries of the extract. You'll see in the example below, that if you request a custom extract near a popular extract, you'll see a red line outlining the popular extract.
 
