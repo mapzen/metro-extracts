@@ -451,7 +451,7 @@ class TestApp (unittest.TestCase):
     def test_redirect(self):
         resp = self.client.get('/data/metro-extracts-alt')
         self.assertEqual(resp.status_code, 301)
-        self.assertEqual(_url_prefix, resp.headers.get('Location'))
+        self.assertTrue(resp.headers.get('Location').endswith('/data/metro-extracts'))
 
 class TestAppPrefix (TestApp):
     _url_prefix = '/{}'.format(uuid4())
