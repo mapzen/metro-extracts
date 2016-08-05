@@ -4,6 +4,8 @@ Metro Extracts are chunks of OpenStreetMap data clipped to the rectangular regio
 
 This tutorial will cover how to download an extract of OSM data for a region and load the file into [QGIS](http://www.qgis.org/en/site/), which is a free, open-source desktop GIS application. Covered in this tutorial is how to download data from Metro Extracts, which file format to pick, how to open the data in QGIS, and how to make a map of Sydney, Australia. You can follow along by downloading the data for Sydney, or choose a different city.
 
+For this tutorial, we are going to look at two types of file formats suitable for a typical mapping workflow in QGIS. These two types are processed to different levels of granularity that can be useful for different reasons. One file type separates the OSM data by geometry type, this is the [osm2pgsql](http://wiki.openstreetmap.org/wiki/Osm2pgsql) extract. The other, the [imposm](https://imposm.org/) extract, is a bit more processed and separates the OSM data by the different tags, separating the data into logical layers like roads, administrative boundaries, buildings, and so on.
+
 ### Requirements
 
 1. An Internet connection with the ability to download the Metro Extract files. The Sydney data used in this exercise is approximately 23 MB, but downloads for other cities range from 2 MB to 350 MB.
@@ -21,8 +23,9 @@ This tutorial will cover how to download an extract of OSM data for a region and
 
     ![Sydney extract file formats](./images/sydney_extract.png)
 
-  For this tutorial, we are going to look at two types of file formats suitable for a typical mapping workflow in QGIS. These two types are processed to different levels of granularity that can be useful for different reasons. One file type separates the OSM data by geometry type, this is the [osm2pgsql](http://wiki.openstreetmap.org/wiki/Osm2pgsql) extract. The other, the [imposm](https://imposm.org/) extract, is a bit more processed and separates the OSM data by the different tags, separating the data into logical layers like roads, administrative boundaries, buildings, and so on.
 5. Select one of each of the processed data types (osm2pgsql and imposm) on the extract page. Each of these file formats has two different options: GeoJSON or Shapefile. For the sake of this tutorial, we'll be using one of each option to look at the differences between the different OSM extract types as well as different spatial data file formats.
+
+### Download the file formats
 
 ![Select the file formats for Sydney](./images/file_format_sydney.png)
 
