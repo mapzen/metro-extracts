@@ -19,7 +19,7 @@ For this tutorial, we are going to look at two types of file formats suitable fo
 
 2. The left part of the page has a list of the top 200 popular metro extract areas that are available for immediate download. For this tutorial, we'll be choosing Sydney, Australia which is on the list. [Custom extracts](custom-extracts.md) can also be created.
 3. To select Sydney, you can scroll down the list until you see the extract's name (note that they are organized by country), use the search bar, or zoom into the map on the right side of the page. Once you've navigated to the extract, click on 'Sydney' to choose a file format.
-4. Once you've selected a metro extract, you are navigated to a page which allows you to look at the extract on a map, and select a file format to download. There are a multitude of formats available, depending on what you intend to use this data for. Learn more about [file formats](fileformat.md) in Metro Extracts.
+4. Once you've selected a metro extract, you are navigated to a page which allows you to look at the extract on a map, and select a file format to download. There are a multitude of formats available, depending on what you intend to use this data for. Learn more about [file formats](file-format.md) in Metro Extracts.
 
     ![Sydney extract file formats](./images/sydney_extract.png)
 
