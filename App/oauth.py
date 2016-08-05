@@ -1,4 +1,5 @@
 from os import environ
+from os.path import basename
 from urllib.parse import urlencode, urlunparse, urljoin
 from functools import wraps
 from uuid import uuid4
@@ -45,24 +46,28 @@ def check_authentication(untouched_route):
                     )
         
         else:
+            envelope_path = url_for('ODES.get_envelope', envelope_id=basename(request.path))
+            is_envelope = bool(envelope_path == request.path)
             is_returning = bool('been here before' in session)
+            should_see_interstitial = is_envelope and not is_returning
+
             access_token = session.get('token', {}).get('access_token', None)
             user_id = session.get('id', {}).get('id', None)
             
             if access_token is None or user_id is None:
-                return make_401_response(is_returning)
+                return make_401_response(should_see_interstitial)
 
             resp = get(mapzen_currdev_url,
                        headers={'Authorization': 'Bearer {}'.format(access_token)})
             
             if resp.status_code in range(400, 499):
-                return make_401_response(is_returning)
+                return make_401_response(should_see_interstitial)
         
         return untouched_route(*args, **kwargs)
     
     return wrapper
 
-def make_401_response(is_returning):
+def make_401_response(should_see_interstitial):
     ''' Create an HTTP 401 Not Authorized response to trigger Mapzen OAuth.
     
         Start by redirecting the user to Mapzen OAuth authorization page:
@@ -81,11 +86,11 @@ def make_401_response(is_returning):
     args.update(client_id=current_app.config['MAPZEN_APP_ID'], state=state_id)
     args.update(response_type='code')
     
-    if is_returning:
-        return redirect(mapzen_authorize_url+'?'+urlencode(args), 302)
+    if should_see_interstitial:
+        return make_response(render_template('error-authenticate.html', util=util,
+                                             href=mapzen_authorize_url, **args), 401)
 
-    return make_response(render_template('error-authenticate.html', util=util,
-                                         href=mapzen_authorize_url, **args), 401)
+    return redirect(mapzen_authorize_url+'?'+urlencode(args), 302)
 
 def absolute_url(request, location):
     '''
