@@ -3,14 +3,14 @@
 PATH := $(shell pwd)/env/bin:$(PATH)
 SHELL := /bin/bash # required for OSX
 
-all: npm clean-dist build-borders build-metro-extracts copy-assets
+all: npm clean-dist build-borders build-metro-extracts-old copy-assets
 	@printf '\nDone.\n'
 
 borders: npm clean-dist build-borders copy-assets
 
-metro-extracts: npm clean-dist build-metro-extracts copy-assets
+metro-extracts-old: npm clean-dist build-metro-extracts-old copy-assets
 
-rebuild: build-borders build-metro-extracts
+rebuild: build-borders build-metro-extracts-old
 
 # Install dependencies
 npm:
@@ -36,7 +36,7 @@ build-borders:
 	@cp -v src/scripts/borders.js dist/borders
 	@npm run build borders
 
-build-metro-extracts:
+build-metro-extracts-old:
 	@mkdir -p dist/metro-extracts-old
 	@cp -v src/scripts/metro.js dist/metro-extracts-old
 	@npm run build metro-extracts-old
