@@ -447,6 +447,11 @@ class TestApp (unittest.TestCase):
         self.assertEqual(o.id, str(999))
         self.assertEqual(url_for.mock_calls[0], mock.call('ODES.get_extract', extract_id=extract_id))
         self.assertEqual(url_for.mock_calls[1], mock.call('ODES.get_extracts'))
+    
+    def test_redirect(self):
+        resp = self.client.get('/data/metro-extracts-alt')
+        self.assertEqual(resp.status_code, 301)
+        self.assertEqual(_url_prefix, resp.headers.get('Location'))
 
 class TestAppPrefix (TestApp):
     _url_prefix = '/{}'.format(uuid4())
