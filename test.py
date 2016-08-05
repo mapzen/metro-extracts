@@ -449,9 +449,21 @@ class TestApp (unittest.TestCase):
         self.assertEqual(url_for.mock_calls[1], mock.call('ODES.get_extracts'))
     
     def test_redirect(self):
-        resp = self.client.get('/data/metro-extracts-alt')
-        self.assertEqual(resp.status_code, 301)
-        self.assertTrue(resp.headers.get('Location').endswith('/data/metro-extracts'))
+        resp1 = self.client.get('/data/metro-extracts-alt')
+        self.assertEqual(resp1.status_code, 301)
+        self.assertTrue(resp1.headers.get('Location').endswith('/data/metro-extracts'))
+
+        resp2 = self.client.get('/data/metro-extracts-alt/')
+        self.assertEqual(resp2.status_code, 301)
+        self.assertTrue(resp2.headers.get('Location').endswith('/data/metro-extracts/'))
+
+        resp3 = self.client.get('/data/metro-extracts-alt/odes/extracts')
+        self.assertEqual(resp3.status_code, 301)
+        self.assertTrue(resp3.headers.get('Location').endswith('/data/metro-extracts/odes/extracts'))
+
+        resp4 = self.client.get('/data/metro-extracts-alt/oauth/hello')
+        self.assertEqual(resp4.status_code, 301)
+        self.assertTrue(resp4.headers.get('Location').endswith('/data/metro-extracts/oauth/hello'))
 
 class TestAppPrefix (TestApp):
     _url_prefix = '/{}'.format(uuid4())

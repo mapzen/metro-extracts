@@ -10,3 +10,12 @@ def apply_redirect_blueprint(app):
 @blueprint.route('/data/metro-extracts-alt')
 def index():
     return Response('', status=301, headers={'Location': '/data/metro-extracts'})
+
+@blueprint.route('/data/metro-extracts-alt/')
+def trailing_slash():
+    return Response('', status=301, headers={'Location': '/data/metro-extracts/'})
+
+@blueprint.route('/data/metro-extracts-alt/<path:path>')
+def trailing_path(path=''):
+    location = '/data/metro-extracts/' + path
+    return Response('', status=301, headers={'Location': location})
