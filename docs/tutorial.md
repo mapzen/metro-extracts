@@ -1,4 +1,4 @@
-# tutorial: Extract OpenStreetMap data for display in QGIS
+# Tutorial: Extract OpenStreetMap data for display in QGIS
 
 Metro Extracts are chunks of OpenStreetMap data clipped to the rectangular region surrounding a particular city or region of interest. There are extracts available for immediate download of the top 200 most popular regions and you can also create [custom extracts](custom-extracts.md) that are available within 30-60 minutes.
 
