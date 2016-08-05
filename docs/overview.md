@@ -13,4 +13,4 @@ Thus the original Metro Extracts, which provided downloads of metro areas, was c
 Eventually Mapzen took on running and releasing Metro Extracts. There is a [chef recipe](https://github.com/mapzen/chef-metroextractor) to do it (if you think about food and not code, [learn more about Chef here](https://docs.getchef.com/essentials_cookbook_recipes.html)), which makes maintenance and updating the extracts easier.
 
 ## Use Metro Extracts
-To get started with Metro Extracts, follow the [walkthrough](walkthrough.md) to learn how to download an extract, open it in a GIS application, and create a map. You can also learn more about the [file formats](fileformat.md) available for download or how to create a [custom extract](custom-extracts.md).
+To get started with Metro Extracts, follow the [tutorial](tutorial.md) to learn how to download an extract, open it in a GIS application, and create a map. You can also learn more about the [file formats](fileformat.md) available for download or how to create a [custom extract](customextract.md).

@@ -1,10 +1,10 @@
-# Walkthrough: Extract OpenStreetMap data for display in QGIS
+# tutorial: Extract OpenStreetMap data for display in QGIS
 
 Metro Extracts are chunks of OpenStreetMap data clipped to the rectangular region surrounding a particular city or region of interest. There are extracts available for immediate download of the top 200 most popular regions and you can also create [custom extracts](custom-extracts.md) that are available within 30-60 minutes.
 
-This walkthrough will cover how to download an extract of OSM data for a region and load the file into [QGIS](http://www.qgis.org/en/site/), which is a free, open-source desktop GIS application. Covered in this walkthrough is how to download data from Metro Extracts, which file format to pick, how to open the data in QGIS, and how to make a map of Sydney, Australia. You can follow along by downloading the data for Sydney, or choose a different city.
+This tutorial will cover how to download an extract of OSM data for a region and load the file into [QGIS](http://www.qgis.org/en/site/), which is a free, open-source desktop GIS application. Covered in this tutorial is how to download data from Metro Extracts, which file format to pick, how to open the data in QGIS, and how to make a map of Sydney, Australia. You can follow along by downloading the data for Sydney, or choose a different city.
 
-## Requirements:
+### Requirements:
 
 1. An Internet connection with the ability to download the Metro Extract files. The Sydney data used in this exercise is approximately 23 MB, but downloads for other cities range from 2 MB to 350 MB.
 2. QGIS and its dependencies, such as GDAL. QGIS is available for multiple platforms, including Windows and Mac. If you need to install QGIS, follow the instructions for your [operating system](https://www.qgis.org/en/site/forusers/download.html). The tutorial is written using QGIS 2.14 (Essen).
@@ -15,21 +15,22 @@ This walkthrough will cover how to download an extract of OSM data for a region 
 
   ![Metro Extracts Page](./images/metroextracts.png)
 
-2. The left part of the page has a list of the top 200 popular metro extract areas that are available for immediate download. For this walkthrough, we'll be choosing Sydney, Australia which is on the list. [Custom extracts](custom-extracts.md) can also be created.
+2. The left part of the page has a list of the top 200 popular metro extract areas that are available for immediate download. For this tutorial, we'll be choosing Sydney, Australia which is on the list. [Custom extracts](custom-extracts.md) can also be created.
 3. To select Sydney, you can scroll down the list until you see the extract's name (note that they are organized by country), use the search bar, or zoom into the map on the right side of the page. Once you've navigated to the extract, click on 'Sydney' to choose a file format.
-<!-- insert three images of different ways to navigate here -->
 4. Once you've selected a metro extract, you are navigated to a page which allows you to look at the extract on a map, and select a file format to download. There are a multitude of formats available, depending on what you intend to use this data for. Learn more about [file formats](fileformat.md) in Metro Extracts.
-<!-- insert image of file formats here -->
-For this tutorial, we are going to look at two types of file formats suitable for a typical mapping workflow in QGIS. These two types are processed to different levels of granularity that can be useful for different reasons. One file type separates the OSM data by geometry type, this is the [osm2pgsql](http://wiki.openstreetmap.org/wiki/Osm2pgsql) extract. The other, the [imposm](https://imposm.org/) extract, is a bit more processed and separates the OSM data by the different tags, separating the data into logical layers like roads, administrative boundaries, buildings, and so on.
-5. Select one of each of the processed data types (osm2pgsql and imposm) on the extract page. Each of these file formats has two different options: GeoJSON or Shapefile. For the sake of this walkthrough, we'll be using one of each option to look at the differences between the different OSM extract types as well as different spatial data file formats.
 
-<!-- insert image of chosen file formats here -->
+  ![Sydney extract file formats](./image/sydney_extract.png)
+
+For this tutorial, we are going to look at two types of file formats suitable for a typical mapping workflow in QGIS. These two types are processed to different levels of granularity that can be useful for different reasons. One file type separates the OSM data by geometry type, this is the [osm2pgsql](http://wiki.openstreetmap.org/wiki/Osm2pgsql) extract. The other, the [imposm](https://imposm.org/) extract, is a bit more processed and separates the OSM data by the different tags, separating the data into logical layers like roads, administrative boundaries, buildings, and so on.
+5. Select one of each of the processed data types (osm2pgsql and imposm) on the extract page. Each of these file formats has two different options: GeoJSON or Shapefile. For the sake of this tutorial, we'll be using one of each option to look at the differences between the different OSM extract types as well as different spatial data file formats.
+
+![Select the file formats for Sydney](./image/file_format_sydney.png)
 
   1. Under the OSM2PGSQL heading, click on the SHAPEFILE button to download the files.
   2. Under the IMPOSM heading, click on the GeoJSON button to download the files.
   3. Find the downloaded files on disk (by default, they will be in your machine's download folder) and unzip them if they were not unzipped automatically. There should be two folders, each containing the appropriate Metro Extracts files.
 
-Note: If you are using Safari as your browser, your downloads may get unzipped automatically and the folders be named slightly differently than those shown in this walkthrough.
+Note: If you are using Safari as your browser, your downloads may get unzipped automatically and the folders be named slightly differently than those shown in this tutorial.
 
 While a GeoJSON is a single .geojson file on disk, one shapefile is made of individual files (.shp, .dbf, .prj, and so on), so do not delete or move individually any of these constituent files to avoid corrupting the shapefile and having to download it again. If you manage the files through GIS software, the components are treated as a whole entity and are updated appropriately.
 
@@ -65,7 +66,7 @@ The shapefiles and GeoJSONs all have a spatial reference of WGS 84, and more spe
 
 ### View the extract's attribute values
 
-The line layer has over 100,000 features in it, representing every line in OSM in this region, although you are only interested in mapping roads for this walkthrough. You can view the attribute table to understand the search terms to use to limit the display to only certain features.
+The line layer has over 100,000 features in it, representing every line in OSM in this region, although you are only interested in mapping roads for this tutorial. You can view the attribute table to understand the search terms to use to limit the display to only certain features.
 
 In OSM, a feature is identified through a [tag](http://wiki.openstreetmap.org/wiki/Tags) that describes the attributes as a key and a value. The key is a broad category, such as `highway`, and the value provides more details, such as the type of road or its name.
 
@@ -130,7 +131,7 @@ The imposm extraction process results in a series of individual layers named by 
 
 In the imposm process, the categorization of features into particular layers is determined by the listing and hierarchy in a [JSON file](https://github.com/mapzen/chef-metroextractor/blob/master/files/default/mapping.json). In some cases, this may result in certain OSM tags being in parts of multiple layers. If you cannot find a particular attribute value in the first layer you check, look through the other imposm files, or go back and export it from the osm2pgsql layer.
 
-###Change the symbols for the places layer
+### Change the symbols for the places layer
 
 The features in the places layer are drawn with one symbol, but you can use the attribute values to draw them in categories with different symbols for certain values.
 
@@ -150,9 +151,9 @@ The features in the places layer are drawn with one symbol, but you can use the 
 
 Beyond QGIS on the desktop, there are many web-based tools you can use to display GeoJSON. Some of the websites you can use without scripting include [geojson.io](http://geojson.io/) and the [GitHub website](https://help.github.com/articles/mapping-geojson-files-on-github/). Not all applications support large numbers of features or direct editing of GeoJSON, so you may need to convert to another format. Consult the documentation for the software you are using to learn more about its capabilities and limitations.
 
-## Walkthrough summary and new cities for Metro Extracts
+## tutorial summary and new cities for Metro Extracts
 
-In this walkthrough, you downloaded different file formats of Metro Extracts, added the layers to QGIS, and performed queries and set symbols for the features. You should have a better idea of the contents of each download so you can decide which one works best for your project. To learn how to create custom extracts, follow this [walkthrough](custom-extracts.md).
+In this tutorial, you downloaded different file formats of Metro Extracts, added the layers to QGIS, and performed queries and set symbols for the features. You should have a better idea of the contents of each download so you can decide which one works best for your project. To learn how to create custom extracts, follow this [tutorial](custom-extracts.md).
 
 ### Data credits
 OpenStreetMap data: &copy; OSM contributors
