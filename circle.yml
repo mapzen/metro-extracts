@@ -16,9 +16,9 @@ general:
   artifacts:
     - "dist"
 
-deployment:
-  production:
-    branch: master
-    commands:
-      - ./deploy dev
-      - ./deploy prod
+# deployment:
+#   production:
+#     branch: master
+#     commands:
+#       - ./deploy dev
+#       - ./deploy prod
