@@ -4,10 +4,9 @@ title: Metro Extracts
 subtitle: City-sized portions of OpenStreetMap, served weekly
 introduction: |
   <div class="alert alert-success" role="alert" style="text-align:center; margin-bottom: 40px;">
-      <h2 style="font-size: 36px; margin-top: 0;">Try the updated Metro Extracts!</h2>
-      <p>We are excited to open up a new feature: your own custom extracts.</p>
-      <p>Search and get an extract for anywhere in the world within an hour! You're going to love it :)</p>
-      <a class="btn btn-transparent" style="color: #444; text-decoration: none;" href="https://mapzen.com/data/metro-extracts-alt/">SURE, I'LL TRY IT!</a>
+      <h2 style="font-size: 36px; margin-top: 0;">Metro Extracts just got an upgrade!</h2>
+      <p>Try it <a href="https://mapzen.com/data/metro-extracts/">here</a>. We have made creating custom extracts super easy. Give it a spin and send us <a href="mailto:hello@mapzen.com">your feedback</a>!</p>
+      <p>This old version with only be available for a short period of time.</p>
   </div>
   <p>
     Now it’s even easier to get local data so you can start building cool stuff. Each week, we automatically extract the latest <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area shapefiles in a variety of formats for you to use.
