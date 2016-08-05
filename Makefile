@@ -37,6 +37,6 @@ build-borders:
 	@npm run build borders
 
 build-metro-extracts:
-	@mkdir -p dist/metro-extracts
-	@cp -v src/scripts/metro.js dist/metro-extracts
-	@npm run build metro-extracts
+	@mkdir -p dist/metro-extracts-old
+	@cp -v src/scripts/metro.js dist/metro-extracts-old
+	@npm run build metro-extracts-old
