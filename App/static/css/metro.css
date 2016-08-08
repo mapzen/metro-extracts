@@ -30,6 +30,9 @@ p.error {
   font-size: 12px;
   margin-left: 5px;
 }
+.dl-group {
+  margin-bottom: 5px;
+}
 @media (max-width: 768px) {
   body.data-pages #map {
     height: 300px;

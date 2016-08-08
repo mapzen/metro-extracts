@@ -74,10 +74,11 @@
         </div>
         <p>If you're unsure of which file to pick, check out our <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">format guide</a>.</p>
       </div>
-      <h3>Update Extract</h3>
+      <h3>Extract Details</h3>
       <form method="post" action="{{ url_for('ODES.post_envelope') }}">
-        <p>Your extract was generated on {{ extract.odes.created_at.strftime('%Y %B %d, at %I:%M %p') }}. If you'd like to update it to the most recent OSM data, click the button below. This will take 30-60 minutes to complete, and you will receive another email when it's finished.</p>
-        <button class="btn btn-transparent">Update Extract</button>
+        <p>Your extract was created on {{ extract.odes.created_at.strftime('%Y %B %d, at %I:%M %p') }}.</p>
+        <p>To update your extract with the latest OpenStreetMap data, click the button below. This will take 30-60 minutes to complete, and you will receive another email when it's finished.</p>
+        <button class="btn btn-transparent">Update {{extract.name or extract.wof.name or extract.id or extract.odes.id}}</button>
         <input name="wof_id" value="{{ extract.wof.id or '' }}" type="hidden">
         <input name="wof_name" value="{{ extract.wof.name or '' }}" type="hidden">
         <input name="display_name" value="{{ extract.name or '' }}" type="hidden">
