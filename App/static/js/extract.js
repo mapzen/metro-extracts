@@ -28,7 +28,7 @@ var Extract = function (){
     },
     showOutline : function(geojson_url) {
       d3.json(geojson_url, function(data){
-        if (data) {
+        if (data && data.geometry.type == "Feature") {
           outline = L.geoJson(data.geometry, { className : "outline" }).addTo(displayMap);
           displayMap.addLayer(outline);
         } else {
