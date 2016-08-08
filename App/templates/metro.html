@@ -23,8 +23,8 @@
         <a href="{{ url_for('ODES.get_extracts') }}">Your Custom Extracts</a> |
       {% endif %}
       <a href="https://mapzen.com/documentation/metro-extracts/">Documentation</a> | 
-      <a href="https://mapzen.com/documentation/metro-extracts/walkthrough/">Tutorial</a> | 
-      <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">File Format Guide</a>
+      <a href="https://mapzen.com/documentation/metro-extracts/tutorial/">Tutorial</a> | 
+      <a href="https://mapzen.com/documentation/metro-extracts/file-format/">File Format Guide</a>
     </div>
 
     {% if wof_id and wof_name %}
@@ -37,27 +37,27 @@
 
     <h3>Downloads</h3>
     <div id="downloads">
-      <div class="label">Datasets split by geometry type: lines, points, or polygons (<a href="https://mapzen.com/documentation/metro-extracts/overview/#osm2pgsql-and-imposm" class="label">OSM2PGSQL</a>)</div>
+      <div class="label">Datasets split by geometry type: lines, points, or polygons (<a href="https://mapzen.com/documentation/metro-extracts/file-format/#data-split-by-geometry" class="label">OSM2PGSQL</a>)</div>
       <div class="dl-group">
         <a class="link" href="{{ downloads['OSM2PGSQL SHP'].url }}" data-format="OSM2PGSQL SHP"> SHAPEFILE <span class="size">{{ downloads['OSM2PGSQL SHP'].size }}</span></a>
         <a class="link" href="{{ downloads['OSM2PGSQL GEOJSON'].url }}" data-format="OSM2PGSQL GEOJSON">GEOJSON <span class="size">{{ downloads['OSM2PGSQL GEOJSON'].size }}</span></a>
       </div>
-      <div class="label">Datasets grouped into individual layers by OpenStreetMap tags (<a href="https://mapzen.com/documentation/metro-extracts/overview/#osm2pgsql-and-imposm" class="label">IMPOSM</a>)</div>
+      <div class="label">Datasets grouped into individual layers by OpenStreetMap tags (<a href="https://mapzen.com/documentation/metro-extracts/file-format/#data-split-by-osm-tags" class="label">IMPOSM</a>)</div>
       <div class="dl-group">
         <a class="link" href="{{ downloads['IMPOSM SHP'].url }}" data-format="IMPOSM SHP">SHAPEFILE <span class="size">{{ downloads['IMPOSM SHP'].size }}</span></a>
         <a class="link" href="{{ downloads['IMPOSM GEOJSON'].url }}" data-format="IMPOSM GEOJSON">GEOJSON <span class="size">{{ downloads['IMPOSM GEOJSON'].size }}</span></a>
       </div>
-      <div class="label">Raw OpenStreetMap datasets (<a href="https://mapzen.com/documentation/metro-extracts/overview/#osm-pbf-and-osm-xml" class="label">PBF and XML</a>)</div>
+      <div class="label">Raw OpenStreetMap datasets (<a href="https://mapzen.com/documentation/metro-extracts/file-format/#raw-osm-data" class="label">PBF and XML</a>)</div>
       <div class="dl-group">
         <a class="link" href="{{ downloads['OSM PBF'].url }}" data-format="OSM PBF">OSM PBF <span class="size">{{ downloads['OSM PBF'].size }}</span></a>
         <a class="link" href="{{ downloads['OSM XML'].url }}" data-format="OSM XML">OSM XML <span class="size">{{ downloads['OSM XML'].size }}</span></a>
       </div>
-      <div class="label">Coastlines</div>
+      <div class="label">Coastlines (<a href="https://mapzen.com/documentation/metro-extracts/file-format/#coastlines" class="label">Shapefile</a>)</div>
       <div class="dl-group">
-        <a class="link" href="{{ downloads['WATER COASTLINE SHP'].url }}" data-format="WATER COASTLINE SHP">WATER SHAPEFILE <span class="size">{{ downloads['WATER COASTLINE SHP'].size }}</span></a>
-        <a class="link" href="{{ downloads['LAND COASTLINE SHP'].url }}" data-format="LAND COASTLINE SHP">LAND SHAPEFILE <span class="size">{{ downloads['LAND COASTLINE SHP'].size }}</span></a>
+        <a class="link" href="{{ downloads['WATER COASTLINE SHP'].url }}" data-format="WATER COASTLINE SHP">WATER<span class="size">{{ downloads['WATER COASTLINE SHP'].size }}</span></a>
+        <a class="link" href="{{ downloads['LAND COASTLINE SHP'].url }}" data-format="LAND COASTLINE SHP">LAND<span class="size">{{ downloads['LAND COASTLINE SHP'].size }}</span></a>
       </div>
-      <p>If you're unsure of which file to pick, check out our <a href="https://mapzen.com/documentation/metro-extracts/overview/#choose-a-file-format">format guide</a>.</p>
+      <p>If you're unsure of which file to pick, check out our <a href="https://mapzen.com/documentation/metro-extracts/file-format/">format guide</a>.</p>
     </div>
   </div>
 {% endblock %}
