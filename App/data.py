@@ -15,6 +15,8 @@ class WoF:
 class ODES:
     def __init__(self, id, status=None, created_at=None, processed_at=None, links=None, bbox=None):
         assert type(id) is not int
+        assert hasattr(created_at, 'strftime') or (created_at is None)
+        assert hasattr(processed_at, 'strftime') or (processed_at is None)
     
         self.id = id
         self.status = status
@@ -25,6 +27,8 @@ class ODES:
 
 class Extract:
     def __init__(self, id, name, envelope, odes, user_id, created, wof):
+        assert hasattr(created, 'strftime') or (created is None)
+
         self.id = id
         self.name = name
         self.envelope = envelope
