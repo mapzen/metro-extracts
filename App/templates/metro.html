@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+
+{% block styles %}
+  <link rel='stylesheet' href='{{ url_for('static', filename='css/metro.css') }}'>
+{% endblock %}
+
+{% block content %}
+  <div class="col-xs-12">
+    <ol class="breadcrumb">
+      <li>
+        <a href="{{ url_for('Metro-Extracts.index') }}">Metro Extracts</a>
+      </li>
+      <li class="active">{{ metro.name }}</li>
+    </ol>
+  </div>
+  <div class="col-sm-6 col-xs-12">
+    <div id="map"></div>
+  </div>
+  <div class="col-sm-6 col-xs-12">
+    <h2>{{ metro.name }}</h2>
+    <div class="btn-group" style="margin: 0 auto;">
+      {% if user_id %}
+        <a href="{{ url_for('ODES.get_extracts') }}">Your Custom Extracts</a> |
+      {% endif %}
+      <a href="https://mapzen.com/documentation/metro-extracts/">Documentation</a> | 
+      <a href="https://mapzen.com/documentation/metro-extracts/tutorial/">Tutorial</a> | 
+      <a href="https://mapzen.com/documentation/metro-extracts/file-format/">File Format Guide</a>
+    </div>
+
+    {% if wof_id and wof_name %}
+      <div id="encompassed">
+        <h3>{{ wof_name }}</h3>
+        <p>To clip this extract to the <span class="legend-blue">{{wof_name}} boundary</span>, use this outline:</p>
+        <a class="link" href="{{ url_for('Metro-Extracts.wof_geojson', id=wof_id)}}">{{wof_name}}  GEOJSON</a>
+      </div>
+    {% endif %}
+
+    <h3>Downloads</h3>
+    <div id="downloads">
+      <div class="label">Datasets split by geometry type: lines, points, or polygons (<a href="https://mapzen.com/documentation/metro-extracts/file-format/#data-split-by-geometry" class="label">OSM2PGSQL</a>)</div>
+      <div class="dl-group">
+        <a class="link" href="{{ downloads['OSM2PGSQL SHP'].url }}" data-format="OSM2PGSQL SHP"> SHAPEFILE <span class="size">{{ downloads['OSM2PGSQL SHP'].size }}</span></a>
+        <a class="link" href="{{ downloads['OSM2PGSQL GEOJSON'].url }}" data-format="OSM2PGSQL GEOJSON">GEOJSON <span class="size">{{ downloads['OSM2PGSQL GEOJSON'].size }}</span></a>
+      </div>
+      <div class="label">Datasets grouped into individual layers by OpenStreetMap tags (<a href="https://mapzen.com/documentation/metro-extracts/file-format/#data-split-by-osm-tags" class="label">IMPOSM</a>)</div>
+      <div class="dl-group">
+        <a class="link" href="{{ downloads['IMPOSM SHP'].url }}" data-format="IMPOSM SHP">SHAPEFILE <span class="size">{{ downloads['IMPOSM SHP'].size }}</span></a>
+        <a class="link" href="{{ downloads['IMPOSM GEOJSON'].url }}" data-format="IMPOSM GEOJSON">GEOJSON <span class="size">{{ downloads['IMPOSM GEOJSON'].size }}</span></a>
+      </div>
+      <div class="label">Raw OpenStreetMap datasets (<a href="https://mapzen.com/documentation/metro-extracts/file-format/#raw-osm-data" class="label">PBF and XML</a>)</div>
+      <div class="dl-group">
+        <a class="link" href="{{ downloads['OSM PBF'].url }}" data-format="OSM PBF">OSM PBF <span class="size">{{ downloads['OSM PBF'].size }}</span></a>
+        <a class="link" href="{{ downloads['OSM XML'].url }}" data-format="OSM XML">OSM XML <span class="size">{{ downloads['OSM XML'].size }}</span></a>
+      </div>
+      <div class="label">Coastlines (<a href="https://mapzen.com/documentation/metro-extracts/file-format/#coastlines" class="label">Shapefile</a>)</div>
+      <div class="dl-group">
+        <a class="link" href="{{ downloads['WATER COASTLINE SHP'].url }}" data-format="WATER COASTLINE SHP">WATER<span class="size">{{ downloads['WATER COASTLINE SHP'].size }}</span></a>
+        <a class="link" href="{{ downloads['LAND COASTLINE SHP'].url }}" data-format="LAND COASTLINE SHP">LAND<span class="size">{{ downloads['LAND COASTLINE SHP'].size }}</span></a>
+      </div>
+      <p>If you're unsure of which file to pick, check out our <a href="https://mapzen.com/documentation/metro-extracts/file-format/">format guide</a>.</p>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+  <script src='{{ url_for('static', filename='js/metro.js') }}'></script>
+{% endblock %}
+
+{% block script %}
+  var mapHeight = window.innerWidth < 768 ? 300 : Math.max(window.innerHeight - 114, 500);
+  d3.select("#map").style("height", mapHeight + 'px');
+
+  var metro = {{metro|tojson|safe}},
+    sceneURL = "{{ url_for('static', filename='scene.yaml') }}";
+
+  var metroPage = Metro().init(metro, sceneURL);
+
+  {% if wof_id and wof_name %}
+    metroPage.showOutline("{{ url_for('Metro-Extracts.wof_geojson', id=wof_id) }}");
+  {% endif %}
+
+  d3.selectAll(".link").on("click", function () {
+    var name = "{{ metro.name }}, {{ metro.country }}",
+      format = d3.select(this).attr("data-format");
+    ga('send', 'event', 'metroextracts', name, format);
+  });
+
+{% endblock %}

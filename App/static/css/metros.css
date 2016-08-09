@@ -1,0 +1,320 @@
+h1 {
+  margin-bottom: 10px;
+}
+h1 a {
+  font-weight: inherit;
+  color: inherit;
+}
+h1 a:hover {
+  color: inherit;
+}
+body.data-pages #search_input{
+  height:41px;
+}
+body.data-pages .inline-submit .btn { 
+  background: #666; 
+  color: white;
+}
+body.data-pages .inline-submit .btn:hover { 
+  background: #555; 
+}
+.map-wrapper {
+  padding: 0;
+}
+.col-sm-6, .col-xs-12 {
+  position: relative;
+}
+.map-wrapper {
+  position: absolute;
+  width: 50%;
+  right: 0;
+}
+#map {
+  border-left: 1px solid rgb(224,224,224);
+  position: fixed;
+  width: inherit;
+}
+#content-wrapper[class*="filtered"] #map {
+  position: absolute !important;
+  top: 0px !important;
+  width: 200% !important;
+}
+.drag-icon {
+  width: 10px;
+  height: 10px;
+  cursor: move;
+  background: #6ea0a4;
+}
+.leaflet-marker-icon.label {
+  margin-left: -1px !important;
+  font-size: 18px;
+  margin-top: -26px !important;
+  width: auto !important;
+  white-space: nowrap;
+  background-color: rgba(212,100,92,.9);
+  height: auto !important;
+  padding: 0 10px;
+  display: none;
+  cursor: pointer;
+}
+.leaflet-marker-icon.label a {
+  color: white;
+  font-weight: normal;
+}
+.leaflet-marker-icon.label a:hover {
+  color: black;
+}
+.z-8 .leaflet-marker-icon.label,
+.z-9 .leaflet-marker-icon.label {
+  font-size: 14px;
+  margin-top: -20px !important;
+  display: inline-block;
+}
+.z-10 .leaflet-marker-icon.label,
+.z-11 .leaflet-marker-icon.label,
+.z-12 .leaflet-marker-icon.label,
+.z-1 .leaflet-marker-icon.label {
+  display: inline-block;
+}
+#legend {
+  position: absolute;
+  bottom: 0;
+  background: rgba(255,255,255,.8);
+  z-index: 1;
+  padding: 5px 10px;
+  font-size: 14px;
+}
+#legend label {
+  font-weight: bold;
+}
+#legend .legend-row {
+  line-height: 15px;
+  margin-bottom: 5px;
+}
+#legend .box {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  background: rgba(212,100,92,.3);
+  border: 2px solid rgba(212,100,92,.5);
+  vertical-align: bottom;
+  margin-right: 3px;
+}
+#legend .custom {
+  display: none;
+}
+#map.request-mode #legend .custom .box {
+  background: rgba(110,160,164,.4);
+  border-color: rgba(110,160,164,.5);
+}
+#map.request-mode #legend .box {
+  background: transparent;
+  border: 3px solid rgba(212,100,92,.9); 
+}
+#map.request-mode .custom {
+  display: block;
+}
+#map.request-mode #legend .custom .box {
+  border-width: 2px;
+}
+
+#search-box {
+  margin: 20px 0;
+}
+#search-box .hasclear {
+  padding: 0;
+}
+#search-box #search_input {
+  width: 100%;
+}
+#search-box .fa-times {
+  position: absolute;
+  top: 10px;
+  right: 7px;
+  font-size: 16px;
+  background: rgb(224,224,224);;
+  width: 22px;
+  text-align: center;
+  border-radius: 15px;
+  height: 22px;
+  line-height: 21px;
+  cursor: pointer;
+  display: none;
+}
+#content-wrapper[class*="filtered-"] #search-box .fa-times {
+  display: inline-block;
+}
+#search-box .fa-times:hover {
+  background: #ccc;
+}
+.data-filter-label {
+  position:relative;
+  font-size:12px;
+  line-height:1;
+  font-weight:bold;
+  color:#000;
+  text-transform:uppercase;
+  width: 100%;
+}
+.data-filter-label.red {
+  color: #d4645c;
+}
+#content-wrapper[class*="filtered"] .data-filter-label.red {
+  display: none;
+}
+#content-wrapper[class*="filtered"] #extracts {
+  display: none;
+}
+#content-wrapper[class="filtered-encompassed"] #extracts {
+  display: block;
+}
+#extracts .country:first-child {
+  margin-top: 5px;
+}
+.country {
+  border-top: 1px solid rgb(224,224,224);
+  margin-top: 10px;
+}
+.country.no-line {
+  border-top: none;
+}
+.country.no-line .country-name {
+  display: none;
+}
+.country.no-line .city {
+  margin-left: 0;
+}
+.country-name {
+  background: rgb(224,224,224);
+  font-weight: bold;
+  text-transform: uppercase;
+  display: inline-block;
+  letter-spacing: 1px;
+  padding: 2px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  float: left;
+}
+.country-name:hover {
+  background: #ccc;
+}
+.city {
+  margin: 3px 0 3px 10px;
+  cursor: pointer;
+  clear: both;
+  color: #000;
+  font-weight: normal;
+  display: block;
+  text-transform: capitalize;
+}
+#search-error .name {
+  font-weight: bold;
+}
+#make-request {
+  display: none;
+  background: rgba(110,160,164,.3);
+  padding: 20px;
+  margin-top: 30px;
+  font-size: 14px;
+}
+#make-request .btn {
+  background: rgba(110,160,164,.35);
+}
+#make-request .btn:hover {
+  background: rgba(110,160,164,.5);
+}
+#content-wrapper .request-messaging {
+  display: none;
+}
+#content-wrapper.filtered-default .default-request-text {
+  display: block;
+}
+#content-wrapper.filtered-encompassed .encompassed-text {
+  display: block;
+}
+#content-wrapper.filtered-encompassed #make-request {
+  margin-top: 30px;
+}
+#content-wrapper.filtered-request-greater-1 .request-greater-1 {
+  display: block;
+}
+#content-wrapper.filtered-request-greater-5 .request-greater-5 {
+  display: block;
+}
+#content-wrapper.filtered-request-greater-5 #make-request {
+  background: rgba(212,100,92, .3);
+}
+#content-wrapper.filtered-request-greater-5 #make-request .btn {
+  display: none;
+}
+#content-wrapper.filtered-error #search-error {
+  display: block;
+}
+#content-wrapper.filtered-error #make-request {
+  display: none;
+}
+#make-request .note {
+  margin-top: 20px;
+  font-style: italic;
+  margin-bottom: 0;
+}
+#make-request input[type="text"] {
+  width: 250px;
+  padding: 3px 5px;
+  height: auto;
+}
+.autocomplete {
+  border: 1px solid #ddd;
+}
+.autocomplete .label {
+  font-size:12px;
+  font-weight:bold;
+  text-transform:uppercase;
+  color: #6ea0a4;
+  clear: both;
+  height: 25px;
+  vertical-align: bottom;
+  line-height: 2em;
+  background: white;
+  cursor: default;
+}
+.autocomplete .label.red {
+  color: #d4645c;
+}
+.autocomplete a {
+  display: block;
+  color: inherit;
+  font-weight: inherit;
+}
+.suggestion {
+  border-bottom: 1px solid #ddd;
+  padding: 1px 0 1px 15px;
+  color: #808080;
+  cursor: pointer;
+  font-size: 14px;
+}
+.suggestion .layer {
+  float: right;
+  text-align: right;
+  padding-right: 10px;
+}
+.suggestion.selected {
+  color: #000;
+  background: #ddd;
+}
+.suggestion:hover {
+  color: #000;
+  background: #eee;
+}
+.suggestion:last-child {
+  margin-bottom: -1px;
+}
+@media (max-width: 768px) {
+  .map-wrapper {
+    position: relative;
+    width: 100%;
+  }
+  #map {
+    position: relative;
+  }
+}

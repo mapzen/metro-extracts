@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='x-ua-compatible' content='ie=edge'>
+  <title>Metro Extracts · Mapzen</title>
+  <meta name='description' content=''>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css'>
+  <link rel='stylesheet' href='https://mapzen.com/common/styleguide/styles/styleguide.css'>
+  <link rel='stylesheet' href='{{ url_for("static", filename="css/common.css") }}'>
+  {% block styles %}{% endblock %}
+</head>
+<body class='data-pages'>
+  {{ util.get_mapzen_navbar()|safe }}
+
+  {% block content %}{% endblock %}
+  <div class="container text-center">
+    <div class="col-xs-12 page-footer">
+      <h3>More from Mapzen</h3>
+      <p>Read more about Metro Extracts in <a href="https://mapzen.com/blog/metro-extracts-on-demand/">this blog post</a>.</p>
+      <p>The <a href="https://mapzen.com/documentation/vector-tiles/">Mapzen Vector Tile Service</a> provides worldwide basemap coverage sourced from OpenStreetMap and other open data projects, updated daily! <b>Get started with your free <a href="https://mapzen.com/developers/">Mapzen Developer account</a>.</b></p>
+    </div>
+  </div>
+  
+  <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <script src="https://mapzen.com/js/mapzen.min.js"></script>
+  {% block js %}{% endblock %}
+  <script type="text/javascript">
+    {% block script %}{% endblock %}
+  </script>
+
+  {{ util.get_mapzen_footer()|safe }}
+  <script src="https://mapzen.com/common/styleguide/scripts/mapzen-styleguide.min.js"></script>
+</body>
+</html>

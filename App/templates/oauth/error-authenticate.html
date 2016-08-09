@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <div class="container text-center" style="margin-top: 100px">
+    <h2 class="">Almost There!</h2>
+    
+    <p>
+        You will now be directed to sign up or sign in with a free Mapzen Developer account so we can create your custom extract.
+    </p>
+  </div>
+
+  <div class="container text-center" style="margin-top: 3em; margin-bottom: 300px">
+    <form action="{{href}}" method="get">
+        <input type="hidden" name="state" value="{{state}}">
+        <input type="hidden" name="client_id" value="{{client_id}}">
+        <input type="hidden" name="redirect_uri" value="{{redirect_uri}}">
+        <input type="hidden" name="response_type" value="{{response_type}}">
+        <button class="btn btn-mapzen-alt">CONTINUE</button>
+    </form>
+  </div>
+{% endblock %}

@@ -1,0 +1,47 @@
+body.data-pages #map {
+  width: 100%;
+  border: 1px solid #ddd;
+}
+#map, #map path {
+  cursor: default;
+}
+h2 {
+  margin-top: 0;
+}
+h3.top {
+  margin-top: 0;
+}
+h3 {
+  margin: 2em 0 .5em;
+}
+.sit-tight {
+  margin-top: 40px;
+  background: rgba(110,160,164,.3);
+  padding: 20px;
+}
+p.error {
+  color: #d4645c;
+}
+#downloads .label {
+  margin: 5px 0;
+  display: inline-block;
+  clear: both;
+  font-weight: bold;
+}
+#downloads p {
+  margin-top: 15px;
+}
+#downloads .size {
+  color: #808080;
+  font-weight: normal;
+  font-size: 12px;
+  margin-left: 5px;
+}
+.dl-group {
+  margin-bottom: 5px;
+}
+@media (max-width: 768px) {
+  body.data-pages #map {
+    height: 300px;
+  }
+}

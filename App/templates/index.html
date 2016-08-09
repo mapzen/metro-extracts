@@ -1,0 +1,127 @@
+{% extends "layout.html" %}
+
+{% block styles %}
+  <link rel='stylesheet' href='{{ url_for('static', filename='css/metros.css') }}'>
+{% endblock %}
+
+{% block content %}
+  <div id="content-wrapper">
+    <div class='col-xs-12 col-sm-6 map-wrapper'>
+      <div id='map'>
+        <div id="legend">
+          <label>Legend:</label>
+          <div class="legend-row custom">
+            <span class="box"></span> Your Custom Extract
+          </div>
+          <div class="legend-row">
+            <span class="box"></span> Popular Extracts
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class='col-xs-12 col-sm-6' id="list-wrapper">
+      <div class="alert alert-success text-center" role="alert" style="margin-top: 15px;">
+        <p>Welcome to the new and enhanced Metro Extracts! We have made creating custom extracts super easy. Give it a spin and send us <a href="mailto:hello@mapzen.com">your feedback</a>!</p>
+        <p>Looking for the old version? You can <a href="https://mapzen.com/data/metro-extracts-old/">see it here</a> for a short period of time.</p>
+      </div>
+      <h1 style="clear: both" class="headroom text-center"><a href="{{ url_for('Metro-Extracts.index') }}">metro extracts</a></h1>
+      <p>Every week, Metro Extracts automatically creates snapshots of <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area files in a variety of formats for you to use. Download an extract from the list of <b>popular extracts</b> below to get started right away.</p>
+      <p>Can't find what you are looking for? You can get <b>custom extracts</b> of anywhere in the world! To get started, search for the place you are looking for.</p>
+        {% if user_id %}
+        <a href="{{ url_for('ODES.get_extracts') }}">Your Custom Extracts</a> |
+        {% endif %}
+        <a href="https://mapzen.com/documentation/metro-extracts/">Documentation</a> |
+        <a href="https://mapzen.com/documentation/metro-extracts/tutorial/">Tutorial</a> |
+        <a href="https://mapzen.com/documentation/metro-extracts/file-format/">File Format Guide</a>
+      </p>
+      <div id="request-wrapper">
+        <div class='row inline-submit' id='search-box'>
+          <label class='data-filter-label' for='search_input'>Search for a City or Region</label>
+          <div class="hasclear col-sm-9 col-xs-8">
+            <input type='search' id='search_input' placeholder='example: Los Angeles' type='text'>
+            <i class="fa fa-times" aria-hidden="true"></i>
+          </div>
+          <input id='search_submit' type="submit" value="search" class="col-xs-4 col-sm-3 btn btn-transparent">
+          <div class="autocomplete"></div>
+        </div>
+
+        <p id="search-error" class="request-messaging">Sorry, we don't have any results for <span class="name"></span>. Try a different search?</p>
+        <p class="encompassed-text request-messaging"><b>Looks like the place you are looking for is part of a popular extract:</b></p>
+        <label class="data-filter-label red">Popular Extracts:</label>
+        <div id="extracts">
+          {% for country_metros in metros_tree %}
+            <div class="country">
+              <div class="country-name">{{ country_metros.country }}</div>
+              {% for metro in country_metros.metros %}
+                <a class="city" href="{{ metro.href }}">{{ metro.name }}</a>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+        <div id="make-request">
+          <p class="default-request-text request-greater-1 request-messaging">We don't have an extract for <span class="name"></span> ready to download, but you can make your own!</p>
+          <p class="encompassed-text request-messaging">You can make your own extract for <span class="name"></span> too!</p>
+          <p class="request-greater-1 encompassed-text default-request-text request-messaging">Step 1: Confirm ​the boundaries of your custom extract. Drag the corners of the blue box on the map to adjust.</p>
+          <p class="request-greater-5 request-messaging">Sorry, the area you have defined for <span class="name"></span> is too large. Drag the corners of the blue box on the map to make it smaller.</p>
+          <form action="{{ url_for('ODES.post_envelope') }}" method="post">
+            <input name="bbox_n" type="hidden" />
+            <input name="bbox_w" type="hidden" />
+            <input name="bbox_s" type="hidden" />
+            <input name="bbox_e" type="hidden" />
+            <input name="wof_id" type="hidden" />
+            <input name="wof_name" type="hidden" />
+            <div style="margin-bottom: 10px;">
+              <label>Step 2: Choose a name for your extract:</label>
+              <input name="display_name" type="text" />
+            </div>
+            <button class="btn btn-transparent">Get Extract</button>
+          </form>
+          <p class="default-request-text encompassed-text request-messaging note">(Note: Custom extracts take about 30-60 minutes to generate and you will be guided to sign in or sign up for a free Mapzen Developer account)</p>
+          <p class="request-greater-1 request-messaging note">(Note: You have defined a large area as a custom extract. This might take a few hours to finish. You will be guided to sign in or sign up for a free Mapzen Developer account to complete this request)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+  <script src='{{ url_for('static', filename='js/metros.js') }}'></script>
+{% endblock %}
+
+{% block script %}
+  // set the window as either full-height, or 300px for mobile
+  var mapHeight = window.innerWidth < 768 ? 300 : Math.max(window.innerHeight - 56, 500);
+  d3.select("#map").style("height", mapHeight + 'px');
+  d3.select("#list-wrapper").style("min-height", mapHeight + 'px');
+  
+  var metrosPage = Metros().init(
+    {{metros_tree|tojson|safe}}, 
+    "{{ url_for('Metro-Extracts.get_cities_geojson') }}", 
+    "{{ url_for('static', filename='scene.yaml') }}",
+    "{{ url_for('Metro-Extracts.wof_geojson', id='GEOID') }}"
+  );
+
+  // to recreate state on a back button
+  if (document.getElementById("search_input").value.length)
+    document.getElementById("search_input").value = "";
+
+  d3.selectAll(".country-name")
+    .on("click",function(d){
+      metrosPage.doSearch(d3.select(this).text(), true);
+    });
+
+  d3.select("#search_submit").on("click",function(){
+    var val = document.getElementById("search_input").value;
+    if (val.length)
+      metrosPage.onSubmit(val);
+  });
+
+  d3.select("#search_input").on("keyup",function(){
+    metrosPage.processKeyup(d3.event);
+  });
+
+  d3.select(".fa-times").on("click", function(){
+    metrosPage.clearSearchBox();
+  });
+  
+{% endblock %}

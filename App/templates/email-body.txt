@@ -1,0 +1,5 @@
+Hooray, your requested extract for {{ name }} {{ created.strftime('at %I:%M%p (%Z) on %b %d, %Y') }} has finished.
+
+You can download it here: {{ link }}
+
+If you have any questions, please get in touch with us at hello@mapzen.com.

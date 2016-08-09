@@ -1,0 +1,124 @@
+{% extends "layout.html" %}
+
+{% block styles %}
+  <link rel='stylesheet' href='{{ url_for('static', filename='css/metro.css') }}'>
+{% endblock %}
+
+{% block content %}
+  <div class="col-xs-12">
+    {% include "odes/logout-fragment.html" %}
+    <ol class="breadcrumb">
+      <li>
+        <a href="{{ url_for('Metro-Extracts.index') }}">Metro Extracts</a>
+      </li>
+      <li>
+        <a href="{{ url_for('ODES.get_extracts') }}">Your Custom Extracts</a>
+      </li>
+      <li class="active">{{extract.name or extract.wof.name or extract.id or extract.odes.id}}</li>
+    </ol>
+  </div>
+  <div class="col-sm-6 col-xs-12">
+    <div id="map"></div>
+  </div>
+  <div class="col-sm-6 col-xs-12">
+    <h3 class="top">Your Extract</h3>
+    <h2>{{extract.name or extract.wof.name or extract.id or extract.odes.id}}</h2>
+    <div class="btn-group" style="margin: 0 auto;">
+      {% if user_id %}
+        <a href="{{ url_for('ODES.get_extracts') }}">Your Custom Extracts</a> |
+      {% endif %}
+      <a href="https://mapzen.com/documentation/metro-extracts/">Documentation</a> | 
+      <a href="https://mapzen.com/documentation/metro-extracts/tutorial/">Tutorial</a> | 
+      <a href="https://mapzen.com/documentation/metro-extracts/file-format/">File Format Guide</a>
+    </div>
+    
+    {% if extract.odes.status == "pending" or extract.odes.status == "processing" %}
+      <div class="sit-tight">
+        <p>Sit tight! We will send you an email to the address associated with your GitHub account when your custom extract is ready for download.</p>
+        <p>Custom extracts take about 30-60 minutes to generate, depending on the size. The download links for your extract will appear on this page once it is ready.</p>
+        {% if user_id %}
+          <p>You can view all of the extracts you've made <a href="{{ url_for('ODES.get_extracts') }}" style="color:black;">here</a>.</p>
+        {% endif %}
+      </div>
+    {% elif downloads
+        and 'osm2pgsql shapefiles zip' in downloads
+        and 'osm2pgsql geojson zip' in downloads
+        and 'imposm shapefiles zip' in downloads
+        and 'imposm geojson zip' in downloads
+        and 'osm pbf' in downloads
+        and 'osm bz2' in downloads
+        and 'water coastline zip' in downloads
+        and 'land coastline zip' in downloads %}
+      <h3>Downloads</h3>
+      {% if extract.wof.name and extract.wof.id %}
+        <div id="encompassed">
+          <p>To clip this extract to the <span class="legend-blue">{{extract.wof.name}}</span> boundary, use this outline:</p>
+          <a class="link" href="{{ url_for('Metro-Extracts.wof_geojson', id=extract.wof.id)}}">BOUNDARY GEOJSON</a>
+        </div>
+      {% endif %}
+      <div id="downloads">
+        <div class="label">Datasets split by geometry type: lines, points, or polygons (<a href="https://mapzen.com/documentation/metro-extracts/file-format/#data-split-by-geometry" class="label">OSM2PGSQL</a>)</div>
+        <div class="dl-group">
+          <a class="link" href="{{ downloads['osm2pgsql shapefiles zip'].url }}"  data-format="OSM2PGSQL SHP">SHAPEFILE <span class="size">{{ downloads['osm2pgsql shapefiles zip'].size }}</span></a>
+          <a class="link" href="{{ downloads['osm2pgsql geojson zip'].url }}"  data-format="OSM2PGSQL GEOJSON">GEOJSON <span class="size">{{ downloads['osm2pgsql geojson zip'].size }}</span></a>
+        </div>
+        <div class="label">Datasets grouped into individual layers by OpenStreetMap tags (<a href="https://mapzen.com/documentation/metro-extracts/file-format/#data-split-by-osm-tags" class="label">IMPOSM</a>)</div>
+        <div class="dl-group">
+          <a class="link" href="{{ downloads['imposm shapefiles zip'].url }}"  data-format="IMPOSM SHP">SHAPEFILE <span class="size">{{ downloads['imposm shapefiles zip'].size }}</span></a>
+          <a class="link" href="{{ downloads['imposm geojson zip'].url }}"  data-format="IMPOSM GEOJSON">GEOJSON <span class="size">{{ downloads['imposm geojson zip'].size }}</span></a>
+        </div>
+        <div class="label">Raw OpenStreetMap datasets (<a href="https://mapzen.com/documentation/metro-extracts/file-format/#raw-osm-data" class="label">PBF and XML</a>)</div>
+        <div class="dl-group">
+          <a class="link" href="{{ downloads['osm pbf'].url }}"  data-format="OSM PBF">OSM PBF <span class="size">{{ downloads['osm pbf'].size }}</span></a>
+          <a class="link" href="{{ downloads['osm bz2'].url }}"  data-format="OSM XML">OSM XML <span class="size">{{ downloads['osm bz2'].size }}</span></a>
+        </div>
+        <div class="label">Coastlines (<a href="https://mapzen.com/documentation/metro-extracts/file-format/#coastlines" class="label">Shapefile</a>)</div>
+        <div class="dl-group">
+          <a class="link" href="{{ downloads['water coastline zip'].url }}"  data-format="WATER COASTLINE SHP">WATER<span class="size">{{ downloads['water coastline zip'].size }}</span></a>
+          <a class="link" href="{{ downloads['land coastline zip'].url }}"  data-format="LAND COASTLINE SHP">LAND<span class="size">{{ downloads['land coastline zip'].size }}</span></a>
+        </div>
+        <p>If you're unsure of which file to pick, check out our <a href="https://mapzen.com/documentation/metro-extracts/file-format/">format guide</a>.</p>
+      </div>
+      <h3>Extract Details</h3>
+      <form method="post" action="{{ url_for('ODES.post_envelope') }}">
+        <p>Your extract was created on {{ extract.odes.created_at.strftime('%Y %B %d, at %I:%M %p') }}.</p>
+        <p>To update your extract with the latest OpenStreetMap data, click the button below. This will take 30-60 minutes to complete, and you will receive another email when it's finished.</p>
+        <button class="btn btn-transparent">Update {{extract.name or extract.wof.name or extract.id or extract.odes.id}}</button>
+        <input name="wof_id" value="{{ extract.wof.id or '' }}" type="hidden">
+        <input name="wof_name" value="{{ extract.wof.name or '' }}" type="hidden">
+        <input name="display_name" value="{{ extract.name or '' }}" type="hidden">
+        <input name="bbox_w" value="{{ extract.odes.bbox.w or '' }}" type="hidden">
+        <input name="bbox_s" value="{{ extract.odes.bbox.s or '' }}" type="hidden">
+        <input name="bbox_e" value="{{ extract.odes.bbox.e or '' }}" type="hidden">
+        <input name="bbox_n" value="{{ extract.odes.bbox.n or '' }}" type="hidden">
+      </p>
+    {% else %}
+      <p class="error" style="margin-top:40px;">Oh no, your extract request seems to have errored out. Please let us know at <a href="mailto:hello@mapzen.com">hello@mapzen.com</a>.</p>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block js %}
+  <script src='{{ url_for('static', filename='js/extract.js') }}'></script>
+{% endblock %}
+
+{% block script %}
+  var mapHeight = window.innerWidth < 768 ? 300 : Math.max(window.innerHeight - 114, 500);
+  d3.select("#map").style("height", mapHeight + 'px');
+
+  var extractPage = Extract().init(
+    {{ extract.odes.bbox|safe }}, 
+    "{{ url_for('static', filename='scene.yaml') }}"
+  );
+
+  {% if extract.wof.name and extract.wof.id %}
+    extractPage.showOutline("{{ url_for('Metro-Extracts.wof_geojson', id=extract.wof.id) }}");
+  {% endif %}
+
+  d3.selectAll(".link").on("click", function () {
+    var name = "{{extract.wof.name or extract.id or extract.odes.id}}",
+      format = d3.select(this).attr("data-format");
+    ga('send', 'event', 'metroextracts', name, format);
+  });
+  
+{% endblock %}

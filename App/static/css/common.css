@@ -1,0 +1,76 @@
+.page-footer {
+  margin: 50px 0;
+}
+.page-footer h3 {
+  font-size: 36px;
+  margin: 1.2em 0 .6em;
+}
+.logout-form span {
+  color: #898989;
+}
+.logout-form .btn-transparent {
+  padding: 2px 10px;
+  float: right;
+  font-size: 12px;
+  margin-left: 20px;
+  color: #898989;
+  border-color: #898989;
+}
+.legend-red {
+  background: rgba(212,100,92,.3);
+  padding: 0 5px;
+}
+.legend-blue {
+  background: rgba(110,160,164,.3);
+  padding: 0 5px;
+}
+#map {
+  overflow: hidden;
+}
+#map path, .map path {
+  fill: #d4645c;
+  stroke: #d4645c;
+  stroke-width: 2;
+  stroke-opacity: .3;
+  fill-opacity: .3;
+}
+#map.request-mode path.red {
+  fill: transparent;
+  stroke-opacity: .9;
+  stroke-width: 3;
+}
+#map path.blue, .map path.blue {
+  fill: #6ea0a4;
+  stroke: #6ea0a4;
+  fill-opacity: .4;
+  cursor: default;
+}
+#map path.outline {
+  stroke: #000;
+  fill: #6ea0a4;
+  fill-opacity: .3;
+  stroke-opacity: .5;
+  cursor: default;
+}
+.leaflet-container a {
+  color: #6ea0a4;
+}
+.leaflet-container .leaflet-control-zoom-in,
+.leaflet-container .leaflet-control-zoom-out {
+  color: #000;
+}
+.link {
+  border: 1px solid #ddd;
+  display: inline-block;
+  padding: 5px 15px;
+  margin: 0 10px 10px 0;
+  text-transform: uppercase;
+}
+.link:hover {
+  background: #eee;
+}
+@media (max-width: 768px) {
+  .col-sm-6 {
+    margin-bottom: 10px;
+  }
+}

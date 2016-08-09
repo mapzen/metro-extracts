@@ -1,0 +1,7 @@
+﻿import:
+    - https://mapzen.com/carto/refill-style-more-labels/refill-style-more-labels.yaml
+
+styles:
+    waves:
+        base: polygons
+        shaders:
