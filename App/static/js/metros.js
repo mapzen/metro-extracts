@@ -330,7 +330,7 @@ var Metros = function() {
       // zoomout to account for Point geometry, and zooming far enough out to see the box
       displayMap.zoomOut(zoomOut);
 
-      var geoID = metro.properties.id;
+      var geoID = (metro.properties.source == "whosonfirst") ? metro.properties.id : null;
       d3.select("input[name='wof_id']").attr("value",geoID);
       d3.select("input[name='wof_name']").attr("value",metro.properties.label);
       d3.select("input[name='display_name']").attr("value",metro.properties.label);

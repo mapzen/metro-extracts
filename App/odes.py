@@ -177,7 +177,7 @@ def post_envelope():
     envelope = data.Envelope(str(uuid4())[-12:], bbox)
     
     with data.connect(current_app.config['DB_DSN']) as db:
-        data.add_extract_envelope(db, name, envelope, data.WoF(wof_id, wof_name))
+        data.add_extract_envelope(db, name, envelope, data.WoF(wof_id or None, wof_name))
 
     return redirect(url_for('ODES.get_envelope', envelope_id=envelope.id), 303)
 
