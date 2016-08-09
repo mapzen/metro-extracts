@@ -60,8 +60,8 @@ def get_odes_extracts(db, api_keys):
         if resp.status_code in range(200, 299):
             odeses.extend([data.ODES(str(oj['id']), status=oj['status'], bbox=oj['bbox'],
                                      links=oj.get('download_links', {}),
-                                     processed_at=parse_datetime(oj['processed_at']),
-                                     created_at=parse_datetime(oj['created_at']))
+                                     processed_at=(parse_datetime(oj['processed_at']) if oj['processed_at'] else None),
+                                     created_at=(parse_datetime(oj['created_at']) if oj['created_at'] else None))
                            for oj in resp.json()])
     
     for odes in sorted(odeses, key=attrgetter('created_at'), reverse=True):
@@ -91,8 +91,8 @@ def get_odes_extract(db, id, api_keys):
                 oj = resp.json()
                 odes = data.ODES(str(oj['id']), status=oj['status'], bbox=oj['bbox'],
                                  links=oj.get('download_links', {}),
-                                 processed_at=parse_datetime(oj['processed_at']),
-                                 created_at=parse_datetime(oj['created_at']))
+                                 processed_at=(parse_datetime(oj['processed_at']) if oj['processed_at'] else None),
+                                 created_at=(parse_datetime(oj['created_at']) if oj['created_at'] else None))
                 break
     
         if odes is None:
@@ -143,8 +143,8 @@ def request_odes_extract(extract, request, url_for, api_key):
     
     return data.ODES(str(oj['id']), status=oj['status'], bbox=oj['bbox'],
                      links=oj.get('download_links', {}),
-                     processed_at=parse_datetime(oj['processed_at']),
-                     created_at=parse_datetime(oj['created_at']))
+                     processed_at=(parse_datetime(oj['processed_at']) if oj['processed_at'] else None),
+                     created_at=(parse_datetime(oj['created_at']) if oj['created_at'] else None))
 
 def populate_link_downloads(odes_links):
     '''

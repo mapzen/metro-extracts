@@ -487,7 +487,7 @@ class TestApp (unittest.TestCase):
 
             if MHP == ('GET', 'odes.mapzen.com', '/extracts'):
                 if url.query == 'api_key=odes-xxxxxxx':
-                    data = u'''[\r{\r  "id": 999,\r  "status": "created",\r  "created_at": "2016-06-02T03:29:25.233Z",\r  "bbox": {\r    "e": -122.24825,\r    "n": 37.81230,\r    "s": 37.79724,\r    "w": -122.26447\r  }\r}\r]'''
+                    data = u'''[\r{\r  "id": 999,\r  "status": "created",\r  "created_at": "2016-06-02T03:29:25.233Z",\r  "processed_at": "",\r  "bbox": {\r    "e": -122.24825,\r    "n": 37.81230,\r    "s": 37.79724,\r    "w": -122.26447\r  }\r}\r]'''
                     return response(200, data.encode('utf8'), headers=response_headers)
 
             raise Exception(request.method, url, request.headers, request.body)
