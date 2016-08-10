@@ -316,7 +316,7 @@ class TestApp (unittest.TestCase):
             redirect2 = urlparse(resp2.headers.get('Location'))
             
             self.assertEqual(resp2.status_code, 301)
-            self.assertTrue(redirect2.path.startswith(self.prefixed('/odes/extracts/')))
+            self.assertTrue(redirect2.path.startswith(self.prefixed('/your-extracts/')))
             
             # Follow the redirect to the new extract
             resp3 = self.client.get(redirect2.path)
@@ -327,7 +327,7 @@ class TestApp (unittest.TestCase):
             self.assertIsNotNone(soup3.find(text=compile(r'\bwoof woof\b')))
             
             # Verify that the extract is in the big list
-            resp4 = self.client.get(self.prefixed('/odes/extracts/'))
+            resp4 = self.client.get(self.prefixed('/your-extracts/'))
             soup4 = BeautifulSoup(resp4.data, 'html.parser')
             
             self.assertEqual(resp4.status_code, 200)
@@ -466,7 +466,7 @@ class TestApp (unittest.TestCase):
             raise Exception(request.method, url, request.headers, request.body)
         
         with HTTMock(response_content1):
-            resp1 = self.client.get(self.prefixed('/odes/extracts/'))
+            resp1 = self.client.get(self.prefixed('/your-extracts/'))
             self.assertEqual(resp1.status_code, 200)
         
         def response_content2(url, request):
@@ -493,7 +493,7 @@ class TestApp (unittest.TestCase):
             raise Exception(request.method, url, request.headers, request.body)
         
         with HTTMock(response_content2):
-            resp1 = self.client.get(self.prefixed('/odes/extracts/'))
+            resp1 = self.client.get(self.prefixed('/your-extracts/'))
             self.assertEqual(resp1.status_code, 200)
     
     def test_request_odes_extract(self):

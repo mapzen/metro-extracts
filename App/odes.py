@@ -205,7 +205,7 @@ def get_envelope(envelope_id):
     
     return redirect(url_for('ODES.get_extract', extract_id=extract.id), 301)
 
-@blueprint.route('/odes/extracts/', methods=['GET'])
+@blueprint.route('/your-extracts/', methods=['GET'])
 @util.errors_logged
 @check_authentication
 def get_extracts():
@@ -220,7 +220,7 @@ def get_extracts():
     return render_template('extracts.html', extracts=extracts, util=util,
                            user_id=id, user_nickname=nickname)
 
-@blueprint.route('/odes/extracts/<extract_id>', methods=['GET'])
+@blueprint.route('/your-extracts/<extract_id>', methods=['GET'])
 @util.errors_logged
 @check_authentication
 def get_extract(extract_id):
