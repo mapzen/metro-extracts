@@ -22,7 +22,7 @@ Custom extracts can take about 30-60 minutes to generate, depending on the size.
 
 ### Share custom extracts
 
-After your custom extracts have been created, they're viewable on the 'your custom extracts' page. They can be shared with anyone who also has a Mapzen Developer Account by copying the URL and sending it to the other person.
+After your custom extracts have been created, they're viewable on the 'your custom extracts' page. Individual extracts can be shared with anyone who also has a Mapzen Developer Account by opening the individual extract and then copying the URL and sending it to the other person.
 
 ### Update custom extracts
 
