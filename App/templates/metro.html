@@ -19,9 +19,7 @@
   <div class="col-sm-6 col-xs-12">
     <h2>{{ metro.name }}</h2>
     <div class="btn-group" style="margin: 0 auto;">
-      {% if user_id %}
-        <a href="{{ url_for('ODES.get_extracts') }}">Your Custom Extracts</a> |
-      {% endif %}
+      <a href="{{ url_for('ODES.get_extracts') }}">Your Custom Extracts</a> |
       <a href="https://mapzen.com/documentation/metro-extracts/">Documentation</a> | 
       <a href="https://mapzen.com/documentation/metro-extracts/tutorial/">Tutorial</a> | 
       <a href="https://mapzen.com/documentation/metro-extracts/file-format/">File Format Guide</a>
