@@ -27,9 +27,7 @@
       <h1 style="clear: both" class="headroom text-center"><a href="{{ url_for('Metro-Extracts.index') }}">metro extracts</a></h1>
       <p>Every week, Metro Extracts automatically creates snapshots of <a href='http://openstreetmap.org/'>OpenStreetMap</a> data into manageable, metro-area files in a variety of formats for you to use. Download an extract from the list of <b>popular extracts</b> below to get started right away.</p>
       <p>Can't find what you are looking for? You can get <b>custom extracts</b> of anywhere in the world! To get started, search for the place you are looking for.</p>
-        {% if user_id %}
         <a href="{{ url_for('ODES.get_extracts') }}">Your Custom Extracts</a> |
-        {% endif %}
         <a href="https://mapzen.com/documentation/metro-extracts/">Documentation</a> |
         <a href="https://mapzen.com/documentation/metro-extracts/tutorial/">Tutorial</a> |
         <a href="https://mapzen.com/documentation/metro-extracts/file-format/">File Format Guide</a>
