@@ -19,3 +19,13 @@ Is the location you're looking for not on the extract list? Mapzen hosts the top
 5. You'll be prompted to either sign up or sign in with a Mapzen Developer account. This uses [GitHub](https://www.github.com) authentication (if you don't have a GitHub account, you can sign up for one at: [https://github.com/join](https://github.com/join))
 6. Custom extracts can take about 30-60 minutes to generate, depending on the size. An email will be sent to the address associated with your GitHub account, but will also be viewable on the Metro Extracts page under 'your custom extracts'. This page also shows you the status of the custom extract and allows you to access previous requests as well.
 ![Pending custom extracts](./images/your_custom_extracts.png)
+
+### Share Custom Extracts
+
+Once your custom extracts have been created, they're viewable on the 'your custom extracts' page. They can be shared with anyone who also has a Mapzen Developer Account, by copying the URL and sending it to the other person.
+
+### Update Custom Extracts
+
+The data used in a custom extract is pulled from OpenStreetMap at the time of the request. While the popular metro extracts available for immediate download are updated on a weekly basis, custom extracts are not. In order to update the data in your custom extract, you can click on the 'update' button on the custom extracts page. 
+
+![Update your custom extract](./images/update_extract.png)
