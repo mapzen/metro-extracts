@@ -6,15 +6,13 @@
 
 {% block content %}
   <div class="container">
-    <div>
-      {% include "odes/logout-fragment.html" %}
-      <ol class="breadcrumb">
-        <li>
-          <a href="{{ url_for('Metro-Extracts.index') }}">Metro Extracts</a>
-        </li>
-        <li class="active">Your Custom Extracts</li>
-      </ol>
-    </div>
+    {% include "odes/logout-fragment.html" %}
+    <ol class="breadcrumb">
+      <li>
+        <a href="{{ url_for('Metro-Extracts.index') }}">Metro Extracts</a>
+      </li>
+      <li class="active">Your Custom Extracts</li>
+    </ol>
   </div>
   <div class="container">
     <h1 class="text-center">Your Custom Extracts</h1>
