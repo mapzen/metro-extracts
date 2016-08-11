@@ -194,7 +194,7 @@ def get_envelope(envelope_id):
         # this envelope has already been posted to ODES.
         return redirect(url_for('ODES.get_extract', extract_id=extract.id), 301)
     
-    user_id, _, keys_url, access_token = session_info(session)
+    user_id, _, _, keys_url, access_token = session_info(session)
     api_keys = get_odes_keys(keys_url, access_token)
     odes = request_odes_extract(extract, request, url_for, api_keys[0])
     
@@ -211,14 +211,14 @@ def get_envelope(envelope_id):
 def get_extracts():
     '''
     '''
-    id, nickname, keys_url, access_token = session_info(session)
+    id, nickname, avatar, keys_url, access_token = session_info(session)
     api_keys = get_odes_keys(keys_url, access_token)
 
     with data.connect(current_app.config['DB_DSN']) as db:
         extracts = get_odes_extracts(db, api_keys)
     
     return render_template('extracts.html', extracts=extracts, util=util,
-                           user_id=id, user_nickname=nickname)
+                           user_id=id, user_nickname=nickname, avatar=avatar)
 
 @blueprint.route('/odes/extracts/<extract_id>', methods=['GET'])
 @util.errors_logged
@@ -226,7 +226,7 @@ def get_extracts():
 def get_extract(extract_id):
     '''
     '''
-    id, nickname, keys_url, access_token = session_info(session)
+    id, nickname, avatar, keys_url, access_token = session_info(session)
     api_keys = get_odes_keys(keys_url, access_token)
 
     with data.connect(current_app.config['DB_DSN']) as db:
@@ -241,4 +241,4 @@ def get_extract(extract_id):
         downloads = None
 
     return render_template('extract.html', extract=extract, downloads=downloads,
-                           util=util, user_id=id, user_nickname=nickname)
+                           util=util, user_id=id, user_nickname=nickname, avatar=avatar)
