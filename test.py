@@ -3,7 +3,7 @@ import unittest
 import os, tempfile
 from uuid import uuid4
 from shutil import rmtree
-from os.path import join, dirname
+from os.path import join, dirname, basename
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
 from datetime import datetime
 from re import compile
@@ -316,7 +316,7 @@ class TestApp (unittest.TestCase):
             redirect2 = urlparse(resp2.headers.get('Location'))
             
             self.assertEqual(resp2.status_code, 301)
-            self.assertTrue(redirect2.path.startswith(self.prefixed('/odes/extracts/')))
+            self.assertTrue(redirect2.path.startswith(self.prefixed('/your-extracts/')))
             
             # Follow the redirect to the new extract
             resp3 = self.client.get(redirect2.path)
@@ -327,12 +327,17 @@ class TestApp (unittest.TestCase):
             self.assertIsNotNone(soup3.find(text=compile(r'\bwoof woof\b')))
             
             # Verify that the extract is in the big list
-            resp4 = self.client.get(self.prefixed('/odes/extracts/'))
+            resp4 = self.client.get(self.prefixed('/your-extracts/'))
             soup4 = BeautifulSoup(resp4.data, 'html.parser')
             
             self.assertEqual(resp4.status_code, 200)
             self.assertIsNotNone(soup4.find(text=compile(r'\b999\b')))
             self.assertIsNotNone(soup4.find(text=compile(r'\bwoof woof\b')))
+            
+            # See if an out-of-date link to the extract still works
+            resp5 = self.client.get(self.prefixed(join('/odes/extracts/', basename(redirect2.path))))
+            self.assertEqual(resp5.status_code, 200)
+            self.assertEqual(resp5.data, resp3.data)
         
         def response_content2(url, request):
             '''
@@ -405,6 +410,41 @@ class TestApp (unittest.TestCase):
             self.assertEqual(resp2.status_code, 400)
             self.assertIn(b"can&#39;t have more than 5 extracts currently processing", resp2.data)
     
+    def test_odes_your_extracts(self):
+        codes = ['let-me-in']
+        
+        self._do_login(codes)
+        
+        def response_content(url, request):
+            '''
+            '''
+            MHP = request.method, url.hostname, url.path
+            response_headers = {'Content-Type': 'application/json; charset=utf-8'}
+
+            if MHP == ('GET', 'mapzen.com', '/developers/oauth_api/current_developer'):
+                if request.headers['Authorization'] == 'Bearer working-access-token':
+                    data = u'''{\r  "id": 631,\r  "email": "email@company.com",\r  "nickname": "user_github_handle",\r  "admin": false,\r  "keys": "https://mapzen.com/developers/oauth_api/current_developer/keys"\r}'''
+                    return response(200, data.encode('utf8'), headers=response_headers)
+
+            if MHP == ('GET', 'mapzen.com', '/developers/oauth_api/current_developer/keys'):
+                if request.headers['Authorization'] == 'Bearer working-access-token':
+                    data = u'''[\r  {\r    "service": "odes",\r    "key": "odes-xxxxxxx",\r    "created_at": "2015-12-15T15:24:57.236Z",\r    "nickname": "Untitled",\r    "status": "created"\r  },\r  {\r    "service": "odes",\r    "key": "odes-yyyyyyy",\r    "created_at": "2015-12-15T15:24:59.320Z",\r    "nickname": "Untitled",\r    "status": "disabled"\r  }\r]'''
+                    return response(200, data.encode('utf8'), headers=response_headers)
+
+            if MHP == ('GET', 'odes.mapzen.com', '/extracts'):
+                if url.query == 'api_key=odes-xxxxxxx':
+                    data = u'''[\r{\r  "id": 999,\r  "status": "created",\r  "created_at": "2016-06-02T03:29:25.233Z",\r  "processed_at": "2016-06-02T04:20:11.000Z",\r  "bbox": {\r    "e": -122.24825,\r    "n": 37.81230,\r    "s": 37.79724,\r    "w": -122.26447\r  }\r}\r]'''
+                    return response(200, data.encode('utf8'), headers=response_headers)
+
+            raise Exception(request.method, url, request.headers, request.body)
+        
+        with HTTMock(response_content):
+            resp1 = self.client.get(self.prefixed('/odes/extracts/'))
+            resp2 = self.client.get(self.prefixed('/your-extracts/'))
+
+            self.assertEqual(resp1.status_code, resp2.status_code)
+            self.assertEqual(resp1.data, resp2.data)
+    
     def test_odes_request_empty_wof_id(self):
         codes = ['let-me-in']
         
@@ -466,7 +506,7 @@ class TestApp (unittest.TestCase):
             raise Exception(request.method, url, request.headers, request.body)
         
         with HTTMock(response_content1):
-            resp1 = self.client.get(self.prefixed('/odes/extracts/'))
+            resp1 = self.client.get(self.prefixed('/your-extracts/'))
             self.assertEqual(resp1.status_code, 200)
         
         def response_content2(url, request):
@@ -493,7 +533,7 @@ class TestApp (unittest.TestCase):
             raise Exception(request.method, url, request.headers, request.body)
         
         with HTTMock(response_content2):
-            resp1 = self.client.get(self.prefixed('/odes/extracts/'))
+            resp1 = self.client.get(self.prefixed('/your-extracts/'))
             self.assertEqual(resp1.status_code, 200)
     
     def test_request_odes_extract(self):
@@ -557,6 +597,10 @@ class TestApp (unittest.TestCase):
         resp4 = self.client.get('/data/metro-extracts-alt/oauth/hello')
         self.assertEqual(resp4.status_code, 301)
         self.assertTrue(resp4.headers.get('Location').endswith('/data/metro-extracts/oauth/hello'))
+
+        resp5 = self.client.get('/data/metro-extracts-alt/your-extracts')
+        self.assertEqual(resp5.status_code, 301)
+        self.assertTrue(resp5.headers.get('Location').endswith('/data/metro-extracts/your-extracts'))
 
 class TestAppPrefix (TestApp):
     _url_prefix = '/{}'.format(uuid4())
