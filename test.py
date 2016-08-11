@@ -405,6 +405,43 @@ class TestApp (unittest.TestCase):
             self.assertEqual(resp2.status_code, 400)
             self.assertIn(b"can&#39;t have more than 5 extracts currently processing", resp2.data)
     
+    def test_odes_your_extracts(self):
+        codes = ['let-me-in']
+        
+        self._do_login(codes)
+        
+        def response_content(url, request):
+            '''
+            '''
+            MHP = request.method, url.hostname, url.path
+            response_headers = {'Content-Type': 'application/json; charset=utf-8'}
+
+            if MHP == ('GET', 'mapzen.com', '/developers/oauth_api/current_developer'):
+                if request.headers['Authorization'] == 'Bearer working-access-token':
+                    data = u'''{\r  "id": 631,\r  "email": "email@company.com",\r  "nickname": "user_github_handle",\r  "admin": false,\r  "keys": "https://mapzen.com/developers/oauth_api/current_developer/keys"\r}'''
+                    return response(200, data.encode('utf8'), headers=response_headers)
+
+            if MHP == ('GET', 'mapzen.com', '/developers/oauth_api/current_developer/keys'):
+                if request.headers['Authorization'] == 'Bearer working-access-token':
+                    data = u'''[\r  {\r    "service": "odes",\r    "key": "odes-xxxxxxx",\r    "created_at": "2015-12-15T15:24:57.236Z",\r    "nickname": "Untitled",\r    "status": "created"\r  },\r  {\r    "service": "odes",\r    "key": "odes-yyyyyyy",\r    "created_at": "2015-12-15T15:24:59.320Z",\r    "nickname": "Untitled",\r    "status": "disabled"\r  }\r]'''
+                    return response(200, data.encode('utf8'), headers=response_headers)
+
+            if MHP == ('POST', 'odes.mapzen.com', '/extracts'):
+                if url.query == 'api_key=odes-xxxxxxx':
+                    bbox = dict(parse_qsl(request.body))
+                    data = u'''{\r  "error": "can't have more than 5 extracts currently processing"\r}'''
+                    return response(403, data.encode('utf8'), headers=response_headers)
+
+            raise Exception(request.method, url, request.headers, request.body)
+        
+        with HTTMock(response_content):
+            resp1 = self.client.get(self.prefixed('/odes/extracts/'))
+            self.assertEqual(resp1.status_code, 301)
+            self.assertEqual(resp1.headers['Location'], self.prefixed('/your-extracts/'))
+
+            resp2 = self.client.get(self.prefixed('/your-extracts/'))
+            self.assertEqual(resp2.status_code, 200)
+    
     def test_odes_request_empty_wof_id(self):
         codes = ['let-me-in']
         
