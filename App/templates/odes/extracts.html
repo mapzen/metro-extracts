@@ -18,7 +18,8 @@
   </div>
   <div class="container">
     <h1 class="text-center">Your Custom Extracts</h1>
-    <p class="text-center">Here are all the custom extracts that you have created. Individual extracts can be shared via their URL.</p>
+    <p>Here are all the custom extracts that you have created. Individual extracts can be shared via their URL.</p>
+    <p class="note">To update an extract with latest OpenStreetMap data, click the update button in its row. This will take 30-60 minutes to complete, and you will receive another email when it's finished.</p>
     <div id="extracts" class="table-wrapper">
       <table class="table">
         <thead>
@@ -26,6 +27,7 @@
             <th>Name</th>
             <th>Status</th>
             <th>Created At</th>
+            <th>New Data</th>
           </tr>
         </thead>
         <tbody>
@@ -46,6 +48,18 @@
                 <a class="extract" href="{{ url_for('ODES.get_extract', extract_id=(extract.id or extract.odes.id)) }}">
                   {{ extract.odes.created_at.strftime('%Y %B %d, at %I:%M %p') }}
                 </a>
+              </td>
+              <td>
+                <form method="post" action="{{ url_for('ODES.post_envelope') }}">
+                  <button class="btn btn-transparent">Update</button>
+                  <input name="wof_id" value="{{ extract.wof.id or '' }}" type="hidden">
+                  <input name="wof_name" value="{{ extract.wof.name or '' }}" type="hidden">
+                  <input name="display_name" value="{{ extract.name or '' }}" type="hidden">
+                  <input name="bbox_w" value="{{ extract.odes.bbox.w or '' }}" type="hidden">
+                  <input name="bbox_s" value="{{ extract.odes.bbox.s or '' }}" type="hidden">
+                  <input name="bbox_e" value="{{ extract.odes.bbox.e or '' }}" type="hidden">
+                  <input name="bbox_n" value="{{ extract.odes.bbox.n or '' }}" type="hidden">
+                </form>
               </td>
             </tr>
           {% endfor %}

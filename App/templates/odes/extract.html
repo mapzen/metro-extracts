@@ -91,7 +91,7 @@
         <input name="bbox_s" value="{{ extract.odes.bbox.s or '' }}" type="hidden">
         <input name="bbox_e" value="{{ extract.odes.bbox.e or '' }}" type="hidden">
         <input name="bbox_n" value="{{ extract.odes.bbox.n or '' }}" type="hidden">
-      </p>
+      </form>
     {% else %}
       <p class="error" style="margin-top:40px;">Oh no, your extract request seems to have errored out. Please let us know at <a href="mailto:hello@mapzen.com">hello@mapzen.com</a>.</p>
     {% endif %}

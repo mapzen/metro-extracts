@@ -59,6 +59,9 @@
 .leaflet-container .leaflet-control-zoom-out {
   color: #000;
 }
+.note {
+  font-style: italic;
+}
 .link {
   border: 1px solid #ddd;
   display: inline-block;

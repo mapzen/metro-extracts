@@ -2,10 +2,14 @@
   margin-bottom: 100px;
 }
 h1 {
-  margin: 50px 0 20px;
+  margin: 0 0 20px;
 }
 .container {
   margin-bottom: 50px;
+}
+.note {
+  color: #808080;
+  font-size: 14px;
 }
 #extracts {
   width: 100%;
@@ -28,6 +32,14 @@ tbody tr:hover {
 }
 tbody tr:hover td a {
   color: #385d5c;
+}
+tbody .btn-transparent {
+  margin: 8px auto;
+  display: block;
+  padding: 2px 10px;
+  font-size: 12px;
+  color: #898989;
+  border-color: #898989;
 }
 .map {
 	width: 25%;

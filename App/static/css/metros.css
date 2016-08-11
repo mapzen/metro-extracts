@@ -255,7 +255,6 @@ body.data-pages .inline-submit .btn:hover {
 }
 #make-request .note {
   margin-top: 20px;
-  font-style: italic;
   margin-bottom: 0;
 }
 #make-request input[type="text"] {
