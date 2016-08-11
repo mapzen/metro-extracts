@@ -336,11 +336,8 @@ class TestApp (unittest.TestCase):
             
             # See if an out-of-date link to the extract still works
             resp5 = self.client.get(self.prefixed(join('/odes/extracts/', basename(redirect2.path))))
-            soup5 = BeautifulSoup(resp5.data, 'html.parser')
-            
             self.assertEqual(resp5.status_code, 200)
-            self.assertIsNotNone(soup5.find(text=compile(r'\b37.8123')))
-            self.assertIsNotNone(soup5.find(text=compile(r'\bwoof woof\b')))
+            self.assertEqual(resp5.data, resp3.data)
         
         def response_content2(url, request):
             '''
@@ -443,10 +440,10 @@ class TestApp (unittest.TestCase):
         
         with HTTMock(response_content):
             resp1 = self.client.get(self.prefixed('/odes/extracts/'))
-            self.assertEqual(resp1.status_code, 200)
-
             resp2 = self.client.get(self.prefixed('/your-extracts/'))
-            self.assertEqual(resp2.status_code, 200)
+
+            self.assertEqual(resp1.status_code, resp2.status_code)
+            self.assertEqual(resp1.data, resp2.data)
     
     def test_odes_request_empty_wof_id(self):
         codes = ['let-me-in']
