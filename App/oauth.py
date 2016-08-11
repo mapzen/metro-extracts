@@ -21,6 +21,8 @@ mapzen_token_url = 'https://mapzen.com/oauth/token'
 mapzen_authorize_url = 'https://mapzen.com/oauth/authorize'
 mapzen_currdev_url = 'https://mapzen.com/developers/oauth_api/current_developer'
 
+DEFAULT_AVATAR = 'http://placekitten.com/99/99'
+
 def apply_oauth_blueprint(app, url_prefix):
     '''
     '''
@@ -108,7 +110,8 @@ def session_info(session):
     if 'id' not in session or 'token' not in session:
         return None, None, None, None, None
     
-    return (session['id']['id'], session['id']['nickname'], session['id']['avatar'], 
+    return (session['id']['id'], session['id']['nickname'],
+            session['id'].get('avatar', DEFAULT_AVATAR), 
             session['id']['keys_url'], session['token']['access_token'])
 
 @blueprint.route('/oauth/logout', methods=['POST'])
@@ -186,8 +189,7 @@ def get_oauth_callback():
 
     d = get(mapzen_currdev_url, headers=head).json()
     id = dict(id=d['id'], email=d['email'], nickname=d['nickname'],
-              avatar=d.get('avatar', 'http://placekitten.com/99/99'),
-              keys_url=d['keys'])
+              avatar=d.get('avatar', DEFAULT_AVATAR), keys_url=d['keys'])
     session['id'] = id
     
     other = redirect(absolute_url(request, state['redirect']), 302)
