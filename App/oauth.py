@@ -132,7 +132,7 @@ def get_hello():
         Hey there, {}.
         <button>log out</button>
         </form>
-        '''.format(url_for('OAuth.post_logout'), session['id']['nickname']['avatar'])
+        '''.format(url_for('OAuth.post_logout'), session['id']['avatar'])
 
 @blueprint.route('/oauth/callback')
 @util.errors_logged
