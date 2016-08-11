@@ -19,20 +19,38 @@
   <div class="container">
     <h1 class="text-center">Your Custom Extracts</h1>
     <p class="text-center">Here are all the custom extracts that you have created. Individual extracts can be shared via their URL.</p>
-    <div id="extracts">
-      <div class="headers">
-        <span class="label">Name</span>
-        <span class="label">Status</span>
-        <span class="label">Created At</span>
-      </div>
-      {% for extract in extracts %}
-        <a class="extract" href="{{ url_for('ODES.get_extract', extract_id=(extract.id or extract.odes.id)) }}">
-          <!-- <div class="map" id="map-{{extract.odes.id}}"></div> -->
-          <span class="info">{{extract.name or extract.wof.name or extract.id or extract.odes.id}}</span>
-          <span class="info">{{extract.odes.status}}</span>
-          <span class="info time">{{ extract.odes.created_at.strftime('%Y %B %d, at %I:%M %p') }}</span>
-        </a>
-      {% endfor %}
+    <div id="extracts" class="table-wrapper">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Created At</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for extract in extracts %}
+            <tr>
+              <td>
+                <a class="extract" href="{{ url_for('ODES.get_extract', extract_id=(extract.id or extract.odes.id)) }}">
+                  <!-- <div class="map" id="map-{{extract.odes.id}}"></div> -->
+                  {{extract.name or extract.wof.name or extract.id or extract.odes.id}}
+                </a>
+              </td>
+              <td>
+                <a class="extract" href="{{ url_for('ODES.get_extract', extract_id=(extract.id or extract.odes.id)) }}">
+                  {{extract.odes.status}}
+                </a>
+              </td>
+              <td>
+                <a class="extract" href="{{ url_for('ODES.get_extract', extract_id=(extract.id or extract.odes.id)) }}">
+                  {{ extract.odes.created_at.strftime('%Y %B %d, at %I:%M %p') }}
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   </div>
 {% endblock %}
