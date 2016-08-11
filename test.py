@@ -426,18 +426,16 @@ class TestApp (unittest.TestCase):
                     data = u'''[\r  {\r    "service": "odes",\r    "key": "odes-xxxxxxx",\r    "created_at": "2015-12-15T15:24:57.236Z",\r    "nickname": "Untitled",\r    "status": "created"\r  },\r  {\r    "service": "odes",\r    "key": "odes-yyyyyyy",\r    "created_at": "2015-12-15T15:24:59.320Z",\r    "nickname": "Untitled",\r    "status": "disabled"\r  }\r]'''
                     return response(200, data.encode('utf8'), headers=response_headers)
 
-            if MHP == ('POST', 'odes.mapzen.com', '/extracts'):
+            if MHP == ('GET', 'odes.mapzen.com', '/extracts'):
                 if url.query == 'api_key=odes-xxxxxxx':
-                    bbox = dict(parse_qsl(request.body))
-                    data = u'''{\r  "error": "can't have more than 5 extracts currently processing"\r}'''
-                    return response(403, data.encode('utf8'), headers=response_headers)
+                    data = u'''[\r{\r  "id": 999,\r  "status": "created",\r  "created_at": "2016-06-02T03:29:25.233Z",\r  "processed_at": "2016-06-02T04:20:11.000Z",\r  "bbox": {\r    "e": -122.24825,\r    "n": 37.81230,\r    "s": 37.79724,\r    "w": -122.26447\r  }\r}\r]'''
+                    return response(200, data.encode('utf8'), headers=response_headers)
 
             raise Exception(request.method, url, request.headers, request.body)
         
         with HTTMock(response_content):
             resp1 = self.client.get(self.prefixed('/odes/extracts/'))
-            self.assertEqual(resp1.status_code, 301)
-            self.assertEqual(resp1.headers['Location'], self.prefixed('/your-extracts/'))
+            self.assertEqual(resp1.status_code, 200)
 
             resp2 = self.client.get(self.prefixed('/your-extracts/'))
             self.assertEqual(resp2.status_code, 200)
