@@ -185,7 +185,9 @@ def get_oauth_callback():
     head = {'Authorization': 'Bearer {}'.format(session['token']['access_token'])}
 
     d = get(mapzen_currdev_url, headers=head).json()
-    id = dict(id=d['id'], email=d['email'], nickname=d['nickname'], avatar=d['avatar'], keys_url=d['keys'])
+    id = dict(id=d['id'], email=d['email'], nickname=d['nickname'],
+              avatar=d.get('avatar', 'http://placekitten.com/99/99'),
+              keys_url=d['keys'])
     session['id'] = id
     
     other = redirect(absolute_url(request, state['redirect']), 302)
