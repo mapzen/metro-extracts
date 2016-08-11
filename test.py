@@ -3,7 +3,7 @@ import unittest
 import os, tempfile
 from uuid import uuid4
 from shutil import rmtree
-from os.path import join, dirname
+from os.path import join, dirname, basename
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
 from datetime import datetime
 from re import compile
@@ -333,6 +333,14 @@ class TestApp (unittest.TestCase):
             self.assertEqual(resp4.status_code, 200)
             self.assertIsNotNone(soup4.find(text=compile(r'\b999\b')))
             self.assertIsNotNone(soup4.find(text=compile(r'\bwoof woof\b')))
+            
+            # See if an out-of-date link to the extract still works
+            resp5 = self.client.get(self.prefixed(join('/odes/extracts/', basename(redirect2.path))))
+            soup5 = BeautifulSoup(resp5.data, 'html.parser')
+            
+            self.assertEqual(resp5.status_code, 200)
+            self.assertIsNotNone(soup5.find(text=compile(r'\b37.8123')))
+            self.assertIsNotNone(soup5.find(text=compile(r'\bwoof woof\b')))
         
         def response_content2(url, request):
             '''
@@ -592,6 +600,10 @@ class TestApp (unittest.TestCase):
         resp4 = self.client.get('/data/metro-extracts-alt/oauth/hello')
         self.assertEqual(resp4.status_code, 301)
         self.assertTrue(resp4.headers.get('Location').endswith('/data/metro-extracts/oauth/hello'))
+
+        resp5 = self.client.get('/data/metro-extracts-alt/your-extracts')
+        self.assertEqual(resp5.status_code, 301)
+        self.assertTrue(resp5.headers.get('Location').endswith('/data/metro-extracts/your-extracts'))
 
 class TestAppPrefix (TestApp):
     _url_prefix = '/{}'.format(uuid4())
