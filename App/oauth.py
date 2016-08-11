@@ -103,12 +103,12 @@ def absolute_url(request, location):
     return urljoin(actual_url, location)
 
 def session_info(session):
-    ''' Return user ID, user nickname, user keys URL, and OAuth access token.
+    ''' Return user ID, user nickname, user avatar, user keys URL, and OAuth access token.
     '''
     if 'id' not in session or 'token' not in session:
-        return None, None, None, None
+        return None, None, None, None, None
     
-    return (session['id']['id'], session['id']['nickname'],
+    return (session['id']['id'], session['id']['nickname'], session['id']['avatar'], 
             session['id']['keys_url'], session['token']['access_token'])
 
 @blueprint.route('/oauth/logout', methods=['POST'])
@@ -132,7 +132,7 @@ def get_hello():
         Hey there, {}.
         <button>log out</button>
         </form>
-        '''.format(url_for('OAuth.post_logout'), session['id']['nickname'])
+        '''.format(url_for('OAuth.post_logout'), session['id']['nickname']['avatar'])
 
 @blueprint.route('/oauth/callback')
 @util.errors_logged
@@ -185,7 +185,7 @@ def get_oauth_callback():
     head = {'Authorization': 'Bearer {}'.format(session['token']['access_token'])}
 
     d = get(mapzen_currdev_url, headers=head).json()
-    id = dict(id=d['id'], email=d['email'], nickname=d['nickname'], keys_url=d['keys'])
+    id = dict(id=d['id'], email=d['email'], nickname=d['nickname'], avatar=d['avatar'], keys_url=d['keys'])
     session['id'] = id
     
     other = redirect(absolute_url(request, state['redirect']), 302)

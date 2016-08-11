@@ -64,7 +64,7 @@ def populate_metro_urls(metro_id):
 @blueprint.route('/')
 @util.errors_logged
 def index():
-    id, nick, _, _ = session_info(session)
+    id, nick, avatar, _, _ = session_info(session)
     ordered_cities = sorted(cities, key=itemgetter('country'))
     metros_tree = list()
     
@@ -78,7 +78,7 @@ def index():
         metros_tree.append({'country': country, 'metros': sub_metros})
     
     return render_template('index.html', metros_tree=metros_tree, util=util,
-                           user_id=id, user_nickname=nick)
+                           user_id=id, user_nickname=nick, avatar=avatar)
 
 @blueprint.route('/cities.geojson')
 @util.errors_logged
