@@ -21,6 +21,8 @@ mapzen_token_url = 'https://mapzen.com/oauth/token'
 mapzen_authorize_url = 'https://mapzen.com/oauth/authorize'
 mapzen_currdev_url = 'https://mapzen.com/developers/oauth_api/current_developer'
 
+DEFAULT_AVATAR = 'http://placekitten.com/99/99'
+
 def apply_oauth_blueprint(app, url_prefix):
     '''
     '''
@@ -103,12 +105,13 @@ def absolute_url(request, location):
     return urljoin(actual_url, location)
 
 def session_info(session):
-    ''' Return user ID, user nickname, user keys URL, and OAuth access token.
+    ''' Return user ID, user nickname, user avatar, user keys URL, and OAuth access token.
     '''
     if 'id' not in session or 'token' not in session:
-        return None, None, None, None
+        return None, None, None, None, None
     
     return (session['id']['id'], session['id']['nickname'],
+            session['id'].get('avatar', DEFAULT_AVATAR), 
             session['id']['keys_url'], session['token']['access_token'])
 
 @blueprint.route('/oauth/logout', methods=['POST'])
@@ -127,12 +130,8 @@ def post_logout():
 @util.errors_logged
 @check_authentication
 def get_hello():
-    return '''
-        <form action="{}" method="post">
-        Hey there, {}.
-        <button>log out</button>
-        </form>
-        '''.format(url_for('OAuth.post_logout'), session['id']['nickname'])
+    id, nickname, avatar, keys_url, access_token = session_info(session)
+    return render_template('oauth/hello.html', user_id=id, user_nickname=nickname, avatar=avatar)
 
 @blueprint.route('/oauth/callback')
 @util.errors_logged
@@ -185,7 +184,8 @@ def get_oauth_callback():
     head = {'Authorization': 'Bearer {}'.format(session['token']['access_token'])}
 
     d = get(mapzen_currdev_url, headers=head).json()
-    id = dict(id=d['id'], email=d['email'], nickname=d['nickname'], keys_url=d['keys'])
+    id = dict(id=d['id'], email=d['email'], nickname=d['nickname'],
+              avatar=d.get('avatar', DEFAULT_AVATAR), keys_url=d['keys'])
     session['id'] = id
     
     other = redirect(absolute_url(request, state['redirect']), 302)

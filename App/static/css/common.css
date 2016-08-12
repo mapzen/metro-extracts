@@ -5,16 +5,42 @@
   font-size: 36px;
   margin: 1.2em 0 .6em;
 }
-.logout-form span {
-  color: #898989;
+.breadcrumb {
+  margin-top: 10px;
+}
+.logout-form {
+  padding-top: 20px;
+}
+.logout-form .info {
+  float: left;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 400;
+  margin-right: 20px;
+}
+.logout-form .info p {
+  line-height: 1.3em;
+  margin-bottom: 0;
+}
+.logout-form img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 1.5px solid #385d5c;
+  padding: 2px;
+  float: right;
+  margin-top: -10px;
 }
 .logout-form .btn-transparent {
-  padding: 2px 10px;
-  float: right;
-  font-size: 12px;
-  margin-left: 20px;
-  color: #898989;
-  border-color: #898989;
+  color: #6ea0a4;
+  border: none;
+  padding: 0;
+  text-transform: inherit;
+  font-weight: 400;
+}
+.logout-form .btn-transparent:hover {
+  background: white;
+  color: #385d5c;
 }
 .legend-red {
   background: rgba(212,100,92,.3);
