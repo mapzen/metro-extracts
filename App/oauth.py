@@ -130,12 +130,8 @@ def post_logout():
 @util.errors_logged
 @check_authentication
 def get_hello():
-    return '''
-        <form action="{}" method="post">
-        Hey there, {}.
-        <button>log out</button>
-        </form>
-        '''.format(url_for('OAuth.post_logout'), session['id']['avatar'])
+    id, nickname, avatar, keys_url, access_token = session_info(session)
+    return render_template('oauth/hello.html', user_id=id, user_nickname=nickname, avatar=avatar)
 
 @blueprint.route('/oauth/callback')
 @util.errors_logged

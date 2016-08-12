@@ -205,7 +205,7 @@ class TestApp (unittest.TestCase):
             soup3 = BeautifulSoup(resp3.data, 'html.parser')
 
             self.assertEqual(resp3.status_code, 200)
-            self.assertIsNotNone(soup3.find(text=compile(r'\buser_github_handle\b')))
+            self.assertIsNotNone(soup3.find('button', text=compile('Logout')))
     
     def _do_logout(self, codes):
         '''
