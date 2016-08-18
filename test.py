@@ -142,6 +142,14 @@ class TestApp (unittest.TestCase):
                         "region": "africa",
                         "country": "Algeria",
                         "bbox": {"top": "36.762", "left": "3.026", "bottom": "36.744", "right": "3.058"}
+                    },
+                    {
+                        "id": "algiers_algeria-2",
+                        "status": "pre-published",
+                        "name": "Algiers",
+                        "region": "africa",
+                        "country": "Algeria",
+                        "bbox": {"top": "36.847", "left": "2.828", "bottom": "36.567", "right": "3.392"}
                     }
                 ]
             resp1 = self.client.get(self.prefixed('/cities.geojson'))
@@ -160,7 +168,7 @@ class TestApp (unittest.TestCase):
         self.assertEqual(geojson['features'][2]['type'], 'Feature')
         self.assertEqual(geojson['features'][2]['id'], 'algiers_algeria')
         
-        self.assertEqual(len(cities), 2, 'Should see two published cities')
+        self.assertEqual(len(cities), 3, 'Should see three published or pre-published cities')
         
         self.assertEqual(cities[0]['id'], 'abidjan_ivory-coast')
         self.assertEqual(cities[0]['bbox']['top'], '5.523')
@@ -168,6 +176,7 @@ class TestApp (unittest.TestCase):
         self.assertEqual(cities[0]['bbox']['bottom'], '5.220')
         self.assertEqual(cities[0]['bbox']['right'], '-3.849')
         self.assertEqual(cities[1]['id'], 'abuja_nigeria')
+        self.assertEqual(cities[2]['id'], 'algiers_algeria-2')
         
     def test_oauth_index(self):
         resp = self.client.get(self.prefixed('/oauth/hello'))

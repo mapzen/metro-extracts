@@ -76,6 +76,10 @@ def get_cities_geojson():
     features = list()
     
     for city in data.cities:
+        if city.get('status') == 'pre-published':
+            # Skip any city that is not yet fully published.
+            continue
+    
         x1, y1, x2, y2 = [float(city['bbox'][k])
                           for k in ('left', 'bottom', 'right', 'top')]
 
@@ -92,6 +96,7 @@ def get_cities_geojson():
 @blueprint.route('/cities-extractor.json')
 @util.errors_logged
 def get_cities_extractor_json():
+    # Include only cities that have not been deprecated.
     cities = [city for city in data.cities
               if city.get('status') != 'deprecated']
 
