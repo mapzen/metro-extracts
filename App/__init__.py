@@ -12,20 +12,10 @@ from flask import (
     Blueprint, jsonify, Response, render_template, url_for, request, session
     )
 
-from . import util
+from . import util, data
 from .oauth import session_info
 
 blueprint = Blueprint('Metro-Extracts', __name__)
-
-def load_cities(filename):
-    '''
-    '''
-    with open(filename) as file:
-        cities = json.load(file)
-    
-    return cities
-
-cities = load_cities(join(dirname(__file__), '..', 'cities.json'))
 
 def apply_blueprint(app, url_prefix):
     '''
@@ -65,7 +55,7 @@ def populate_metro_urls(metro_id):
 @util.errors_logged
 def index():
     id, nick, avatar, _, _ = session_info(session)
-    ordered_cities = sorted(cities, key=itemgetter('country'))
+    ordered_cities = sorted(data.cities, key=itemgetter('country'))
     metros_tree = list()
     
     for (country, sub_cities) in groupby(ordered_cities, itemgetter('country')):
@@ -85,7 +75,7 @@ def index():
 def get_cities_geojson():
     features = list()
     
-    for city in cities:
+    for city in data.cities:
         x1, y1, x2, y2 = [float(city['bbox'][k])
                           for k in ('left', 'bottom', 'right', 'top')]
 
@@ -102,7 +92,7 @@ def get_cities_geojson():
 @blueprint.route('/cities-extractor.json')
 @util.errors_logged
 def get_cities_extractor_json():
-    return Response(json.dumps(cities, indent=2),
+    return Response(json.dumps(data.cities, indent=2),
                     headers={'Content-Type': 'application/json'})
 
 @blueprint.route('/metro/<metro_id>/')
