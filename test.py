@@ -117,24 +117,36 @@ class TestApp (unittest.TestCase):
         self.assertEqual(resp2.status_code, 200)
         self.assertIn('San Francisco', head2)
     
-    def test_cities_geojson(self):
-        resp = self.client.get(self.prefixed('/cities.geojson'))
-        data = json.loads(resp.data.decode('utf8'))
+    def test_cities_json_responses(self):
+        with mock.patch('App.data') as data:
+            data.cities = [
+                    {
+                        "id": "abidjan_ivory-coast",
+                        "name": "Abidjan",
+                        "region": "africa",
+                        "country": "Ivory Coast",
+                        "bbox": {"top": "5.523", "left": "-4.183", "bottom": "5.220", "right": "-3.849"}
+                    }
+                ]
+            resp1 = self.client.get(self.prefixed('/cities.geojson'))
+            geojson = json.loads(resp1.data.decode('utf8'))
+
+            resp2 = self.client.get(self.prefixed('/cities-extractor.json'))
+            cities = json.loads(resp2.data.decode('utf8'))
         
-        self.assertEqual(data['type'], 'FeatureCollection')
-        for feature in data['features']:
-            self.assertEqual(feature['type'], 'Feature')
+        self.assertEqual(geojson['type'], 'FeatureCollection')
+        self.assertEqual(len(geojson['features']), 1)
         
-    def test_cities_extractor_json(self):
-        resp = self.client.get(self.prefixed('/cities-extractor.json'))
-        data = json.loads(resp.data.decode('utf8'))
+        self.assertEqual(geojson['features'][0]['type'], 'Feature')
+        self.assertEqual(geojson['features'][0]['id'], 'abidjan_ivory-coast')
         
-        for city in data:
-            self.assertIn('id', city)
-            self.assertIn('top', city['bbox'])
-            self.assertIn('left', city['bbox'])
-            self.assertIn('bottom', city['bbox'])
-            self.assertIn('right', city['bbox'])
+        self.assertEqual(len(cities), 1)
+        
+        self.assertEqual(cities[0]['id'], 'abidjan_ivory-coast')
+        self.assertEqual(cities[0]['bbox']['top'], '5.523')
+        self.assertEqual(cities[0]['bbox']['left'], '-4.183')
+        self.assertEqual(cities[0]['bbox']['bottom'], '5.220')
+        self.assertEqual(cities[0]['bbox']['right'], '-3.849')
         
     def test_oauth_index(self):
         resp = self.client.get(self.prefixed('/oauth/hello'))
