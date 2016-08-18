@@ -92,7 +92,10 @@ def get_cities_geojson():
 @blueprint.route('/cities-extractor.json')
 @util.errors_logged
 def get_cities_extractor_json():
-    return Response(json.dumps(data.cities, indent=2),
+    cities = [city for city in data.cities
+              if city.get('status') != 'deprecated']
+
+    return Response(json.dumps(cities, indent=2),
                     headers={'Content-Type': 'application/json'})
 
 @blueprint.route('/metro/<metro_id>/')

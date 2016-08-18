@@ -134,6 +134,14 @@ class TestApp (unittest.TestCase):
                         "region": "africa",
                         "country": "Nigeria",
                         "bbox": {"top": "9.246", "left": "7.248", "bottom": "8.835", "right": "7.717"}
+                    },
+                    {
+                        "id": "algiers_algeria",
+                        "status": "deprecated",
+                        "name": "Algiers",
+                        "region": "africa",
+                        "country": "Algeria",
+                        "bbox": {"top": "36.762", "left": "3.026", "bottom": "36.744", "right": "3.058"}
                     }
                 ]
             resp1 = self.client.get(self.prefixed('/cities.geojson'))
@@ -143,14 +151,16 @@ class TestApp (unittest.TestCase):
             cities = json.loads(resp2.data.decode('utf8'))
         
         self.assertEqual(geojson['type'], 'FeatureCollection')
-        self.assertEqual(len(geojson['features']), 2)
+        self.assertEqual(len(geojson['features']), 3, 'Should see three published or deprecated cities')
         
         self.assertEqual(geojson['features'][0]['type'], 'Feature')
         self.assertEqual(geojson['features'][0]['id'], 'abidjan_ivory-coast')
         self.assertEqual(geojson['features'][1]['type'], 'Feature')
         self.assertEqual(geojson['features'][1]['id'], 'abuja_nigeria')
+        self.assertEqual(geojson['features'][2]['type'], 'Feature')
+        self.assertEqual(geojson['features'][2]['id'], 'algiers_algeria')
         
-        self.assertEqual(len(cities), 2)
+        self.assertEqual(len(cities), 2, 'Should see two published cities')
         
         self.assertEqual(cities[0]['id'], 'abidjan_ivory-coast')
         self.assertEqual(cities[0]['bbox']['top'], '5.523')
