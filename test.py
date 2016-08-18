@@ -117,7 +117,7 @@ class TestApp (unittest.TestCase):
         self.assertEqual(resp2.status_code, 200)
         self.assertIn('San Francisco', head2)
     
-    def test_cities_json_responses(self):
+    def test_cities_responses(self):
         with mock.patch('App.data') as data:
             data.cities = [
                     {
@@ -136,7 +136,7 @@ class TestApp (unittest.TestCase):
                         "bbox": {"top": "9.246", "left": "7.248", "bottom": "8.835", "right": "7.717"}
                     },
                     {
-                        "id": "algiers_algeria",
+                        "id": "algiers_algeria:deprecated",
                         "status": "deprecated",
                         "name": "Algiers",
                         "region": "africa",
@@ -144,7 +144,7 @@ class TestApp (unittest.TestCase):
                         "bbox": {"top": "36.762", "left": "3.026", "bottom": "36.744", "right": "3.058"}
                     },
                     {
-                        "id": "algiers_algeria-2",
+                        "id": "algiers_algeria:pre-published",
                         "status": "pre-published",
                         "name": "Algiers",
                         "region": "africa",
@@ -157,6 +157,9 @@ class TestApp (unittest.TestCase):
 
             resp2 = self.client.get(self.prefixed('/cities-extractor.json'))
             cities = json.loads(resp2.data.decode('utf8'))
+            
+            resp3 = self.client.get(self.prefixed('/'))
+            html = resp3.data.decode('utf8')
         
         self.assertEqual(geojson['type'], 'FeatureCollection')
         self.assertEqual(len(geojson['features']), 3, 'Should see three published or deprecated cities')
@@ -166,7 +169,7 @@ class TestApp (unittest.TestCase):
         self.assertEqual(geojson['features'][1]['type'], 'Feature')
         self.assertEqual(geojson['features'][1]['id'], 'abuja_nigeria')
         self.assertEqual(geojson['features'][2]['type'], 'Feature')
-        self.assertEqual(geojson['features'][2]['id'], 'algiers_algeria')
+        self.assertEqual(geojson['features'][2]['id'], 'algiers_algeria:deprecated')
         
         self.assertEqual(len(cities), 3, 'Should see three published or pre-published cities')
         
@@ -176,7 +179,12 @@ class TestApp (unittest.TestCase):
         self.assertEqual(cities[0]['bbox']['bottom'], '5.220')
         self.assertEqual(cities[0]['bbox']['right'], '-3.849')
         self.assertEqual(cities[1]['id'], 'abuja_nigeria')
-        self.assertEqual(cities[2]['id'], 'algiers_algeria-2')
+        self.assertEqual(cities[2]['id'], 'algiers_algeria:pre-published')
+        
+        self.assertIn('abidjan_ivory-coast', html)
+        self.assertIn('abuja_nigeria', html)
+        self.assertIn('algiers_algeria:deprecated', html)
+        self.assertNotIn('algiers_algeria:pre-published', html)
         
     def test_oauth_index(self):
         resp = self.client.get(self.prefixed('/oauth/hello'))
