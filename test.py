@@ -159,7 +159,12 @@ class TestApp (unittest.TestCase):
             cities = json.loads(resp2.data.decode('utf8'))
             
             resp3 = self.client.get(self.prefixed('/'))
-            html = resp3.data.decode('utf8')
+            index_html = resp3.data.decode('utf8')
+            
+            resp4 = self.client.get(self.prefixed('/metro/abidjan_ivory-coast/'))
+            resp5 = self.client.get(self.prefixed('/metro/abuja_nigeria/'))
+            resp6 = self.client.get(self.prefixed('/metro/algiers_algeria:deprecated/'))
+            resp7 = self.client.get(self.prefixed('/metro/algiers_algeria:pre-published/'))
         
         self.assertEqual(geojson['type'], 'FeatureCollection')
         self.assertEqual(len(geojson['features']), 3, 'Should see three published or deprecated cities')
@@ -181,10 +186,15 @@ class TestApp (unittest.TestCase):
         self.assertEqual(cities[1]['id'], 'abuja_nigeria')
         self.assertEqual(cities[2]['id'], 'algiers_algeria:pre-published')
         
-        self.assertIn('abidjan_ivory-coast', html)
-        self.assertIn('abuja_nigeria', html)
-        self.assertIn('algiers_algeria:deprecated', html)
-        self.assertNotIn('algiers_algeria:pre-published', html)
+        self.assertIn('abidjan_ivory-coast', index_html)
+        self.assertIn('abuja_nigeria', index_html)
+        self.assertIn('algiers_algeria:deprecated', index_html)
+        self.assertNotIn('algiers_algeria:pre-published', index_html)
+        
+        self.assertEqual(resp4.status_code, 200)
+        self.assertEqual(resp5.status_code, 200)
+        self.assertEqual(resp6.status_code, 200)
+        self.assertNotEqual(resp7.status_code, 200)
         
     def test_oauth_index(self):
         resp = self.client.get(self.prefixed('/oauth/hello'))
