@@ -652,6 +652,11 @@ class TestAppDoublePrefix (TestApp):
 
 class TestData (unittest.TestCase):
 
+    def test_cities_json_content(self):
+        values = (None, 'published', 'pre-published', 'deprecated')
+        for city in data.cities:
+            self.assertIn(city.get('status'), values, 'Bad status in city {id}'.format(**city))
+
     def test_add_extract_envelope(self):
         db, name = Mock(), str(uuid4())
         envelope = data.Envelope('xyz', [-122.26447, 37.79724, -122.24825, 37.81230])
