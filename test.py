@@ -158,13 +158,25 @@ class TestApp (unittest.TestCase):
             resp2 = self.client.get(self.prefixed('/cities-extractor.json'))
             cities = json.loads(resp2.data.decode('utf8'))
             
-            resp3 = self.client.get(self.prefixed('/'))
-            index_html = resp3.data.decode('utf8')
+            def response_content(url, request):
+                '''
+                '''
+                MH = request.method, url.hostname
+                response_headers = {'Content-Length': '0'}
+
+                if MH == ('HEAD', 's3.amazonaws.com'):
+                    return response(200, data.encode('utf8'), headers=response_headers)
+
+                raise Exception(request.method, url, request.headers, request.body)
+        
+            with HTTMock(response_content):
+                resp3 = self.client.get(self.prefixed('/'))
+                index_html = resp3.data.decode('utf8')
             
-            resp4 = self.client.get(self.prefixed('/metro/abidjan_ivory-coast/'))
-            resp5 = self.client.get(self.prefixed('/metro/abuja_nigeria/'))
-            resp6 = self.client.get(self.prefixed('/metro/algiers_algeria:deprecated/'))
-            resp7 = self.client.get(self.prefixed('/metro/algiers_algeria:pre-published/'))
+                resp4 = self.client.get(self.prefixed('/metro/abidjan_ivory-coast/'))
+                resp5 = self.client.get(self.prefixed('/metro/abuja_nigeria/'))
+                resp6 = self.client.get(self.prefixed('/metro/algiers_algeria:deprecated/'))
+                resp7 = self.client.get(self.prefixed('/metro/algiers_algeria:pre-published/'))
         
         self.assertEqual(geojson['type'], 'FeatureCollection')
         self.assertEqual(len(geojson['features']), 3, 'Should see three published or deprecated cities')
@@ -194,7 +206,7 @@ class TestApp (unittest.TestCase):
         self.assertEqual(resp4.status_code, 200)
         self.assertEqual(resp5.status_code, 200)
         self.assertEqual(resp6.status_code, 200)
-        self.assertNotEqual(resp7.status_code, 200)
+        self.assertEqual(resp7.status_code, 404)
         
     def test_oauth_index(self):
         resp = self.client.get(self.prefixed('/oauth/hello'))

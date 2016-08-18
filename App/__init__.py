@@ -55,7 +55,12 @@ def populate_metro_urls(metro_id):
 @util.errors_logged
 def index():
     id, nick, avatar, _, _ = session_info(session)
-    ordered_cities = sorted(data.cities, key=itemgetter('country'))
+    
+    # Include only cities that have been published.
+    cities = [city for city in data.cities
+              if city.get('status') != 'pre-published']
+
+    ordered_cities = sorted(cities, key=itemgetter('country'))
     metros_tree = list()
     
     for (country, sub_cities) in groupby(ordered_cities, itemgetter('country')):
@@ -107,10 +112,13 @@ def get_cities_extractor_json():
 @blueprint.route('/metro/<metro_id>/<wof_id>/<wof_name>/')
 @util.errors_logged
 def get_metro(metro_id, wof_id=None, wof_name=None):
-    with open('cities.json') as file:
-        cities = json.load(file)
-        metro = {c['id']: c for c in cities}[metro_id]
-        downloads = {d.format: d for d in populate_metro_urls(metro_id)}
+    cities = {c['id']: c for c in data.cities if c.get('status') != 'pre-published'}
+    
+    if metro_id not in cities:
+        return Response('', status=404)
+    
+    metro = cities[metro_id]
+    downloads = {d.format: d for d in populate_metro_urls(metro_id)}
     
     return render_template('metro.html', metro=metro, downloads=downloads,
                            wof_id=wof_id, wof_name=wof_name, util=util)
