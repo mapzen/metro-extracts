@@ -117,24 +117,96 @@ class TestApp (unittest.TestCase):
         self.assertEqual(resp2.status_code, 200)
         self.assertIn('San Francisco', head2)
     
-    def test_cities_geojson(self):
-        resp = self.client.get(self.prefixed('/cities.geojson'))
-        data = json.loads(resp.data.decode('utf8'))
+    def test_cities_responses(self):
+        with mock.patch('App.data') as data:
+            data.cities = [
+                    {
+                        "id": "abidjan_ivory-coast",
+                        "name": "Abidjan",
+                        "region": "africa",
+                        "country": "Ivory Coast",
+                        "bbox": {"top": "5.523", "left": "-4.183", "bottom": "5.220", "right": "-3.849"}
+                    },
+                    {
+                        "id": "abuja_nigeria",
+                        "status": "published",
+                        "name": "Abuja",
+                        "region": "africa",
+                        "country": "Nigeria",
+                        "bbox": {"top": "9.246", "left": "7.248", "bottom": "8.835", "right": "7.717"}
+                    },
+                    {
+                        "id": "algiers_algeria:deprecated",
+                        "status": "deprecated",
+                        "name": "Algiers",
+                        "region": "africa",
+                        "country": "Algeria",
+                        "bbox": {"top": "36.762", "left": "3.026", "bottom": "36.744", "right": "3.058"}
+                    },
+                    {
+                        "id": "algiers_algeria:pre-published",
+                        "status": "pre-published",
+                        "name": "Algiers",
+                        "region": "africa",
+                        "country": "Algeria",
+                        "bbox": {"top": "36.847", "left": "2.828", "bottom": "36.567", "right": "3.392"}
+                    }
+                ]
+            resp1 = self.client.get(self.prefixed('/cities.geojson'))
+            geojson = json.loads(resp1.data.decode('utf8'))
+
+            resp2 = self.client.get(self.prefixed('/cities-extractor.json'))
+            cities = json.loads(resp2.data.decode('utf8'))
+            
+            def response_content(url, request):
+                '''
+                '''
+                MH = request.method, url.hostname
+                response_headers = {'Content-Length': '0'}
+
+                if MH == ('HEAD', 's3.amazonaws.com'):
+                    return response(200, data.encode('utf8'), headers=response_headers)
+
+                raise Exception(request.method, url, request.headers, request.body)
         
-        self.assertEqual(data['type'], 'FeatureCollection')
-        for feature in data['features']:
-            self.assertEqual(feature['type'], 'Feature')
+            with HTTMock(response_content):
+                resp3 = self.client.get(self.prefixed('/'))
+                index_html = resp3.data.decode('utf8')
+            
+                resp4 = self.client.get(self.prefixed('/metro/abidjan_ivory-coast/'))
+                resp5 = self.client.get(self.prefixed('/metro/abuja_nigeria/'))
+                resp6 = self.client.get(self.prefixed('/metro/algiers_algeria:deprecated/'))
+                resp7 = self.client.get(self.prefixed('/metro/algiers_algeria:pre-published/'))
         
-    def test_cities_extractor_json(self):
-        resp = self.client.get(self.prefixed('/cities-extractor.json'))
-        data = json.loads(resp.data.decode('utf8'))
+        self.assertEqual(geojson['type'], 'FeatureCollection')
+        self.assertEqual(len(geojson['features']), 3, 'Should see three published or deprecated cities')
         
-        for city in data:
-            self.assertIn('id', city)
-            self.assertIn('top', city['bbox'])
-            self.assertIn('left', city['bbox'])
-            self.assertIn('bottom', city['bbox'])
-            self.assertIn('right', city['bbox'])
+        self.assertEqual(geojson['features'][0]['type'], 'Feature')
+        self.assertEqual(geojson['features'][0]['id'], 'abidjan_ivory-coast')
+        self.assertEqual(geojson['features'][1]['type'], 'Feature')
+        self.assertEqual(geojson['features'][1]['id'], 'abuja_nigeria')
+        self.assertEqual(geojson['features'][2]['type'], 'Feature')
+        self.assertEqual(geojson['features'][2]['id'], 'algiers_algeria:deprecated')
+        
+        self.assertEqual(len(cities), 3, 'Should see three published or pre-published cities')
+        
+        self.assertEqual(cities[0]['id'], 'abidjan_ivory-coast')
+        self.assertEqual(cities[0]['bbox']['top'], '5.523')
+        self.assertEqual(cities[0]['bbox']['left'], '-4.183')
+        self.assertEqual(cities[0]['bbox']['bottom'], '5.220')
+        self.assertEqual(cities[0]['bbox']['right'], '-3.849')
+        self.assertEqual(cities[1]['id'], 'abuja_nigeria')
+        self.assertEqual(cities[2]['id'], 'algiers_algeria:pre-published')
+        
+        self.assertIn('abidjan_ivory-coast', index_html)
+        self.assertIn('abuja_nigeria', index_html)
+        self.assertIn('algiers_algeria:deprecated', index_html)
+        self.assertNotIn('algiers_algeria:pre-published', index_html)
+        
+        self.assertEqual(resp4.status_code, 200)
+        self.assertEqual(resp5.status_code, 200)
+        self.assertEqual(resp6.status_code, 200)
+        self.assertEqual(resp7.status_code, 404)
         
     def test_oauth_index(self):
         resp = self.client.get(self.prefixed('/oauth/hello'))
@@ -609,6 +681,11 @@ class TestAppDoublePrefix (TestApp):
     _url_prefix = '/{}/{}'.format(uuid4(), uuid4())
 
 class TestData (unittest.TestCase):
+
+    def test_cities_json_content(self):
+        values = (None, 'published', 'pre-published', 'deprecated')
+        for city in data.cities:
+            self.assertIn(city.get('status'), values, 'Bad status in city {id}'.format(**city))
 
     def test_add_extract_envelope(self):
         db, name = Mock(), str(uuid4())

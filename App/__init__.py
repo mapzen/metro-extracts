@@ -12,20 +12,10 @@ from flask import (
     Blueprint, jsonify, Response, render_template, url_for, request, session
     )
 
-from . import util
+from . import util, data
 from .oauth import session_info
 
 blueprint = Blueprint('Metro-Extracts', __name__)
-
-def load_cities(filename):
-    '''
-    '''
-    with open(filename) as file:
-        cities = json.load(file)
-    
-    return cities
-
-cities = load_cities(join(dirname(__file__), '..', 'cities.json'))
 
 def apply_blueprint(app, url_prefix):
     '''
@@ -65,6 +55,11 @@ def populate_metro_urls(metro_id):
 @util.errors_logged
 def index():
     id, nick, avatar, _, _ = session_info(session)
+    
+    # Include only cities that have been published.
+    cities = [city for city in data.cities
+              if city.get('status') != 'pre-published']
+
     ordered_cities = sorted(cities, key=itemgetter('country'))
     metros_tree = list()
     
@@ -85,7 +80,11 @@ def index():
 def get_cities_geojson():
     features = list()
     
-    for city in cities:
+    for city in data.cities:
+        if city.get('status') == 'pre-published':
+            # Skip any city that is not yet fully published.
+            continue
+    
         x1, y1, x2, y2 = [float(city['bbox'][k])
                           for k in ('left', 'bottom', 'right', 'top')]
 
@@ -102,6 +101,10 @@ def get_cities_geojson():
 @blueprint.route('/cities-extractor.json')
 @util.errors_logged
 def get_cities_extractor_json():
+    # Include only cities that have not been deprecated.
+    cities = [city for city in data.cities
+              if city.get('status') != 'deprecated']
+
     return Response(json.dumps(cities, indent=2),
                     headers={'Content-Type': 'application/json'})
 
@@ -109,10 +112,13 @@ def get_cities_extractor_json():
 @blueprint.route('/metro/<metro_id>/<wof_id>/<wof_name>/')
 @util.errors_logged
 def get_metro(metro_id, wof_id=None, wof_name=None):
-    with open('cities.json') as file:
-        cities = json.load(file)
-        metro = {c['id']: c for c in cities}[metro_id]
-        downloads = {d.format: d for d in populate_metro_urls(metro_id)}
+    cities = {c['id']: c for c in data.cities if c.get('status') != 'pre-published'}
+    
+    if metro_id not in cities:
+        return Response('', status=404)
+    
+    metro = cities[metro_id]
+    downloads = {d.format: d for d in populate_metro_urls(metro_id)}
     
     return render_template('metro.html', metro=metro, downloads=downloads,
                            wof_id=wof_id, wof_name=wof_name, util=util)

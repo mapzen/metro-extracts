@@ -1,6 +1,18 @@
 from uuid import uuid4
+from os.path import dirname, join
 from contextlib import contextmanager
 import psycopg2, psycopg2.extras
+import json
+
+def load_cities(filename):
+    '''
+    '''
+    with open(filename) as file:
+        cities = json.load(file)
+    
+    return cities
+
+cities = load_cities(join(dirname(__file__), '..', 'cities.json'))
 
 class Envelope:
     def __init__(self, id, bbox):
