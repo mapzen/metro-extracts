@@ -28,7 +28,7 @@ def apply_odes_blueprint(app, url_prefix):
     app.register_blueprint(blueprint, url_prefix=url_prefix)
     app.config['DB_DSN'] = environ.get('DATABASE_URL')
 
-def get_odes_keys(keys_url, access_token):
+def get_odes_key(keys_url, access_token):
     auth_header = {'Authorization': 'Bearer {}'.format(access_token)}
 
     resp1 = requests.get(keys_url, headers=auth_header)
@@ -45,24 +45,23 @@ def get_odes_keys(keys_url, access_token):
         
         api_keys = [resp2.json().get('key')]
     
-    return api_keys
+    return api_keys[0]
 
-def get_odes_extracts(db, api_keys):
+def get_odes_extracts(db, api_key):
     '''
     '''
     odeses, extracts = list(), list()
     
-    for api_key in api_keys:
-        vars = dict(api_key=api_key)
-        extracts_url = uritemplate.expand(odes_extracts_url, vars)
-        resp = requests.get(extracts_url)
-    
-        if resp.status_code in range(200, 299):
-            odeses.extend([data.ODES(str(oj['id']), status=oj['status'], bbox=oj['bbox'],
-                                     links=oj.get('download_links', {}),
-                                     processed_at=(parse_datetime(oj['processed_at']) if oj['processed_at'] else None),
-                                     created_at=(parse_datetime(oj['created_at']) if oj['created_at'] else None))
-                           for oj in resp.json()])
+    vars = dict(api_key=api_key)
+    extracts_url = uritemplate.expand(odes_extracts_url, vars)
+    resp = requests.get(extracts_url)
+
+    if resp.status_code in range(200, 299):
+        odeses.extend([data.ODES(str(oj['id']), status=oj['status'], bbox=oj['bbox'],
+                                 links=oj.get('download_links', {}),
+                                 processed_at=(parse_datetime(oj['processed_at']) if oj['processed_at'] else None),
+                                 created_at=(parse_datetime(oj['created_at']) if oj['created_at'] else None))
+                       for oj in resp.json()])
     
     for odes in sorted(odeses, key=attrgetter('created_at'), reverse=True):
         extract = data.get_extract(db, odes=odes)
@@ -74,26 +73,23 @@ def get_odes_extracts(db, api_keys):
 
     return extracts
 
-def get_odes_extract(db, id, api_keys):
+def get_odes_extract(db, id, api_key):
     '''
     '''
     extract, odes = data.get_extract(db, extract_id=id), None
     
     if extract is None:
         # Nothing by that name in the database, so ask the ODES API.
-        for api_key in api_keys:
-            vars = dict(id=id, api_key=api_key)
-            extract_url = uritemplate.expand(odes_extracts_url, vars)
-            resp = requests.get(extract_url)
-    
-            if resp.status_code in range(200, 299):
-                # Stop at first matching ODES extract
-                oj = resp.json()
-                odes = data.ODES(str(oj['id']), status=oj['status'], bbox=oj['bbox'],
-                                 links=oj.get('download_links', {}),
-                                 processed_at=(parse_datetime(oj['processed_at']) if oj['processed_at'] else None),
-                                 created_at=(parse_datetime(oj['created_at']) if oj['created_at'] else None))
-                break
+        vars = dict(id=id, api_key=api_key)
+        extract_url = uritemplate.expand(odes_extracts_url, vars)
+        resp = requests.get(extract_url)
+
+        if resp.status_code in range(200, 299):
+            oj = resp.json()
+            odes = data.ODES(str(oj['id']), status=oj['status'], bbox=oj['bbox'],
+                             links=oj.get('download_links', {}),
+                             processed_at=(parse_datetime(oj['processed_at']) if oj['processed_at'] else None),
+                             created_at=(parse_datetime(oj['created_at']) if oj['created_at'] else None))
     
         if odes is None:
             # Nothing at all for this ID anywhere.
@@ -101,7 +97,7 @@ def get_odes_extract(db, id, api_keys):
     
     if odes is None:
         # A DB extract was found, but nothing in ODES - very weird!
-        return get_odes_extract(db, extract.odes.id, api_keys)
+        return get_odes_extract(db, extract.odes.id, api_key)
     
     # We have a known ODES, so look for it in the database.
     extract = data.get_extract(db, odes=odes)
@@ -195,8 +191,8 @@ def get_envelope(envelope_id):
         return redirect(url_for('ODES.get_extract', extract_id=extract.id), 301)
     
     user_id, _, _, keys_url, access_token = session_info(session)
-    api_keys = get_odes_keys(keys_url, access_token)
-    odes = request_odes_extract(extract, request, url_for, api_keys[0])
+    api_key = get_odes_key(keys_url, access_token)
+    odes = request_odes_extract(extract, request, url_for, api_key)
     
     with data.connect(current_app.config['DB_DSN']) as db:
         extract.user_id = user_id
@@ -213,10 +209,10 @@ def get_extracts():
     '''
     '''
     id, nickname, avatar, keys_url, access_token = session_info(session)
-    api_keys = get_odes_keys(keys_url, access_token)
+    api_key = get_odes_key(keys_url, access_token)
 
     with data.connect(current_app.config['DB_DSN']) as db:
-        extracts = get_odes_extracts(db, api_keys)
+        extracts = get_odes_extracts(db, api_key)
     
     return render_template('extracts.html', extracts=extracts, util=util,
                            user_id=id, user_nickname=nickname, avatar=avatar)
@@ -229,10 +225,10 @@ def get_extract(extract_id):
     '''
     '''
     id, nickname, avatar, keys_url, access_token = session_info(session)
-    api_keys = get_odes_keys(keys_url, access_token)
+    api_key = get_odes_key(keys_url, access_token)
 
     with data.connect(current_app.config['DB_DSN']) as db:
-        extract = get_odes_extract(db, extract_id, api_keys)
+        extract = get_odes_extract(db, extract_id, api_key)
     
     if extract is None:
         raise ValueError('No extract {}'.format(extract_id))
