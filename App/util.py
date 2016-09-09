@@ -19,7 +19,9 @@ class Download:
         self.url = url
         
         resp = requests.head(url, timeout=2)
-        self.size = nice_size(int(resp.headers.get('Content-Length')))
+        
+        self.size = nice_size(int(resp.headers['Content-Length'])) \
+            if ('Content-Length' in resp.headers) else 'Missing'
 
 def nice_size(size):
     KB = 1024.

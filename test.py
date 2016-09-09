@@ -173,7 +173,12 @@ class TestApp (unittest.TestCase):
                    'WATER COASTLINE SHP', 'LAND COASTLINE SHP')
         
         self.assertEqual(len(soup1.find_all('a', class_='link', **{'data-format': compile(r'.*')})),
-                         len(formats), 'Should have no data format links, because nothing exists')
+                         len(formats), 'Should have eight data format links')
+        
+        for format in formats:
+            link = soup1.find('a', class_='link', **{'data-format': format})
+            size = link.find('span', class_='size').text
+            self.assertEqual(size, 'Missing')
     
     def test_cities_responses(self):
         with mock.patch('App.data') as data:
