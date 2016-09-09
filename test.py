@@ -117,6 +117,69 @@ class TestApp (unittest.TestCase):
         self.assertEqual(resp2.status_code, 200)
         self.assertIn('San Francisco', head2)
     
+    def test_metro(self):
+        def response_content(url, request):
+            '''
+            '''
+            response_headers = {'Content-Type': 'application/json; charset=utf-8'}
+            
+            if (request.method, url.hostname) == ('HEAD', 's3.amazonaws.com'):
+                if url.path.startswith('/metro-extracts.mapzen.com/new-york_new-york.'):
+                    return response(200, '', headers={'Content-Length': '999999'})
+
+            raise Exception(request.method, url, request.headers, request.body)
+        
+        with HTTMock(response_content):
+            resp1 = self.client.get(self.prefixed('/metro/new-york_new-york/'))
+            soup1 = BeautifulSoup(resp1.data, 'html.parser')
+            head1 = soup1.find('h2').text
+
+        self.assertEqual(resp1.status_code, 200)
+        self.assertIn('New York', head1)
+        
+        formats = ('OSM2PGSQL SHP', 'OSM2PGSQL GEOJSON', 'IMPOSM SHP',
+                   'IMPOSM GEOJSON', 'OSM PBF', 'OSM XML',
+                   'WATER COASTLINE SHP', 'LAND COASTLINE SHP')
+        
+        self.assertEqual(len(soup1.find_all('a', class_='link', **{'data-format': compile(r'.*')})),
+                         len(formats), 'Should have eight data format links')
+        
+        for format in formats:
+            link = soup1.find('a', class_='link', **{'data-format': format})
+            size = link.find('span', class_='size').text
+            self.assertEqual(size, '977KB')
+    
+    def test_metro_missing(self):
+        def response_content(url, request):
+            '''
+            '''
+            response_headers = {'Content-Type': 'application/json; charset=utf-8'}
+            
+            if (request.method, url.hostname) == ('HEAD', 's3.amazonaws.com'):
+                return response(404, '')
+
+            raise Exception(request.method, url, request.headers, request.body)
+        
+        with HTTMock(response_content):
+            resp1 = self.client.get(self.prefixed('/metro/new-york_new-york/'))
+            soup1 = BeautifulSoup(resp1.data, 'html.parser')
+            head1 = soup1.find('h2').text
+
+        self.assertEqual(resp1.status_code, 200)
+        self.assertIn('New York', head1)
+        
+        formats = ('OSM2PGSQL SHP', 'OSM2PGSQL GEOJSON', 'IMPOSM SHP',
+                   'IMPOSM GEOJSON', 'OSM PBF', 'OSM XML',
+                   'WATER COASTLINE SHP', 'LAND COASTLINE SHP')
+        
+        self.assertEqual(len(soup1.find_all('a', class_='link', **{'data-format': compile(r'.*')})),
+                         len(formats), 'Should have eight data format links')
+        
+        for format in formats:
+            link = soup1.find('a', class_='link', **{'data-format': format})
+            size = link.find('span', class_='size').text
+            self.assertEqual(size, 'Missing')
+    
     def test_cities_responses(self):
         with mock.patch('App.data') as data:
             data.cities = [
