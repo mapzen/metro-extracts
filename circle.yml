@@ -1,15 +1,25 @@
 machine:
   python:
     version: 3.5.1
+  services:
+    - docker
   environment:
     DATABASE_URL: postgres://extracts:extracts@localhost/extracts
+
 dependencies:
   override:
     - sudo apt-get update -y && sudo apt-get install -y postgresql-9.4
     - sudo -u postgres psql -c "CREATE USER extracts WITH PASSWORD 'extracts'"
     - sudo -u postgres psql -c "CREATE DATABASE extracts WITH OWNER extracts"
     - pip install -r requirements.txt
+
 test:
   override:
     - ./test.py
     - cp -Lr Prototypes $CIRCLE_ARTIFACTS/
+
+deployment:
+  production:
+    branch: master
+    commands:
+      - ./docker-publish.sh mapzen/metro-extracts latest
