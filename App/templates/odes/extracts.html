@@ -6,7 +6,6 @@
 
 {% block content %}
   <div class="container">
-    {% include "odes/logout-fragment.html" %}
     <ol class="breadcrumb">
       <li>
         <a href="{{ url_for('Metro-Extracts.index') }}">Metro Extracts</a>
@@ -60,7 +59,7 @@
 {% block script %}
   {% for extract in extracts %}
     /* Extracts().init(
-      {{ extract.odes.bbox|safe }}, 
+      {{ extract.odes.bbox|safe }},
       {{ extract.odes.id|safe }},
       "{{ url_for('static', filename='scene.yaml') }}"
     ); */
