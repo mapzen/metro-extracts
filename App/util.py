@@ -81,7 +81,7 @@ def _get_remote_fragment(url):
     with open(path, 'r') as file:
         return file.read()
 
-def get_mapzen_navbar(user_id, avatar, user_nickname):
+def get_mapzen_navbar():
     return _get_remote_fragment('https://mapzen.com/site-fragments/new-navbar.html')
 
 def get_mapzen_footer():
