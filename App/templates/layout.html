@@ -12,7 +12,7 @@
   {% block styles %}{% endblock %}
 </head>
 <body class='data-pages'>
-  {{ util.get_mapzen_navbar()|safe }}
+  {{ util.get_mapzen_navbar(user_id, avatar, user_nickname)|safe }}
 
   {% block content %}{% endblock %}
   <div class="container text-center">
@@ -31,6 +31,24 @@
   </script>
 
   {{ util.get_mapzen_footer()|safe }}
-  <script src="https://mapzen.com/common/styleguide/scripts/mapzen-styleguide.min.js"></script>
+  <script src="http://127.0.0.1:3000/scripts/mapzen-styleguide.min.js"></script>
+  <script>
+    // See https://github.com/mapzen/styleguide#mpznnav
+    MPZN.nav.reflectUserState(
+        {{ user_nickname|tojson }},
+        {{ avatar|tojson }},
+        function(e)
+        {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var logoutRequest = new XMLHttpRequest();
+            logoutRequest.open('POST', {{ url_for('OAuth.post_logout')|tojson }}, true);
+            logoutRequest.send();
+            logoutRequest.onload = function() {
+                window.location = {{ url_for('Metro-Extracts.index')|tojson }};
+            }
+        });
+  </script>
 </body>
 </html>
