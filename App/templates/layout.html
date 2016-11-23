@@ -35,8 +35,8 @@
   <script>
     // See https://github.com/mapzen/styleguide#mpznnav
     MPZN.nav.reflectUserState(
-        {{ user_nickname|tojson }},
-        {{ avatar|tojson }},
+        {{ (user_nickname or None)|tojson }},
+        {{ (avatar or None)|tojson }},
         function(e)
         {
             e.preventDefault();
