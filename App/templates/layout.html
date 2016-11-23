@@ -32,5 +32,23 @@
 
   {{ util.get_mapzen_footer()|safe }}
   <script src="https://mapzen.com/common/styleguide/scripts/mapzen-styleguide.min.js"></script>
+  <script>
+    // See https://github.com/mapzen/styleguide#mpznnav
+    MPZN.nav.reflectUserState(
+        {{ (user_nickname or None)|tojson }},
+        {{ (avatar or None)|tojson }},
+        function(e)
+        {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var logoutRequest = new XMLHttpRequest();
+            logoutRequest.open('POST', {{ url_for('OAuth.post_logout')|tojson }}, true);
+            logoutRequest.send();
+            logoutRequest.onload = function() {
+                window.location = {{ url_for('Metro-Extracts.index')|tojson }};
+            }
+        });
+  </script>
 </body>
 </html>

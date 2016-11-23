@@ -54,7 +54,7 @@ class TestUtil (unittest.TestCase):
             self.assertIn(content, function())
     
     def test_navbar(self):
-        return self._test_remote_fragment(util.get_mapzen_navbar, 'navbar.html')
+        return self._test_remote_fragment(util.get_mapzen_navbar, 'new-navbar.html')
     
     def test_footer(self):
         return self._test_remote_fragment(util.get_mapzen_footer, 'footer.html')
@@ -73,7 +73,7 @@ class TestApp (unittest.TestCase):
         def response_content(url, request):
             response_headers = {'Content-Type': 'text/html; charset=utf-8'}
 
-            if (url.netloc, url.path) == ('mapzen.com', '/site-fragments/navbar.html'):
+            if (url.netloc, url.path) == ('mapzen.com', '/site-fragments/new-navbar.html'):
                 return response(200, '<div>fake navbar HTML</div>', headers=response_headers)
 
             if (url.netloc, url.path) == ('mapzen.com', '/site-fragments/footer.html'):
