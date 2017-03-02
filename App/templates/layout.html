@@ -22,7 +22,7 @@
       <p>The <a href="https://mapzen.com/documentation/vector-tiles/">Mapzen Vector Tile Service</a> provides worldwide basemap coverage sourced from OpenStreetMap and other open data projects, updated daily! <b>Get started with your free <a href="https://mapzen.com/developers/">Mapzen Developer account</a>.</b></p>
     </div>
   </div>
-  
+
   <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
   <script src="https://mapzen.com/js/0.4/mapzen.min.js"></script>
   {% block js %}{% endblock %}
@@ -35,6 +35,7 @@
   <script>
     // See https://github.com/mapzen/styleguide#mpznnav
     MPZN.nav.reflectUserState(
+        {{ (user_id or None)|tojson }},
         {{ (user_nickname or None)|tojson }},
         {{ (avatar or None)|tojson }},
         function(e)
