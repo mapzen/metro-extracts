@@ -70,9 +70,8 @@ def _get_remote_fragment(url):
     path = join(tempfile.gettempdir(), sha+ext)
 
     def new_enough(filename):
-        return False # tempoarily disable caching
-        # ctime, oldest = os.stat(filename).st_ctime, time() - 300
-        # return bool(ctime > oldest)
+        ctime, oldest = os.stat(filename).st_ctime, time() - 300
+        return bool(ctime > oldest)
 
     if not (exists(path) and new_enough(path)):
         with open(path, 'w') as file:
