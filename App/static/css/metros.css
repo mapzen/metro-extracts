@@ -1,5 +1,5 @@
 h1 {
-  margin-bottom: 10px;
+  /*margin-bottom: 10px;*/
 }
 h1 a {
   font-weight: inherit;
@@ -11,12 +11,12 @@ h1 a:hover {
 body.data-pages #search_input{
   height:41px;
 }
-body.data-pages .inline-submit .btn { 
-  background: #666; 
+body.data-pages .inline-submit .btn {
+  background: #666;
   color: white;
 }
-body.data-pages .inline-submit .btn:hover { 
-  background: #555; 
+body.data-pages .inline-submit .btn:hover {
+  background: #555;
 }
 .map-wrapper {
   padding: 0;
@@ -109,7 +109,7 @@ body.data-pages .inline-submit .btn:hover {
 }
 #map.request-mode #legend .box {
   background: transparent;
-  border: 3px solid rgba(212,100,92,.9); 
+  border: 3px solid rgba(212,100,92,.9);
 }
 #map.request-mode .custom {
   display: block;
@@ -157,7 +157,7 @@ body.data-pages .inline-submit .btn:hover {
   width: 100%;
 }
 .data-filter-label.red {
-  color: #d4645c;
+  color: #2C1E3F;
 }
 #content-wrapper[class*="filtered"] .data-filter-label.red {
   display: none;
@@ -203,7 +203,7 @@ body.data-pages .inline-submit .btn:hover {
   cursor: pointer;
   clear: both;
   color: #000;
-  font-weight: normal;
+  font-weight: 300;
   display: block;
   text-transform: capitalize;
 }
