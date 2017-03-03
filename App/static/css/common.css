@@ -78,6 +78,9 @@
   stroke-opacity: .5;
   cursor: default;
 }
+.leaflet-container {
+  font-family: 'Poppins', 'Open Sans', Helvetica, Arial, sans-serif;
+}
 .leaflet-container a {
   color: #6ea0a4;
 }

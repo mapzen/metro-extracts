@@ -149,15 +149,10 @@ body.data-pages .inline-submit .btn:hover {
 }
 .data-filter-label {
   position:relative;
-  font-size:12px;
   line-height:1;
   font-weight:bold;
-  color:#000;
   text-transform:uppercase;
   width: 100%;
-}
-.data-filter-label.red {
-  color: #2C1E3F;
 }
 #content-wrapper[class*="filtered"] .data-filter-label.red {
   display: none;
@@ -202,8 +197,6 @@ body.data-pages .inline-submit .btn:hover {
   margin: 3px 0 3px 10px;
   cursor: pointer;
   clear: both;
-  color: #000;
-  font-weight: 300;
   display: block;
   text-transform: capitalize;
 }
@@ -270,16 +263,13 @@ body.data-pages .inline-submit .btn:hover {
   font-size:12px;
   font-weight:bold;
   text-transform:uppercase;
-  color: #6ea0a4;
+  color: #2C1E3F;
   clear: both;
   height: 25px;
   vertical-align: bottom;
   line-height: 2em;
   background: white;
   cursor: default;
-}
-.autocomplete .label.red {
-  color: #d4645c;
 }
 .autocomplete a {
   display: block;
@@ -289,7 +279,7 @@ body.data-pages .inline-submit .btn:hover {
 .suggestion {
   border-bottom: 1px solid #ddd;
   padding: 1px 0 1px 15px;
-  color: #808080;
+  color: #FF7B7B;
   cursor: pointer;
   font-size: 14px;
 }
@@ -299,11 +289,11 @@ body.data-pages .inline-submit .btn:hover {
   padding-right: 10px;
 }
 .suggestion.selected {
-  color: #000;
+  color: #FF4947;
   background: #ddd;
 }
-.suggestion:hover {
-  color: #000;
+.suggestion.hit:hover {
+  color: #FF4947;
   background: #eee;
 }
 .suggestion:last-child {
