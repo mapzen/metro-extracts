@@ -157,7 +157,7 @@ body.data-pages .inline-submit .btn:hover {
   width: 100%;
 }
 .data-filter-label.red {
-  color: #2C1E3F;
+  color: #d4645c;
 }
 #content-wrapper[class*="filtered"] .data-filter-label.red {
   display: none;
