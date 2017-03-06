@@ -12,11 +12,8 @@ body.data-pages #search_input{
   height:41px;
 }
 body.data-pages .inline-submit .btn {
-  background: #666;
-  color: white;
-}
-body.data-pages .inline-submit .btn:hover {
-  background: #555;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
 }
 .map-wrapper {
   padding: 0;
@@ -258,6 +255,9 @@ body.data-pages .inline-submit .btn:hover {
 }
 .autocomplete {
   border: 1px solid #ddd;
+  border-radius: 5px;
+  min-height: 41px;
+  margin-right: 1px;
 }
 .autocomplete .label {
   font-size:12px;
