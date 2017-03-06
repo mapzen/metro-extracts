@@ -54,8 +54,8 @@
   overflow: hidden;
 }
 #map path, .map path {
-  fill: #d4645c;
-  stroke: #d4645c;
+  fill: #FF7B7B;
+  stroke: #FF7B7B;
   stroke-width: 2;
   stroke-opacity: .3;
   fill-opacity: .3;
@@ -82,7 +82,7 @@
   font-family: 'Poppins', 'Open Sans', Helvetica, Arial, sans-serif;
 }
 .leaflet-container a {
-  color: #6ea0a4;
+  color: #FF7B7B;
 }
 .leaflet-container .leaflet-control-zoom-in,
 .leaflet-container .leaflet-control-zoom-out {
