@@ -1,5 +1,8 @@
-﻿import:
+import:
     - https://mapzen.com/carto/refill-style-more-labels/refill-style-more-labels.yaml
+
+global:
+    sdk_mapzen_api_key: mapzen-xxxxxxx
 
 styles:
     waves:
