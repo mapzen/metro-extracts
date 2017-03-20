@@ -23,5 +23,5 @@ deployment:
     branch: master
     commands:
       - ./docker-publish.sh mapzen/metro-extracts latest
-      - pip install ‘Circle-Beacon == 2.0.0'
+      - pip install 'Circle-Beacon == 2.0.0'
       - alert-circle mapzen documentation master $CIRCLE_TOKEN
