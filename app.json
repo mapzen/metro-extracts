@@ -11,7 +11,8 @@
   "formation": {
   },
   "addons": [
-    "heroku-postgresql"
+    "heroku-postgresql",
+    "sendgrid"
   ],
   "buildpacks": [
 
