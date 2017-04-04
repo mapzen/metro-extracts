@@ -45,6 +45,7 @@
         {{ (user_id or None)|tojson }},
         {{ (user_nickname or None)|tojson }},
         {{ (avatar or None)|tojson }},
+        {{ (admin or None)|tojson }},
         function(e)
         {
             e.preventDefault();
