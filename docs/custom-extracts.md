@@ -9,11 +9,11 @@ Is the location you're looking for not on the extract list? Mapzen hosts the top
 1. Go to the Metro Extracts download page at https://mapzen.com/data/metro-extracts/
 2. Type the location for where you want a custom extract. The geographic hierarchy of the feature displays in the drop-down menu, allowing you to make a more precise extract.
 
-    ![Custom Extract dropidown menu](./images/custom_searchbar.png)
+    ![Custom Extract drop-down menu](./images/custom_searchbar.png)
 
 3. Once you have selected a place from the drop-down menu, a solid blue bounding box appears on the map. You can drag this to specify the boundaries of the extract. If you request a custom extract near a popular extract, there is a red line outlining the popular extract.
 
-    ![Selecting a custom extract on the map](./images/customextract.png)
+    ![Select a custom extract on the map](./images/customextract.png)
 
 4. After you have the custom extract ready, click Get Extract. You need to sign in to your Mapzen account, or create one if you are a new user. See the [Mapzen developer overview](https://mapzen.com/documentation/overview/) for more information on accounts.
 
