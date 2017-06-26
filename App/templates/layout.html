@@ -41,13 +41,12 @@
   <script src="https://mapzen.com/common/styleguide/scripts/mapzen-styleguide.min.js"></script>
   <script>
     // See https://github.com/mapzen/styleguide#mpznnav
-    MPZN.nav.reflectUserState(
+    MPZN.nav.metroExtractsUserState(
         {{ (user_id or None)|tojson }},
         {{ (user_nickname or None)|tojson }},
         {{ (avatar or None)|tojson }},
         {{ (admin or None)|tojson }},
-        function(e)
-        {
+        function(e) {
             e.preventDefault();
             e.stopPropagation();
 
@@ -56,7 +55,7 @@
             logoutRequest.send();
             logoutRequest.onload = function() {
                 window.location = {{ url_for('Metro-Extracts.index')|tojson }};
-            }
+            };
         });
   </script>
 </body>
