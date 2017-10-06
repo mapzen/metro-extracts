@@ -112,21 +112,26 @@ def request_odes_extract(extract, request, url_for, api_key):
     '''
     '''
     env = Environment(loader=PackageLoader(__name__, 'templates'))
-    args = dict(
+    email_args = dict(
         name = extract.name or extract.wof.name or 'an unnamed place',
         link = urljoin(util.get_base_url(request), url_for('ODES.get_extract', extract_id=extract.id)),
         extracts_link = urljoin(util.get_base_url(request), url_for('ODES.get_extracts')),
         created = extract.created
         )
 
-    email = dict(
-        email_subject=env.get_template('email-subject.txt').render(**args),
-        email_body_text=env.get_template('email-body.txt').render(**args),
-        email_body_html=env.get_template('email-body.html').render(**args)
+    params = dict(
+        email_subject=env.get_template('email-subject.txt').render(**email_args),
+        email_body_text=env.get_template('email-body.txt').render(**email_args),
+        email_body_html=env.get_template('email-body.html').render(**email_args),
+
+        ui_id=extract.id,
+        envelope_id=extract.envelope.id,
+        wof_name=extract.wof.name,
+        wof_id=extract.wof.id,
+        name=extract.name
         )
 
-    params = {key: extract.envelope.bbox[i] for (i, key) in enumerate(('bbox_w', 'bbox_s', 'bbox_e', 'bbox_n'))}
-    params.update(email)
+    params.update({key: extract.envelope.bbox[i] for (i, key) in enumerate(('bbox_w', 'bbox_s', 'bbox_e', 'bbox_n'))})
 
     post_url = uritemplate.expand(odes_extracts_url, dict(api_key=api_key))
     resp = requests.post(post_url, data=params)
