@@ -5,7 +5,6 @@ blueprint = Blueprint('Alt-Redirects', __name__)
 def apply_redirect_blueprint(app):
     '''
     '''
-    app.logger.debug('redirect blue')
     app.register_blueprint(blueprint)
 
 @blueprint.route('/data/metro-extracts-alt')

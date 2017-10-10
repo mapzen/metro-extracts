@@ -13,14 +13,13 @@ from flask import (
     )
 
 from . import util, data
-from .session import session_info
+from .oauth import session_info
 
 blueprint = Blueprint('Metro-Extracts', __name__)
 
 def apply_blueprint(app, url_prefix):
     '''
     '''
-    app.logger.debug('applying blueprint')
     app.register_blueprint(blueprint, url_prefix=url_prefix)
 
 def populate_metro_urls(metro_id):

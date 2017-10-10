@@ -17,9 +17,9 @@ from . import util
 blueprint = Blueprint('OAuth', __name__, template_folder='templates/oauth')
 hardcoded_auth = ('mapzen', environ.get('TESTING_PASSWORD'))
 
-mapzen_token_url = 'http://localhost/oauth/token'
-mapzen_authorize_url = 'http://localhost/oauth/authorize'
-mapzen_currdev_url = 'http://localhost/developers/oauth_api/current_developer'
+mapzen_token_url = environ.get('OAUTH_TOKEN_URL')
+mapzen_authorize_url = environ.get('OAUTH_AUTHORIZE_URL')
+mapzen_currdev_url = environ.get('CURRENT_USER_URL')
 
 DEFAULT_AVATAR = 'http://placekitten.com/99/99'
 

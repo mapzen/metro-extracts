@@ -25,7 +25,6 @@ odes_extracts_url = 'https://odes.mapzen.com/extracts{/id}{?api_key}'
 def apply_odes_blueprint(app, url_prefix):
     '''
     '''
-    app.logger.debug('odes blue')
     app.register_blueprint(blueprint, url_prefix=url_prefix)
     app.config['DB_DSN'] = environ.get('DATABASE_URL')
 
