@@ -17,9 +17,9 @@ from . import util
 blueprint = Blueprint('OAuth', __name__, template_folder='templates/oauth')
 hardcoded_auth = ('mapzen', environ.get('TESTING_PASSWORD'))
 
-mapzen_token_url = 'https://mapzen.com/oauth/token'
-mapzen_authorize_url = 'https://mapzen.com/oauth/authorize'
-mapzen_currdev_url = 'https://mapzen.com/developers/oauth_api/current_developer'
+mapzen_token_url = 'http://localhost/oauth/token'
+mapzen_authorize_url = 'http://localhost/oauth/authorize'
+mapzen_currdev_url = 'http://localhost/developers/oauth_api/current_developer'
 
 DEFAULT_AVATAR = 'http://placekitten.com/99/99'
 
@@ -46,7 +46,7 @@ def check_authentication(untouched_route):
                     'You have to login with proper credentials',
                     401, {'WWW-Authenticate': 'Basic realm="Login Required"'}
                     )
-        
+
         else:
             envelope_path = url_for('ODES.get_envelope', envelope_id=basename(request.path))
             is_envelope = bool(envelope_path == request.path)
@@ -55,23 +55,23 @@ def check_authentication(untouched_route):
 
             access_token = session.get('token', {}).get('access_token', None)
             user_id = session.get('id', {}).get('id', None)
-            
+
             if access_token is None or user_id is None:
                 return make_401_response(should_see_interstitial)
 
             resp = get(mapzen_currdev_url,
                        headers={'Authorization': 'Bearer {}'.format(access_token)})
-            
+
             if resp.status_code in range(400, 499):
                 return make_401_response(should_see_interstitial)
-        
+
         return untouched_route(*args, **kwargs)
-    
+
     return wrapper
 
 def make_401_response(should_see_interstitial):
     ''' Create an HTTP 401 Not Authorized response to trigger Mapzen OAuth.
-    
+
         Start by redirecting the user to Mapzen OAuth authorization page:
         https://github.com/mapzen/wiki/wiki/mapzen.com-OAuth#1-redirect-users-to-request-mapzen-access
     '''
@@ -87,7 +87,7 @@ def make_401_response(should_see_interstitial):
     args = dict(redirect_uri=urljoin(request.url, url_for('OAuth.get_oauth_callback')))
     args.update(client_id=current_app.config['MAPZEN_APP_ID'], state=state_id)
     args.update(response_type='code')
-    
+
     if should_see_interstitial:
         return make_response(render_template('error-authenticate.html', util=util,
                                              href=mapzen_authorize_url, **args), 401)
@@ -99,7 +99,7 @@ def absolute_url(request, location):
     '''
     if 'X-Forwarded-Proto' not in request.headers:
         return location
-    
+
     scheme = request.headers.get('X-Forwarded-Proto')
     actual_url = urlunparse((scheme, request.host, request.path, None, None, None))
     return urljoin(actual_url, location)
@@ -109,9 +109,9 @@ def session_info(session):
     '''
     if 'id' not in session or 'token' not in session:
         return None, None, None, None, None
-    
+
     return (session['id']['id'], session['id']['nickname'],
-            session['id'].get('avatar', DEFAULT_AVATAR), 
+            session['id'].get('avatar', DEFAULT_AVATAR),
             session['id']['keys_url'], session['token']['access_token'])
 
 @blueprint.route('/oauth/logout', methods=['POST'])
@@ -123,7 +123,7 @@ def post_logout():
 
     if 'token' in session:
         session.pop('token')
-    
+
     return redirect(absolute_url(request, url_for('Metro-Extracts.index')), 302)
 
 @blueprint.route('/oauth/hello')
@@ -137,25 +137,25 @@ def get_hello():
 @util.errors_logged
 def get_oauth_callback():
     ''' Handle Mapzen's OAuth callback after a user authorizes.
-    
+
         https://github.com/mapzen/wiki/wiki/mapzen.com-OAuth#2-mapzen-redirects-back-to-your-site
     '''
     if 'error' in request.args:
         return render_template('error-oauth.html', util=util,
                                reason="you didn't authorize access to your account.")
-    
+
     try:
         code, state_id = request.args['code'], request.args['state']
     except:
         return render_template('error-oauth.html', util=util,
                                reason='missing code or state in callback.')
-    
+
     try:
         state = session['states'].pop(state_id)
     except:
         return render_template('error-oauth.html', util=util,
                                reason='state "{}" not found?'.format(state_id))
-    
+
     #
     # Exchange the temporary code for an access token:
     # https://github.com/mapzen/wiki/wiki/mapzen.com-OAuth#2-mapzen-redirects-back-to-your-site
@@ -167,17 +167,17 @@ def get_oauth_callback():
 
     resp = post(mapzen_token_url, urlencode(data))
     auth = resp.json()
-    
+
     if 'error' in auth:
         return render_template('error-oauth.html', util=util,
                                reason='Mapzen said "%(error)s".' % auth)
-    
+
     elif 'access_token' not in auth:
         return render_template('error-oauth.html', util=util,
                                reason="missing `access_token`.")
-    
+
     session['token'] = auth
-    
+
     #
     # Figure out who's here.
     #
@@ -187,7 +187,7 @@ def get_oauth_callback():
     id = dict(id=d['id'], email=d['email'], nickname=d['nickname'],
               avatar=d.get('avatar', DEFAULT_AVATAR), keys_url=d['keys'])
     session['id'] = id
-    
+
     other = redirect(absolute_url(request, state['redirect']), 302)
     other.headers['Cache-Control'] = 'no-store private'
     other.headers['Vary'] = 'Referer'

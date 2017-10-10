@@ -7,6 +7,8 @@ from urllib.parse import urlunparse
 from time import time
 import os, tempfile
 
+import logging
+
 from flask import Response, render_template
 import requests
 
@@ -56,7 +58,8 @@ def errors_logged(route_function):
             html = render_template('known-unknown.html', error=str(e), util=globals())
             return Response(html, status=400)
         except Exception as e:
-            print_exc(file=stderr)
+            logger = logging.getLogger()
+            logger.exception(e)
             html = render_template('unknown-unknown.html', util=globals())
             return Response(html, status=500)
         else:
