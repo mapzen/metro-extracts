@@ -5,6 +5,11 @@ machine:
     - docker
   environment:
     DATABASE_URL: postgres://extracts:extracts@localhost/extracts
+    OAUTH_TOKEN_URL: https://mapzen.com/oauth/token
+    OAUTH_AUTHORIZE_URL: https://mapzen.com/oauth/authorize
+    CURRENT_USER_URL: https://mapzen.com/developers/oauth_api/current_developer
+    ODES_URL: https://odes.mapzen.com/extracts
+    keys_url: https://mapzen.com/developers/oauth_api/current_developer/keys
 
 dependencies:
   override:
