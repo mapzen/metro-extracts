@@ -16,7 +16,7 @@ var Metros = function() {
     placeID = null,
     wofPrefix = null;
 
-  var rect, 
+  var rect,
     dots = [],
     outline,
     requestBoundingBox;
@@ -36,7 +36,7 @@ var Metros = function() {
 
       function doThisStuffOnScroll() {
         if (!processScroll) return;
-        if (d3.select("#content-wrapper").attr("class") && 
+        if (d3.select("#content-wrapper").attr("class") &&
           d3.select("#content-wrapper").attr("class").indexOf("filtered") != -1) return;
 
         processScroll = false;
@@ -55,7 +55,7 @@ var Metros = function() {
           });
         setTimeout(function(){ processScroll = true; }, 50);
       }
-      
+
       return this;
     },
     initDisplayMap : function() {
@@ -107,7 +107,7 @@ var Metros = function() {
             country : d.country,
             metros : []
           }
-          d.metros.forEach(function(e){ 
+          d.metros.forEach(function(e){
             if (e.name.toLowerCase().replace(/\W/g, '').indexOf(str) != -1)
               c.metros.push(e);
           });
@@ -151,11 +151,11 @@ var Metros = function() {
       // autocomplete dropdown list request
       if (xhr) xhr.abort();
       var m = this;
-      xhr = d3.json("https://search.mapzen.com/v1/autocomplete?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
+      xhr = d3.json("https://search.mapzen.com/v1/autocomplete?text="+query+"&sources=wof&api_key=mapzen-c1ffj8N", function(error, json) {
         if (json.length)
           m.showSuggestions(json, list);
-        else 
-          d3.json("https://search.mapzen.com/v1/autocomplete?text="+query+"&layers=neighbourhood,locality,borough,localadmin,county,macrocounty,region,macroregion,country&api_key=search-owZDPeC", function(err, results) {
+        else
+          d3.json("https://search.mapzen.com/v1/autocomplete?text="+query+"&layers=neighbourhood,locality,borough,localadmin,county,macrocounty,region,macroregion,country&api_key=mapzen-c1ffj8N", function(err, results) {
             m.showSuggestions(results, list);
           });
       });
@@ -193,7 +193,7 @@ var Metros = function() {
         // appends .layer to account for different WOF areas that have the same label (ex. Tokyo)
         if (d.label) return d.text;
         else if (d.name) return "<a href="+d.href+">"+d.name+"</a>";
-        else return d.properties.label + "<span class='layer'>(" + d.properties.layer + ")</span>"; 
+        else return d.properties.label + "<span class='layer'>(" + d.properties.layer + ")</span>";
       }).on("click",function(d){
         if (d.label || d.name) return;
         m.searchOnSuggestion(d);
@@ -211,7 +211,7 @@ var Metros = function() {
     selectSuggestion : function() {
       // for handling keyboard input on the autocomplete list
       var currentList = d3.selectAll(".hit");
-      currentList.each(function(d, i){ 
+      currentList.each(function(d, i){
         if (i == keyIndex) {
           document.getElementById("search_input").value = d.name ? d.name : d.properties.label;
           if (d.name)
@@ -258,7 +258,7 @@ var Metros = function() {
 
       if (event.keyCode == 40) { //arrow down
         keyIndex = Math.min(keyIndex+1, d3.selectAll(".hit")[0].length-1);
-        this.selectSuggestion();   
+        this.selectSuggestion();
 
       } else if (event.keyCode == 38) { //arrow up
         keyIndex = Math.max(keyIndex-1, 0);
@@ -292,11 +292,11 @@ var Metros = function() {
         if (placeID.charAt(0) == "/")
           window.location.href = placeID;
         else
-          d3.json("https://search.mapzen.com/v1/place?api_key=search-owZDPeC&ids="+placeID, function(error, json){
+          d3.json("https://search.mapzen.com/v1/place?api_key=mapzen-c1ffj8N&ids="+placeID, function(error, json){
             m.requestExtract(json.features[0]);
           });
       } else {
-        d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=search-owZDPeC", function(error, json) {
+        d3.json("https://search.mapzen.com/v1/search?text="+query+"&sources=wof&api_key=mapzen-c1ffj8N", function(error, json) {
           if (countrySearch){
             // if a country name was clicked from the list
             m.zoomMap(json.features[0].bbox);
@@ -309,7 +309,7 @@ var Metros = function() {
             m.requestExtract(json.features[0]);
           } else {
             // if WOF returns no results, hit the regular search API
-            d3.json("https://search.mapzen.com/v1/search?text="+query+"&api_key=search-owZDPeC", function(e, j) {
+            d3.json("https://search.mapzen.com/v1/search?text="+query+"&api_key=mapzen-c1ffj8N", function(e, j) {
               if (j.features.length)
                 m.requestExtract(j.features[0], true);
               else
@@ -371,7 +371,7 @@ var Metros = function() {
       }];
       // go through boxes on map to check .contains()
       extractLayers.forEach(function(l){
-        if (l.getBounds().contains(p1) && l.getBounds().contains(p2)) 
+        if (l.getBounds().contains(p1) && l.getBounds().contains(p2))
           encompassed[0].metros.push({
             name : l.feature.properties.display_name,
             href : l.feature.properties.href,
@@ -419,13 +419,13 @@ var Metros = function() {
     calculateOffset : function(theta, d, lat1, lng1) {
       // we are setting request box slightly outside of the wof bbox
       // this funciton calculates the new latlng points via trig
-      var lat1 = lat1.toRad(), 
+      var lat1 = lat1.toRad(),
         lng1 = lng1.toRad(),
         R = 6371;
 
-      var lat2 = Math.asin( Math.sin(lat1)*Math.cos(d/R) 
+      var lat2 = Math.asin( Math.sin(lat1)*Math.cos(d/R)
             + Math.cos(lat1)*Math.sin(d/R)*Math.cos(theta) ),
-        lng2 = lng1 + Math.atan2(Math.sin(theta)*Math.sin(d/R)*Math.cos(lat1), 
+        lng2 = lng1 + Math.atan2(Math.sin(theta)*Math.sin(d/R)*Math.cos(lat1),
               Math.cos(d/R)-Math.sin(lat1)*Math.sin(lat2));
 
       return [lat2.toDeg(), lng2.toDeg()];
@@ -446,7 +446,7 @@ var Metros = function() {
       var m = this;
       rect = new L.Rectangle(new L.LatLngBounds(requestBoundingBox), { className : "blue" });
       displayMap.addLayer(rect);
-      
+
       this.drawDots();
 
       this.fillRequestForm();
@@ -464,7 +464,7 @@ var Metros = function() {
       var myIcon = L.divIcon({className: 'drag-icon'}),
         dotOptions = { icon : myIcon, draggable: true };
 
-      // [northEast, southWest] 
+      // [northEast, southWest]
       dots = [
         new L.marker(requestBoundingBox[0], dotOptions),
         new L.marker(requestBoundingBox[1], dotOptions),
