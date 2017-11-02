@@ -4,7 +4,7 @@
 global:
     # Sign up for your own Mapzen API key to enjoy higher rate limits
     # https://mapzen.com/documentation/overview/#developer-accounts-and-api-keys
-    sdk_mapzen_api_key: mapzen-PRcoY71
+    sdk_mapzen_api_key: mapzen-c1ffj8N
 
 styles:
     waves:
