@@ -7,6 +7,7 @@ from operator import itemgetter, attrgetter
 from threading import Thread
 from uuid import uuid4
 from time import time
+from datetime import datetime
 
 from dateutil.parser import parse as parse_datetime
 from jinja2 import Environment, PackageLoader
@@ -27,7 +28,6 @@ def apply_odes_blueprint(app, url_prefix):
     '''
     '''
     app.register_blueprint(blueprint, url_prefix=url_prefix)
-    app.config['DB_DSN'] = environ.get('DATABASE_URL')
 
 def get_odes_key(access_token):
     auth_header = {'Authorization': 'Bearer {}'.format(access_token)}
@@ -48,66 +48,32 @@ def get_odes_key(access_token):
 
     return api_keys[0]
 
-def get_odes_extracts(db, api_key):
+def get_odes_extracts(api_key):
     '''
     '''
-    odeses, extracts = list(), list()
+    extracts = list()
 
     vars = dict(api_key=api_key)
     extracts_url = uritemplate.expand(odes_extracts_url, vars)
     resp = requests.get(extracts_url)
 
-    if resp.status_code in range(200, 299):
-        odeses.extend([data.ODES(str(oj['id']), status=oj['status'], bbox=oj['bbox'],
-                                 links=oj.get('download_links', {}),
-                                 processed_at=(parse_datetime(oj['processed_at']) if oj['processed_at'] else None),
-                                 created_at=(parse_datetime(oj['created_at']) if oj['created_at'] else None))
-                       for oj in resp.json()])
-
-    for odes in sorted(odeses, key=attrgetter('created_at'), reverse=True):
-        extract = data.get_extract(db, odes=odes)
-
-        if extract is None:
-            extract = data.Extract(None, None, None, odes, None, None, None)
-
-        extracts.append(extract)
-
+    if resp.status_code not in range(200, 299):
+        return []
+    for e in resp.json():
+        extracts.append(data.extractFromDict(e))
     return extracts
 
-def get_odes_extract(db, id, api_key):
+def get_odes_extract(id, api_key):
     '''
     '''
-    extract, odes = data.get_extract(db, extract_id=id), None
+    vars = dict(id=id, api_key=api_key)
+    extract_url = uritemplate.expand(odes_extracts_url, vars)
+    resp = requests.get(extract_url)
 
-    if extract is None:
-        # Nothing by that name in the database, so ask the ODES API.
-        vars = dict(id=id, api_key=api_key)
-        extract_url = uritemplate.expand(odes_extracts_url, vars)
-        resp = requests.get(extract_url)
+    if resp.status_code not in range(200, 299):
+        return None
 
-        if resp.status_code in range(200, 299):
-            oj = resp.json()
-            odes = data.ODES(str(oj['id']), status=oj['status'], bbox=oj['bbox'],
-                             links=oj.get('download_links', {}),
-                             processed_at=(parse_datetime(oj['processed_at']) if oj['processed_at'] else None),
-                             created_at=(parse_datetime(oj['created_at']) if oj['created_at'] else None))
-
-        if odes is None:
-            # Nothing at all for this ID anywhere.
-            return None
-
-    if odes is None:
-        # A DB extract was found, but nothing in ODES - very weird!
-        return get_odes_extract(db, extract.odes.id, api_key)
-
-    # We have a known ODES, so look for it in the database.
-    extract = data.get_extract(db, odes=odes)
-
-    if extract is None:
-        # Known ODES, but nothing in the DB so make one up.
-        return data.Extract(None, None, None, odes, None, None, None)
-
-    return extract
+    return data.extractFromDict(resp.json())
 
 def request_odes_extract(extract, request, url_for, api_key):
     '''
@@ -117,7 +83,7 @@ def request_odes_extract(extract, request, url_for, api_key):
         name = extract.name or extract.wof.name or 'an unnamed place',
         link = urljoin(util.get_base_url(request), url_for('ODES.get_extract', extract_id=extract.id)),
         extracts_link = urljoin(util.get_base_url(request), url_for('ODES.get_extracts')),
-        created = extract.created
+        created = datetime.now()
         )
 
     email = dict(
@@ -180,8 +146,6 @@ def post_envelope():
     envelope = data.Envelope(str(uuid4())[-12:], bbox)
 
     session['extract'] = {'id': str(uuid4())[-12:], 'name': name, 'envelope_id': envelope.id, 'bbox': envelope.bbox, 'wof_id': wof_id or None, 'wof_name': wof_name}
-    with data.connect(current_app.config['DB_DSN']) as db:
-        data.add_extract_envelope(db, name, envelope, data.WoF(wof_id or None, wof_name))
 
     return redirect(url_for('ODES.get_envelope', envelope_id=envelope.id), 303)
 
@@ -191,21 +155,19 @@ def post_envelope():
 def get_envelope(envelope_id):
     '''
     '''
-    with data.connect(current_app.config['DB_DSN']) as db:
-        extract = data.get_extract(db, envelope_id=envelope_id)
+    assert(envelope_id == session['extract']['envelope_id'])
 
-    if extract.odes.id is not None:
+    if session['extract'].get('odes_id') is not None:
         # this envelope has already been posted to ODES.
-        return redirect(url_for('ODES.get_extract', extract_id=extract.id), 301)
+        return redirect(url_for('ODES.get_extract', extract_id=session['extract']['id']), 301)
 
     user_id, _, _, _, access_token = session_info(session)
     api_key = get_odes_key(access_token)
+    envelope = data.Envelope(session['extract']['envelope_id'], session['extract']['bbox'])
+    wof = data.WoF(session['extract']['wof_id'], session['extract']['wof_name'])
+    extract = data.Extract(session['extract']['id'], session['extract']['name'], envelope, None, user_id, None, wof)
     odes = request_odes_extract(extract, request, url_for, api_key)
-
-    with data.connect(current_app.config['DB_DSN']) as db:
-        extract.user_id = user_id
-        extract.odes.id = odes.id
-        data.set_extract(db, extract)
+    session['extract']['odes_id'] = odes.id
 
     return redirect(url_for('ODES.get_extract', extract_id=extract.id), 301)
 
@@ -219,8 +181,7 @@ def get_extracts():
     id, nickname, avatar, _, access_token = session_info(session)
     api_key = get_odes_key(access_token)
 
-    with data.connect(current_app.config['DB_DSN']) as db:
-        extracts = get_odes_extracts(db, api_key)
+    extracts = get_odes_extracts(api_key)
 
     return render_template('extracts.html', extracts=extracts, util=util,
                            user_id=id, user_nickname=nickname, avatar=avatar)
@@ -235,8 +196,7 @@ def get_extract(extract_id):
     id, nickname, avatar, _, access_token = session_info(session)
     api_key = get_odes_key(access_token)
 
-    with data.connect(current_app.config['DB_DSN']) as db:
-        extract = get_odes_extract(db, extract_id, api_key)
+    extract = get_odes_extract(extract_id, api_key)
 
     if extract is None:
         raise ValueError('No extract {}'.format(extract_id))

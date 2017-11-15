@@ -1,8 +1,9 @@
 from uuid import uuid4
 from os.path import dirname, join
 from contextlib import contextmanager
-import psycopg2, psycopg2.extras
 import json
+
+from dateutil.parser import parse as parse_datetime
 
 def load_cities(filename):
     '''
@@ -49,66 +50,12 @@ class Extract:
         self.created = created
         self.wof = wof
 
-@contextmanager
-def connect(dsn):
-    with psycopg2.connect(dsn) as conn:
-        with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as db:
-            yield db
+def extractFromDict(d):
+    odes = ODES(str(d['id']), status=d['status'], bbox=d['bbox'],
+                     links=d.get('download_links', {}),
+                     processed_at=(parse_datetime(d['processed_at']) if d['processed_at'] else None),
+                     created_at=(parse_datetime(d['created_at']) if d['created_at'] else None))
+    envelope = Envelope(d['envelope_id'], [d['bbox']['w'], d['bbox']['s'], d['bbox']['e'], d['bbox']['n']])
+    wof = WoF(d['wof_id'], d['wof_name'])
+    return Extract(d['ui_id'], d['name'], envelope, odes, d['user_id'], odes.created_at, wof)
 
-def add_extract_envelope(db, name, envelope, wof):
-    '''
-    '''
-    extract_id = str(uuid4())[-12:]
-    
-    db.execute('''
-        INSERT INTO extracts
-        (id, name, envelope_id, envelope_bbox, wof_name, wof_id, created)
-        VALUES (%s, %s, %s, %s, %s, %s, NOW())
-        ''',
-        (extract_id, name, envelope.id, envelope.bbox, wof.name, wof.id))
-    
-    return extract_id
-
-def get_extract(db, extract_id=None, envelope_id=None, odes=None):
-    assert not (extract_id is None and envelope_id is None and odes is None)
-    
-    values, conditions = [], []
-    
-    if extract_id is not None:
-        conditions.append('id = %s')
-        values.append(str(extract_id))
-    
-    if envelope_id is not None:
-        conditions.append('envelope_id = %s')
-        values.append(str(envelope_id))
-    
-    if odes is not None:
-        conditions.append('odes_id = %s')
-        values.append(odes.id)
-    
-    db.execute('''
-        SELECT id, name, envelope_id, envelope_bbox, odes_id, user_id, wof_name, wof_id, created
-        FROM extracts WHERE {}
-        '''.format(' AND '.join(conditions)),
-        tuple(values))
-    
-    try:
-        id, name, env_id, env_bbox, odes_id, user_id, wof_name, wof_id, created = db.fetchone()
-    except TypeError:
-        return None
-
-    wof = WoF(wof_id, wof_name)
-    envelope = Envelope(env_id, env_bbox)
-    odes = odes or ODES(odes_id)
-
-    return Extract(id, name, envelope, odes, user_id, created, wof)
-
-def set_extract(db, extract):
-    db.execute('''
-        UPDATE extracts
-        SET name = %s, envelope_id = %s, envelope_bbox = %s, odes_id = %s,
-            user_id = %s, wof_name = %s, wof_id = %s
-        WHERE id = %s
-        ''',
-        (extract.name, extract.envelope.id, extract.envelope.bbox, extract.odes.id,
-        extract.user_id, extract.wof.name, extract.wof.id, extract.id))

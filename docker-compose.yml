@@ -1,17 +1,8 @@
 version: '2'
 services:
-  pg:
-    image: postgres
-    environment:
-      POSTGRES_PASSWORD: extracts
-      POSTGRES_USER: extracts
-      POSTGRES_DB: extracts
-
   extracts:
     build: .
     ports:
       - "80:80"
     volumes:
       - .:/app
-    environment:
-      DATABASE_URL: postgres://extracts:extracts@pg/extracts
