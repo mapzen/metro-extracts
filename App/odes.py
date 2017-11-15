@@ -129,6 +129,12 @@ def request_odes_extract(extract, request, url_for, api_key):
     params = {key: extract.envelope.bbox[i] for (i, key) in enumerate(('bbox_w', 'bbox_s', 'bbox_e', 'bbox_n'))}
     params.update(email)
 
+    params['ui_id'] = extract.id
+    params['envelope_id'] = extract.envelope.id
+    params['wof_name'] = extract.wof.name
+    params['wof_id'] = extract.wof.id
+    params['name'] = extract.name
+
     post_url = uritemplate.expand(odes_extracts_url, dict(api_key=api_key))
     resp = requests.post(post_url, data=params)
     oj = resp.json()
