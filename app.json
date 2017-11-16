@@ -1,8 +1,5 @@
 {
   "name": "data-pages",
-  "scripts": {
-    "postdeploy": "cat create.pgsql | psql $DATABASE_URL"
-  },
   "env": {
     "FLASK_SECRET_KEY": {
       "generator": "secret"

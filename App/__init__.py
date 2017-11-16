@@ -6,7 +6,6 @@ import json, os
 
 import requests
 import uritemplate
-import psycopg2
 
 from flask import (
     Blueprint, jsonify, Response, render_template, url_for, request, session
@@ -54,7 +53,7 @@ def populate_metro_urls(metro_id):
 @blueprint.route('/')
 @util.errors_logged
 def index():
-    id, nick, avatar, _, _ = session_info(session)
+    id, nick, avatar, _ = session_info(session)
 
     # Include only cities that have been published.
     cities = [city for city in data.cities

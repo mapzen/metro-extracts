@@ -20,21 +20,16 @@ hardcoded_auth = ('mapzen', environ.get('TESTING_PASSWORD'))
 mapzen_token_url = environ.get('OAUTH_TOKEN_URL')
 mapzen_authorize_url = environ.get('OAUTH_AUTHORIZE_URL')
 mapzen_currdev_url = environ.get('CURRENT_USER_URL')
-keys_url = environ.get('KEYS_URL')
 
 DEFAULT_AVATAR = 'http://placekitten.com/99/99'
 
 def apply_oauth_blueprint(app, url_prefix):
-    '''
-    '''
     app.register_blueprint(blueprint, url_prefix=url_prefix)
     app.secret_key = environ.get('FLASK_SECRET_KEY')
     app.config['MAPZEN_APP_ID'] = environ.get('MAPZEN_APP_ID')
     app.config['MAPZEN_APP_SECRET'] = environ.get('MAPZEN_APP_SECRET')
 
 def check_authentication(untouched_route):
-    '''
-    '''
     @wraps(untouched_route)
     def wrapper(*args, **kwargs):
         ''' Prompt user to authenticate with password or Mapzen if necessary.
@@ -96,8 +91,6 @@ def make_401_response(should_see_interstitial):
     return redirect(mapzen_authorize_url+'?'+urlencode(args), 302)
 
 def absolute_url(request, location):
-    '''
-    '''
     if 'X-Forwarded-Proto' not in request.headers:
         return location
 
@@ -109,16 +102,13 @@ def session_info(session):
     ''' Return user ID, user nickname, user avatar, user keys URL, and OAuth access token.
     '''
     if 'id' not in session or 'token' not in session:
-        return None, None, None, None, None
+        return None, None, None, None
 
     return (session['id']['id'], session['id']['nickname'],
-            session['id'].get('avatar', DEFAULT_AVATAR),
-            session['id']['keys_url'], session['token']['access_token'])
+            session['id'].get('avatar', DEFAULT_AVATAR), session['token']['access_token'])
 
 @blueprint.route('/oauth/logout', methods=['POST'])
 def post_logout():
-    '''
-    '''
     if 'id' in session:
         session.pop('id')
 
@@ -134,7 +124,7 @@ def post_logout():
 @util.errors_logged
 @check_authentication
 def get_hello():
-    id, nickname, avatar, _, _ = session_info(session)
+    id, nickname, avatar, _ = session_info(session)
     return render_template('oauth/hello.html', user_id=id, user_nickname=nickname, avatar=avatar)
 
 @blueprint.route('/oauth/callback')
@@ -189,7 +179,7 @@ def get_oauth_callback():
 
     d = get(mapzen_currdev_url, headers=head).json()
     id = dict(id=d['id'], email=d['email'], nickname=d['nickname'],
-              avatar=d.get('avatar', DEFAULT_AVATAR), keys_url=keys_url)
+              avatar=d.get('avatar', DEFAULT_AVATAR))
     session['id'] = id
 
     other = redirect(absolute_url(request, state['redirect']), 302)

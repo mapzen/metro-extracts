@@ -48,8 +48,6 @@ def nice_size(size):
         return '{:.0f}{}'.format(size, suffix)
 
 def errors_logged(route_function):
-    '''
-    '''
     @wraps(route_function)
     def wrapper(*args, **kwargs):
         try:

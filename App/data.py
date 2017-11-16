@@ -6,8 +6,6 @@ import json
 from dateutil.parser import parse as parse_datetime
 
 def load_cities(filename):
-    '''
-    '''
     with open(filename) as file:
         cities = json.load(file)
     

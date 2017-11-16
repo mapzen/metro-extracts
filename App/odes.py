@@ -25,32 +25,26 @@ odes_extracts_url = environ.get('ODES_URL') + '{/id}{?api_key}'
 keys_url = environ.get('KEYS_URL')
 
 def apply_odes_blueprint(app, url_prefix):
-    '''
-    '''
     app.register_blueprint(blueprint, url_prefix=url_prefix)
 
 def get_odes_key(access_token):
     auth_header = {'Authorization': 'Bearer {}'.format(access_token)}
 
     resp1 = requests.get(keys_url, headers=auth_header)
-    keys = sorted(resp1.json(), key=itemgetter('created_at'), reverse=True)
-    api_keys = [key['key'] for key in keys
-                if key['service'] == 'odes' and key['status'] != 'disabled']
+    api_keys = [key['key'] for key in resp1.json()]
 
-    if len(api_keys) == 0:
-        data = dict(service='odes', nickname='Metro Extracts key')
-        resp2 = requests.post(keys_url, data=data, headers=auth_header)
+    if len(api_keys) > 0:
+        return api_keys[0]
 
-        if resp2.status_code != 200:
-            raise Exception('Error making a new ODES key')
+    # no existing keys so create one
+    resp2 = requests.post(keys_url, data=None, headers=auth_header)
 
-        api_keys = [resp2.json().get('key')]
+    if resp2.status_code != 200:
+        raise Exception('Error making a new api key')
 
-    return api_keys[0]
+    return resp2.json().get('key')
 
 def get_odes_extracts(api_key):
-    '''
-    '''
     extracts = list()
 
     vars = dict(api_key=api_key)
@@ -64,8 +58,6 @@ def get_odes_extracts(api_key):
     return extracts
 
 def get_odes_extract(id, api_key):
-    '''
-    '''
     vars = dict(id=id, api_key=api_key)
     extract_url = uritemplate.expand(odes_extracts_url, vars)
     resp = requests.get(extract_url)
@@ -76,8 +68,6 @@ def get_odes_extract(id, api_key):
     return data.extractFromDict(resp.json())
 
 def request_odes_extract(extract, request, url_for, api_key):
-    '''
-    '''
     env = Environment(loader=PackageLoader(__name__, 'templates'))
     args = dict(
         name = extract.name or extract.wof.name or 'an unnamed place',
@@ -116,8 +106,6 @@ def request_odes_extract(extract, request, url_for, api_key):
                      created_at=(parse_datetime(oj['created_at']) if oj['created_at'] else None))
 
 def populate_link_downloads(odes_links):
-    '''
-    '''
     downloads = []
 
     def _download(format, url):
@@ -137,8 +125,6 @@ def populate_link_downloads(odes_links):
 @blueprint.route('/odes/envelopes/', methods=['POST'])
 @util.errors_logged
 def post_envelope():
-    '''
-    '''
     form = request.form
     name = form.get('display_name')
     bbox = [float(form[k]) for k in ('bbox_w', 'bbox_s', 'bbox_e', 'bbox_n')]
@@ -153,15 +139,13 @@ def post_envelope():
 @util.errors_logged
 @check_authentication
 def get_envelope(envelope_id):
-    '''
-    '''
     assert(envelope_id == session['extract']['envelope_id'])
 
     if session['extract'].get('odes_id') is not None:
         # this envelope has already been posted to ODES.
         return redirect(url_for('ODES.get_extract', extract_id=session['extract']['id']), 301)
 
-    user_id, _, _, _, access_token = session_info(session)
+    user_id, _, _, access_token = session_info(session)
     api_key = get_odes_key(access_token)
     envelope = data.Envelope(session['extract']['envelope_id'], session['extract']['bbox'])
     wof = data.WoF(session['extract']['wof_id'], session['extract']['wof_name'])
@@ -176,9 +160,7 @@ def get_envelope(envelope_id):
 @util.errors_logged
 @check_authentication
 def get_extracts():
-    '''
-    '''
-    id, nickname, avatar, _, access_token = session_info(session)
+    id, nickname, avatar, access_token = session_info(session)
     api_key = get_odes_key(access_token)
 
     extracts = get_odes_extracts(api_key)
@@ -191,9 +173,7 @@ def get_extracts():
 @util.errors_logged
 @check_authentication
 def get_extract(extract_id):
-    '''
-    '''
-    id, nickname, avatar, _, access_token = session_info(session)
+    id, nickname, avatar, access_token = session_info(session)
     api_key = get_odes_key(access_token)
 
     extract = get_odes_extract(extract_id, api_key)
