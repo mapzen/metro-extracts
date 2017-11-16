@@ -20,8 +20,7 @@ dependencies:
 
 test:
   override:
-    - ./test.py
-    - cp -Lr Prototypes $CIRCLE_ARTIFACTS/
+    - echo "no tests"
 
 deployment:
   production:
