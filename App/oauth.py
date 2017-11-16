@@ -125,6 +125,9 @@ def post_logout():
     if 'token' in session:
         session.pop('token')
 
+    if 'extract' in session:
+        session.pop('extract')
+
     return redirect(absolute_url(request, url_for('Metro-Extracts.index')), 302)
 
 @blueprint.route('/oauth/hello')

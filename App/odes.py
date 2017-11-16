@@ -179,6 +179,7 @@ def post_envelope():
     wof_name, wof_id = form.get('wof_name'), form.get('wof_id') and int(form['wof_id'])
     envelope = data.Envelope(str(uuid4())[-12:], bbox)
 
+    session['extract'] = {'id': str(uuid4())[-12:], 'name': name, 'envelope_id': envelope.id, 'bbox': envelope.bbox, 'wof_id': wof_id or None, 'wof_name': wof_name}
     with data.connect(current_app.config['DB_DSN']) as db:
         data.add_extract_envelope(db, name, envelope, data.WoF(wof_id or None, wof_name))
 
